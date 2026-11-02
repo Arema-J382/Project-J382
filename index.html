@@ -240,7 +240,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel (Dengan Filter Primary Key Kosong atau '0')
+    // Penanganan Paste Excel (Filter: Jika ada kolom yang kosong atau bernilai '0', baris diabaikan)
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -257,39 +257,51 @@
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
-            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '';
 
             if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
             
-            // FILTRASI: Jika NIP kosong atau bernilai '0', abaikan baris ini
-            if (!nip || nip === '0') return;
+            // FILTRASI: Jika ada salah satu kolom kosong atau bernilai '0' (teks/angka), abaikan baris ini
+            if (!nip || nip === '0' || 
+                !nama || nama === '0' || 
+                !dept || dept === '0' || 
+                !totalStr || totalStr === '0' || Number(totalStr) === 0) {
+              return;
+            }
 
             parsed.push({
               nip: String(nip),
-              nama: nama || 'NONAME',
-              dept: dept || '-',
-              total: Number(totalStr) || 0
+              nama: nama,
+              dept: dept,
+              total: Number(totalStr)
             });
           } else {
             let kodeDept = cols[0] ? cols[0].trim() : '';
             let namaDept = cols[1] ? cols[1].trim() : '';
-            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
-            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
-            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
-            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '';
+            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '';
+            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '';
+            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '';
 
             if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
             
-            // FILTRASI: Jika KODE DEPT kosong atau bernilai '0', abaikan baris ini
-            if (!kodeDept || kodeDept === '0') return;
+            // FILTRASI: Jika ada salah satu kolom kosong atau bernilai '0' (teks/angka), abaikan baris ini
+            if (!kodeDept || kodeDept === '0' || 
+                !namaDept || namaDept === '0' || 
+                !totalSku || totalSku === '0' || Number(totalSku) === 0 || 
+                !totalQty || totalQty === '0' || Number(totalQty) === 0 || 
+                !excludePpn || excludePpn === '0' || Number(excludePpn) === 0 || 
+                !includePpn || includePpn === '0' || Number(includePpn) === 0) {
+              return;
+            }
 
             parsed.push({
               kode_dept: kodeDept,
-              nama_dept: namaDept || '-',
-              total_sku: Number(totalSku) || 0,
-              total_qty: Number(totalQty) || 0,
-              exclude_ppn: Number(excludePpn) || 0,
-              include_ppn: Number(includePpn) || 0
+              nama_dept: namaDept,
+              total_sku: Number(totalSku),
+              total_qty: Number(totalQty),
+              exclude_ppn: Number(excludePpn),
+              include_ppn: Number(includePpn)
             });
           }
         });
@@ -398,7 +410,6 @@
       const btnKirim = document.getElementById('btnKirim');
 
       btnKirim.disabled = true;
-      btnKiriimHtml = btnKirim.innerHTML;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
       const { error } = await supabaseClient.rpc(rpcName, {
