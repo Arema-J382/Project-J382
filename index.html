@@ -65,7 +65,7 @@
           </button>
           
           <div id="submenuTv" class="pl-6 mt-1 space-y-1">
-            <!-- MENU INPUT TARGET TODAY (DIATAS DAILY SALES) -->
+            <!-- MENU INPUT TARGET TODAY -->
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="target" class="w-4 h-4"></i>
               <span>INPUT TARGET TODAY</span>
@@ -117,7 +117,8 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-semibold text-gray-600 mb-1">TARGET SALES (RP)</label>
-                  <input type="number" id="inputTargetSales" placeholder="Contoh: 50000000"
+                  <!-- Input type text dengan format rupiah otomatis -->
+                  <input type="text" id="inputTargetSales" placeholder="Contoh: 50.000.000" onkeyup="formatRupiah(this)"
                     class="w-full px-4 py-2.5 border rounded-lg text-base font-semibold focus:outline-none focus:border-blue-600 bg-white">
                 </div>
 
@@ -182,7 +183,7 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // State Aplikasi
-    let currentView = 'sales'; // 'target', 'sales', atau 'departemen'
+    let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
 
@@ -194,6 +195,23 @@
         showAdminPanel();
       }
     });
+
+    // Fungsi Format Rupiah Otomatis saat Mengetik
+    function formatRupiah(element) {
+      let angka = element.value.replace(/[^,\d]/g, '').toString();
+      let split = angka.split(',');
+      let sisa = split[0].length % 3;
+      let rupiah = split[0].substr(0, sisa);
+      let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+      if (ribuan) {
+        let separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+      }
+
+      rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+      element.value = rupiah;
+    }
 
     // Fungsi Pindah Menu (Switch View)
     function switchView(view) {
@@ -211,7 +229,6 @@
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
 
-      // Reset style menu
       const activeClass = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition";
       const inactiveClass = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition";
 
@@ -436,13 +453,15 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE MENGGUNAKAN RPC
+    // FUNGSI KIRIM TARGET KE SUPABASE (MEMBERSIHKAN TITIK SEBELUM DIKIRIM)
     async function kirimTargetKeSupabase() {
-      const targetVal = document.getElementById('inputTargetSales').value;
+      const targetRaw = document.getElementById('inputTargetSales').value;
+      // Menghilangkan titik (.) agar menjadi angka murni
+      const cleanTarget = targetRaw.replace(/\./g, '');
       const statusMsg = document.getElementById('statusMsg');
       const btnKirimTarget = document.getElementById('btnKirimTarget');
 
-      if (!targetVal || Number(targetVal) <= 0) {
+      if (!cleanTarget || Number(cleanTarget) <= 0) {
         alert('Masukkan nominal target yang valid!');
         return;
       }
@@ -452,7 +471,7 @@
       lucide.createIcons();
 
       const { error } = await supabaseClient.rpc('replace_target_today', {
-        new_target: Number(targetVal)
+        new_target: Number(cleanTarget)
       });
 
       btnKirimTarget.disabled = false;
