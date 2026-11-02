@@ -65,7 +65,7 @@
           </button>
           
           <div id="submenuTv" class="pl-6 mt-1 space-y-1">
-            <!-- MENU BARU: INPUT TARGET TODAY (DIATAS DAILY SALES) -->
+            <!-- MENU INPUT TARGET TODAY (DIATAS DAILY SALES) -->
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="target" class="w-4 h-4"></i>
               <span>INPUT TARGET TODAY</span>
@@ -297,7 +297,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel (Dengan Filter Primary Key Kosong atau '0')
+    // Penanganan Paste Excel
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -317,8 +317,6 @@
             let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            
-            // FILTRASI: Jika NIP kosong atau bernilai '0', abaikan baris ini
             if (!nip || nip === '0') return;
 
             parsed.push({
@@ -336,8 +334,6 @@
             let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
-            
-            // FILTRASI: Jika KODE DEPT kosong atau bernilai '0', abaikan baris ini
             if (!kodeDept || kodeDept === '0') return;
 
             parsed.push({
@@ -440,7 +436,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET TO SUPABASE
+    // FUNGSI KIRIM TARGET KE SUPABASE MENGGUNAKAN RPC
     async function kirimTargetKeSupabase() {
       const targetVal = document.getElementById('inputTargetSales').value;
       const statusMsg = document.getElementById('statusMsg');
@@ -455,9 +451,9 @@
       btnKirimTarget.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
       lucide.createIcons();
 
-      const { data, error } = await supabaseClient
-        .from('target_today')
-        .insert([{ target: Number(targetVal) }]);
+      const { error } = await supabaseClient.rpc('replace_target_today', {
+        new_target: Number(targetVal)
+      });
 
       btnKirimTarget.disabled = false;
       btnKirimTarget.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini';
@@ -469,13 +465,13 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = 'Sukses! Target hari ini berhasil disimpan ke tabel target_today.';
+        statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
         statusMsg.classList.remove('hidden');
         document.getElementById('inputTargetSales').value = '';
       }
     }
 
-    // FUNGSI KIRIM KE SUPABASE MENGGUNAKAN RPC
+    // FUNGSI KIRIM SALES / DEPARTEMEN KE SUPABASE MENGGUNAKAN RPC
     async function kirimKeSupabase() {
       const activeData = (currentView === 'sales') ? salesData : departemenData;
       const rpcName = (currentView === 'sales') ? 'replace_laporan_sales' : 'replace_laporan_departemen';
