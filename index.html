@@ -240,7 +240,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel (Filter ketat berdasarkan Kolom Pertama)
+    // Penanganan Paste Excel (Filter ketat membersihkan spasi/karakter tersembunyi Excel)
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -254,37 +254,42 @@
           const cols = row.split('\t');
 
           if (currentView === 'sales') {
-            let nip = cols[0] ? cols[0].trim() : '';
+            let nipRaw = cols[0] ? cols[0] : '';
+            // Bersihkan total dari spasi, tanda kutip, atau karakter tak kasat mata dari Excel
+            let cleanNip = nipRaw.replace(/['"\s]/g, '');
+            
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
             let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (index === 0 && (cleanNip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
             
-            // FILTRASI: Jika kolom pertama (NIP) kosong, bernilai '0', atau 0, abaikan baris ini
-            if (!nip || nip === '' || nip === '0' || Number(nip) === 0) return;
+            // FILTRASI: Jika kosong, bernilai '0', atau sekumpulan nol (00, 000), abaikan baris ini
+            if (!cleanNip || cleanNip === '0' || /^0+$/.test(cleanNip)) return;
 
             parsed.push({
-              nip: String(nip),
+              nip: String(cleanNip),
               nama: nama || 'NONAME',
               dept: dept || '-',
               total: Number(totalStr) || 0
             });
           } else {
-            let kodeDept = cols[0] ? cols[0].trim() : '';
+            let kodeDeptRaw = cols[0] ? cols[0] : '';
+            let cleanKodeDept = kodeDeptRaw.replace(/['"\s]/g, '');
+
             let namaDept = cols[1] ? cols[1].trim() : '';
             let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
             let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
             let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
             let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
 
-            if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
+            if (index === 0 && (cleanKodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
             
-            // FILTRASI: Jika kolom pertama (KODE DEPT) kosong, bernilai '0', atau 0, abaikan baris ini
-            if (!kodeDept || kodeDept === '' || kodeDept === '0' || Number(kodeDept) === 0) return;
+            // FILTRASI: Jika kosong, bernilai '0', atau sekumpulan nol, abaikan baris ini
+            if (!cleanKodeDept || cleanKodeDept === '0' || /^0+$/.test(cleanKodeDept)) return;
 
             parsed.push({
-              kode_dept: kodeDept,
+              kode_dept: cleanKodeDept,
               nama_dept: namaDept || '-',
               total_sku: Number(totalSku) || 0,
               total_qty: Number(totalQty) || 0,
@@ -301,7 +306,7 @@
         }
 
         renderTableRows();
-      }, 100);
+      }, 1000);
     }
 
     function renderTableRows() {
