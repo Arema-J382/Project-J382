@@ -54,7 +54,7 @@
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
-            <p class="text-sm text-gray-500">Copy data dari Excel, lalu klik kotak di bawah dan tekan <b>Ctrl + V</b>.</p>
+            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
           </div>
           <div class="flex gap-2">
             <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
@@ -69,25 +69,27 @@
         <!-- Notifikasi -->
         <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
-        <!-- AREA PASTE EXCEL -->
-        <div id="pasteAreaContainer" class="mb-4">
-          <textarea id="excelPasteInput" placeholder="Klik di sini, lalu tekan Ctrl + V untuk menempelkan (paste) data dari Excel..." 
-            class="w-full h-32 p-4 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
+        <!-- KOTAK AREA PASTE (DI ATAS TABEL) -->
+        <div class="mb-4">
+          <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
+            class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
             onpaste="handleExcelPaste(event)"></textarea>
         </div>
 
-        <!-- TABEL PREVIEW DENGAN GARIS GRID ALA EXCEL -->
+        <!-- TABEL UTAMA DENGAN HEADER DAN BARIS DATA TEPAT DI BAWAHNYA -->
         <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
           <table class="w-full border-collapse text-left text-sm">
+            <!-- HEADER TABEL -->
             <thead class="bg-slate-800 text-white sticky top-0 z-10">
               <tr>
                 <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
                 <th class="border border-slate-600 px-4 py-2.5">NIP</th>
                 <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
-                <th class="border border-slate-600 px-4 py-2.5 w-24">DEPT</th>
+                <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
                 <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
               </tr>
             </thead>
+            <!-- BARIS DATA AKAN MUNCUL DI SINI TEPAT DI BAWAH HEADER -->
             <tbody id="previewTableBody" class="divide-y divide-gray-200">
               <tr>
                 <td colspan="5" class="text-center py-12 text-gray-400 italic">
@@ -104,8 +106,8 @@
 
   <script>
     // 1. MASUKKAN SUPABASE URL DAN ANON KEY ANDA DI SINI
-    const SUPABASE_URL = 'vxsopsnopeurnxdkfsbe'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
+    const SUPABASE_URL = 'https://XYZ.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJKV1QiLC...'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     lucide.createIcons();
@@ -119,7 +121,7 @@
 
     let parsedData = [];
 
-    // 2. Fungsi Menangkap Paste dari Excel
+    // 2. Fungsi Memproses Paste Data Excel
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -130,15 +132,14 @@
 
         rows.forEach((row, index) => {
           if (!row.trim()) return;
-          const cols = row.split('\t'); // Excel menggunakan tab sebagai pemisah kolom
+          const cols = row.split('\t'); // Pemisah kolom dari Excel
 
-          // Asumsi urutan kolom dari Excel: [NIP, NAMA, DEPT, TOTAL]
           let nip = cols[0] ? cols[0].trim() : '';
           let nama = cols[1] ? cols[1].trim() : '';
           let dept = cols[2] ? cols[2].trim() : '';
           let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
-          // Jika baris pertama adalah Header (misal tertulis NIP / NAMA), abaikan
+          // Abaikan baris header jika tercopy dari Excel
           if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
             return;
           }
@@ -151,18 +152,18 @@
           });
         });
 
-        renderTablePreview();
+        renderTableRows();
       }, 100);
     }
 
-    // 3. Render Preview ke Tabel Bergaris Grid
-    function renderTablePreview() {
+    // 3. Render Data ke Baris Tabel
+    function renderTableRows() {
       const tbody = document.getElementById('previewTableBody');
       const btnKirim = document.getElementById('btnKirim');
       const totalBarisSpan = document.getElementById('totalBaris');
 
       if (parsedData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Data tidak valid atau kosong. Pastikan Anda meng-copy format tabel dengan benar.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Data tidak valid. Pastikan format copy benar.</td></tr>`;
         btnKirim.classList.add('hidden');
         return;
       }
@@ -194,7 +195,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // 5. Kirim ke Supabase
+    // 5. Kirim Data ke Supabase
     async function kirimKeSupabase() {
       if (parsedData.length === 0) return;
 
@@ -221,7 +222,6 @@
         statusMsg.innerText = `Sukses! ${parsedData.length} baris data berhasil dikirim dan disimpan ke Supabase!`;
         statusMsg.classList.remove('hidden');
 
-        // Reset setelah sukses
         resetData();
       }
     }
