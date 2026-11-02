@@ -240,7 +240,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel (Filter: Jika ada kolom yang kosong atau bernilai '0', baris diabaikan)
+    // Penanganan Paste Excel (Filter ketat berdasarkan Kolom Pertama)
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -257,51 +257,39 @@
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
-            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '';
+            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
             
-            // FILTRASI: Jika ada salah satu kolom kosong atau bernilai '0' (teks/angka), abaikan baris ini
-            if (!nip || nip === '0' || 
-                !nama || nama === '0' || 
-                !dept || dept === '0' || 
-                !totalStr || totalStr === '0' || Number(totalStr) === 0) {
-              return;
-            }
+            // FILTRASI: Jika kolom pertama (NIP) kosong, bernilai '0', atau 0, abaikan baris ini
+            if (!nip || nip === '' || nip === '0' || Number(nip) === 0) return;
 
             parsed.push({
               nip: String(nip),
-              nama: nama,
-              dept: dept,
-              total: Number(totalStr)
+              nama: nama || 'NONAME',
+              dept: dept || '-',
+              total: Number(totalStr) || 0
             });
           } else {
             let kodeDept = cols[0] ? cols[0].trim() : '';
             let namaDept = cols[1] ? cols[1].trim() : '';
-            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '';
-            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '';
-            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '';
-            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '';
+            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
+            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
+            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
             
-            // FILTRASI: Jika ada salah satu kolom kosong atau bernilai '0' (teks/angka), abaikan baris ini
-            if (!kodeDept || kodeDept === '0' || 
-                !namaDept || namaDept === '0' || 
-                !totalSku || totalSku === '0' || Number(totalSku) === 0 || 
-                !totalQty || totalQty === '0' || Number(totalQty) === 0 || 
-                !excludePpn || excludePpn === '0' || Number(excludePpn) === 0 || 
-                !includePpn || includePpn === '0' || Number(includePpn) === 0) {
-              return;
-            }
+            // FILTRASI: Jika kolom pertama (KODE DEPT) kosong, bernilai '0', atau 0, abaikan baris ini
+            if (!kodeDept || kodeDept === '' || kodeDept === '0' || Number(kodeDept) === 0) return;
 
             parsed.push({
               kode_dept: kodeDept,
-              nama_dept: namaDept,
-              total_sku: Number(totalSku),
-              total_qty: Number(totalQty),
-              exclude_ppn: Number(excludePpn),
-              include_ppn: Number(includePpn)
+              nama_dept: namaDept || '-',
+              total_sku: Number(totalSku) || 0,
+              total_qty: Number(totalQty) || 0,
+              exclude_ppn: Number(excludePpn) || 0,
+              include_ppn: Number(includePpn) || 0
             });
           }
         });
@@ -427,6 +415,7 @@
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke ${tableName}!`;
+        statusMsg.classList.add('hidden'); // Disesuaikan agar pesan sukses tampil dengan jelas
         statusMsg.classList.remove('hidden');
       }
     }
