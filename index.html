@@ -78,7 +78,7 @@
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
-            <!-- MENU BARU: MTD SALES -->
+            <!-- MENU MTD SALES -->
             <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>MTD SALES</span>
@@ -105,7 +105,7 @@
       <section class="p-6 flex-1 flex flex-col">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
           
-          <!-- Notifikasi Global -->
+          <!-- Notifikasi Global (Berfungsi di Semua Menu) -->
           <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
           <!-- TAMPILAN VIEW TARGET TODAY -->
@@ -190,7 +190,7 @@
     let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
-    let mtdSalesData = []; // State baru untuk MTD Sales
+    let mtdSalesData = []; 
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -232,6 +232,7 @@
       const viewTargetSection = document.getElementById('viewTargetSection');
       const viewExcelSection = document.getElementById('viewExcelSection');
 
+      // Sembunyikan pesan status saat berpindah menu
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
 
@@ -477,7 +478,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE
+    // FUNGSI KIRIM TARGET KE SUPABASE (Menu Target)
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -506,6 +507,7 @@
         statusMsg.innerText = 'Gagal menyimpan target: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
+        // Notifikasi Sukses Menu Target
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
         statusMsg.classList.remove('hidden');
@@ -513,7 +515,7 @@
       }
     }
 
-    // FUNGSI KIRIM SALES / MTD SALES / DEPARTEMEN KE SUPABASE MENGGUNAKAN RPC
+    // FUNGSI KIRIM SALES / MTD SALES / DEPARTEMEN KE SUPABASE (Menu Sales, MTD Sales, & Departemen)
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -525,7 +527,7 @@
         tableName = 'laporan_sales';
       } else if (currentView === 'mtdSales') {
         activeData = mtdSalesData;
-        rpcName = 'replace_mtd_sales'; // Fungsi RPC di Supabase untuk mtd_sales
+        rpcName = 'replace_mtd_sales'; 
         tableName = 'mtd_sales';
       } else if (currentView === 'departemen') {
         activeData = departemenData;
@@ -558,9 +560,10 @@
         statusMsg.innerText = 'Gagal memproses data: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
+        // PERBAIKAN: Menggunakan remove('hidden') agar notifikasi sukses tampil di Daily Sales, MTD Sales, & Departemen
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke ${tableName}!`;
-        statusMsg.classList.add('hidden'); // Anda bisa menghapus .add('hidden') jika ingin pesannya tampil secara permanen sampai diganti aksi berikutnya
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
+        statusMsg.classList.remove('hidden'); 
       }
     }
   </script>
