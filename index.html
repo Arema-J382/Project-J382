@@ -54,7 +54,7 @@
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
-            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
+            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel[cite: 8].</p>
           </div>
           <div class="flex gap-2">
             <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
@@ -69,17 +69,16 @@
         <!-- Notifikasi -->
         <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
-        <!-- KOTAK AREA PASTE (DI ATAS TABEL) -->
+        <!-- KOTAK AREA PASTE -->
         <div class="mb-4">
           <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
             class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
             onpaste="handleExcelPaste(event)"></textarea>
         </div>
 
-        <!-- TABEL UTAMA DENGAN HEADER DAN BARIS DATA TEPAT DI BAWAHNYA -->
+        <!-- TABEL UTAMA (DATA MUNCUL TEPAT DI BAWAH HEADER) -->
         <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
           <table class="w-full border-collapse text-left text-sm">
-            <!-- HEADER TABEL -->
             <thead class="bg-slate-800 text-white sticky top-0 z-10">
               <tr>
                 <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
@@ -89,7 +88,6 @@
                 <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
               </tr>
             </thead>
-            <!-- BARIS DATA AKAN MUNCUL DI SINI TEPAT DI BAWAH HEADER -->
             <tbody id="previewTableBody" class="divide-y divide-gray-200">
               <tr>
                 <td colspan="5" class="text-center py-12 text-gray-400 italic">
@@ -105,9 +103,9 @@
   </main>
 
   <script>
-    // 1. MASUKKAN SUPABASE URL DAN ANON KEY ANDA DI SINI
+    // Konfigurasi Supabase (URL sudah disesuaikan ke domain utama Anda)
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon key Anda dari Project Settings -> API
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     lucide.createIcons();
@@ -121,7 +119,6 @@
 
     let parsedData = [];
 
-    // 2. Fungsi Memproses Paste Data Excel
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -132,20 +129,19 @@
 
         rows.forEach((row, index) => {
           if (!row.trim()) return;
-          const cols = row.split('\t'); // Pemisah kolom dari Excel
+          const cols = row.split('\t');
 
           let nip = cols[0] ? cols[0].trim() : '';
           let nama = cols[1] ? cols[1].trim() : '';
           let dept = cols[2] ? cols[2].trim() : '';
           let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
-          // Abaikan baris header jika tercopy dari Excel
           if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
             return;
           }
 
           parsedData.push({
-            nip: nip || null,
+            nip: nip || '-',       // Mencegah error null constraint jika kolom NIP kosong
             nama: nama || 'NONAME',
             dept: dept || '-',
             total: Number(totalStr) || 0
@@ -156,7 +152,6 @@
       }, 100);
     }
 
-    // 3. Render Data ke Baris Tabel
     function renderTableRows() {
       const tbody = document.getElementById('previewTableBody');
       const btnKirim = document.getElementById('btnKirim');
@@ -173,7 +168,7 @@
         html += `
           <tr class="hover:bg-blue-50/50 transition">
             <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
-            <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip || '-'}</td>
+            <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
             <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
             <td class="border border-gray-300 px-4 py-2 text-center font-semibold text-blue-600">${item.dept}</td>
             <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
@@ -186,7 +181,6 @@
       btnKirim.classList.remove('hidden');
     }
 
-    // 4. Reset Data
     function resetData() {
       parsedData = [];
       document.getElementById('excelPasteInput').value = '';
@@ -195,7 +189,6 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // 5. Kirim Data ke Supabase
     async function kirimKeSupabase() {
       if (parsedData.length === 0) return;
 
@@ -221,7 +214,6 @@
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = `Sukses! ${parsedData.length} baris data berhasil dikirim dan disimpan ke Supabase!`;
         statusMsg.classList.remove('hidden');
-
         resetData();
       }
     }
