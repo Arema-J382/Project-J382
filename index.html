@@ -300,7 +300,7 @@
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
       // Memanggil fungsi RPC PostgreSQL di Supabase (Hapus & Insert sekaligus dalam 1 request)
-      const { error } = await supabaseClient.rpc('replace_laporan_departemen', {
+      const { error } = await supabaseClient.rpc('replace_laporan_sales', {
         new_data: parsedData
       });
 
