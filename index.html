@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV Dashboard - Admin Login</title>
+  <title>TV Dashboard - Admin Panel</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,7 @@
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
-  <!-- ================= SECTION LOGIN (MUNCUL JIKA BELUM LOGIN) ================= -->
+  <!-- ================= SECTION LOGIN ================= -->
   <div id="loginSection" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center">
     <div class="bg-white p-8 rounded-2xl shadow-xl w-96 max-w-full mx-4">
       <div class="text-center mb-6">
@@ -45,7 +45,7 @@
     </div>
   </div>
 
-  <!-- ================= ADMIN PANEL (TERSEMBUNYI SEBELUM LOGIN) ================= -->
+  <!-- ================= ADMIN PANEL ================= -->
   <div id="adminPanel" class="flex h-screen w-full overflow-hidden hidden">
     <!-- SIDEBAR -->
     <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
@@ -73,7 +73,7 @@
         </div>
       </nav>
 
-      <!-- TOMBOL LOGOUT DI BAWAH SIDEBAR -->
+      <!-- TOMBOL LOGOUT -->
       <div class="p-4 border-t border-slate-800">
         <button onclick="handleLogout()" class="w-full flex items-center gap-2 p-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 transition">
           <i data-lucide="log-out" class="w-4 h-4"></i> Logout
@@ -85,7 +85,7 @@
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
       <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
         <h1 class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
-        <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Secure Auth & Sync</span>
+        <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Lightning Fast RPC Sync</span>
       </header>
 
       <section class="p-6 flex-1 flex flex-col">
@@ -100,6 +100,7 @@
               <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
               </button>
+              <!-- TOMBOL SELALU TERLIHAT -->
               <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
                 <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
               </button>
@@ -150,7 +151,7 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Cek status sesi saat halaman pertama kali dibuka
+    // Cek sesi login saat halaman pertama kali dimuat
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -228,14 +229,18 @@
           let dept = cols[2] ? cols[2].trim() : '';
           let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
+          // Abaikan baris header
           if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
             return;
           }
 
-          if (!nip) return; // Abaikan jika NIP kosong
+          // JIKA NIP KOSONG, ABAIKAN / JANGAN MASUKKAN KE DATA
+          if (!nip) {
+            return;
+          }
 
           parsedData.push({
-            nip: Number(nip) || 0,
+            nip: String(nip),
             nama: nama || 'NONAME',
             dept: dept || '-',
             total: Number(totalStr) || 0
@@ -281,7 +286,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // KIRIM KE SUPABASE DENGAN RLS AKTIF
+    // FUNGSI KIRIM SUPER CEPAT MENGGUNAKAN SUPABASE RPC
     async function kirimKeSupabase() {
       if (parsedData.length === 0) {
         alert('Belum ada data valid yang akan dikirim!');
@@ -292,41 +297,24 @@
       const btnKirim = document.getElementById('btnKirim');
 
       btnKirim.disabled = true;
-      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
-      // 1. Hapus data lama (diizinkan karena user sudah login & RLS aktif)
-      const { error: deleteError } = await supabaseClient
-        .from('laporan_departemen')
-        .delete()
-        .gte('total', -999999);
-
-      if (deleteError) {
-        btnKirim.disabled = false;
-        btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${parsedData.length}</span> Baris ke Supabase`;
-        lucide.createIcons();
-        
-        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
-        statusMsg.innerText = 'Gagal menghapus data lama: ' + deleteError.message;
-        statusMsg.classList.remove('hidden');
-        return;
-      }
-
-      // 2. Masukkan data baru ke Supabase
-      const { data, error: insertError } = await supabaseClient
-        .from('laporan_departemen')
-        .insert(parsedData);
+      // Memanggil fungsi RPC PostgreSQL di Supabase (Hapus & Insert sekaligus dalam 1 request)
+      const { error } = await supabaseClient.rpc('replace_laporan_departemen', {
+        new_data: parsedData
+      });
 
       btnKirim.disabled = false;
       btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${parsedData.length}</span> Baris ke Supabase`;
       lucide.createIcons();
 
-      if (insertError) {
+      if (error) {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
-        statusMsg.innerText = 'Gagal menyimpan data baru ke Supabase: ' + insertError.message;
+        statusMsg.innerText = 'Gagal memproses data: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil disimpan dengan aman!`;
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil diperbarui dengan sangat cepat!`;
         statusMsg.classList.remove('hidden');
       }
     }
