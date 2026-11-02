@@ -141,9 +141,9 @@
           }
 
           parsedData.push({
-            nip: nip || '-',       // Mencegah error null constraint jika kolom NIP kosong
+            nip: nip || '0',       // Mencegah error null constraint jika kolom NIP kosong
             nama: nama || 'NONAME',
-            dept: dept || '-',
+            dept: dept || 'NODEPT',
             total: Number(totalStr) || 0
           });
         });
