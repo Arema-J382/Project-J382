@@ -10,7 +10,7 @@
   <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
-  <!-- Handsontable CSS & JS (Untuk fitur Copy-Paste seperti Excel) -->
+  <!-- Handsontable CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
 
@@ -27,19 +27,17 @@
     </div>
     
     <nav class="flex-1 p-4 space-y-2">
-      <!-- Menu Dropdown: TV DASHBOARD -->
       <div>
         <button id="btnTvDashboard" onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
           <div class="flex items-center gap-3">
             <i data-lucide="tv" class="w-5 h-5 text-blue-400"></i>
             <span>TV DASHBOARD</span>
           </div>
-          <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200"></i>
+          <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
         </button>
         
-        <!-- Submenu: DAILY SALES -->
         <div id="submenuTv" class="pl-9 mt-1 space-y-1">
-          <a href="#" onclick="openMenu('daily-sales')" class="block p-2 rounded-md hover:bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
+          <a href="#" class="block p-2 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
             <i data-lucide="table" class="w-4 h-4"></i>
             <span>DAILY SALES</span>
           </a>
@@ -50,24 +48,22 @@
 
   <!-- CONTENT AREA -->
   <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-    <!-- Header -->
     <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
       <h1 id="pageTitle" class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
       <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Bulk Data Paste</span>
     </header>
 
-    <!-- Main Section -->
-    <section class="p-8 flex-1">
-      <div id="daily-sales-view" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+    <section class="p-8 flex-1 flex flex-col">
+      <div id="daily-sales-view" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
         
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2 class="text-lg font-bold text-gray-800">Lembar Input Penjualan</h2>
-            <p class="text-sm text-gray-500">Anda dapat langsung melakukan <b>Copy & Paste (Ctrl+V)</b> dari Excel ke tabel di bawah ini.</p>
+            <p class="text-sm text-gray-500">Silakan <b>Copy data dari Excel</b> lalu klik sel pertama di bawah dan tekan <b>Ctrl + V</b>.</p>
           </div>
           <div class="flex gap-2">
             <button onclick="tambahBaris()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-2 rounded-lg text-sm border flex items-center gap-1">
-              <i data-lucide="plus" class="w-4 h-4"></i> Tambah 10 Baris
+              <i data-lucide="plus" class="w-4 h-4"></i> Tambah 100 Baris
             </button>
             <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
               <i data-lucide="send" class="w-4 h-4"></i> Kirim Semua ke Supabase
@@ -79,24 +75,22 @@
         <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
         <!-- Container Tabel Excel Dinamis -->
-        <div class="border rounded-lg overflow-hidden">
-          <div id="excelGrid" class="w-full"></div>
+        <div class="border rounded-lg overflow-hidden flex-1">
+          <div id="excelGrid" class="w-full h-full"></div>
         </div>
       </div>
     </section>
   </main>
 
   <script>
-    // 1. ISI SUPABASE URL DAN ANON KEY ANDA DI SINI
+    // 1. MASUKKAN SUPABASE URL DAN ANON KEY ANDA DI SINI
     const SUPABASE_URL = 'vxsopsnopeurnxdkfsbe'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Inisialisasi Icons
     lucide.createIcons();
 
-    // Toggle Dropdown Menu SideBar
     function toggleMenu(id) {
       const menu = document.getElementById(id);
       const arrow = document.getElementById('arrowTv');
@@ -104,19 +98,10 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    function openMenu(menuName) {
-      if(menuName === 'daily-sales') {
-        document.getElementById('daily-sales-view').classList.remove('hidden');
-        document.getElementById('pageTitle').innerText = 'TV DASHBOARD / DAILY SALES';
-      }
-    }
+    // Inisialisasi awal 100 baris kosong (cukup ringan & bisa menampung banyak data)
+    const initialData = Array.from({ length: 100 }, () => ['', '', '', '']);
 
-    // 2. Setup Tabel Excel Dinamis (Handsontable)
     const container = document.getElementById('excelGrid');
-    
-    // Data bawaan awal (awal 15 baris kosong)
-    const initialData = Array.from({ length: 15 }, () => ['', '', '', '']);
-
     const hot = new Handsontable(container, {
       data: initialData,
       colHeaders: ['NIP', 'NAMA', 'DEPT', 'TOTAL'],
@@ -127,30 +112,27 @@
         { type: 'numeric', numericFormat: { pattern: '0,0' } }
       ],
       rowHeaders: true,
-      height: '450px',
-      minSpareRows: 1, // Otomatis menambah baris jika baris paling bawah diisi
+      height: '500px', // Tinggi tabel agar pas di layar
+      minSpareRows: 1, // Otomatis menambah baris baru jika mencapai bagian bawah
       stretchH: 'all',
-      contextMenu: true, // Klik kanan untuk copy/paste/insert row
+      contextMenu: true,
       licenseKey: 'non-commercial-and-evaluation'
     });
 
     function tambahBaris() {
-      hot.alter('insert_row_below', hot.countRows() - 1, 10);
+      hot.alter('insert_row_below', hot.countRows() - 1, 100);
     }
 
-    // 3. Fungsi Kirim Data Banyak (Bulk Insert) ke Supabase
     async function kirimKeSupabase() {
       const rawData = hot.getData();
       const payload = [];
 
-      // Filter baris yang tidak kosong (minimal NAMA atau TOTAL terisi)
       rawData.forEach(row => {
         const nip = row[0] ? String(row[0]).trim() : null;
         const nama = row[1] ? String(row[1]).trim() : null;
         const dept = row[2] ? String(row[2]).trim() : null;
         const total = row[3] !== null && row[3] !== '' ? Number(row[3]) : null;
 
-        // Ambil baris yang setidaknya berisi Nama/Dept/Total
         if (nama || dept || total !== null || nip) {
           payload.push({
             nip: nip,
@@ -174,7 +156,7 @@
       btnKirim.disabled = true;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data...';
 
-      // Bulk Insert ke Supabase
+      // Kirim secara bertahap / sekaligus ke Supabase
       const { data, error } = await supabaseClient
         .from('laporan_departemen')
         .insert(payload);
@@ -192,8 +174,7 @@
         statusMsg.innerText = `Berhasil menyimpan ${payload.length} baris data ke Supabase!`;
         statusMsg.classList.remove('hidden');
 
-        // Reset grid setelah berhasil
-        hot.loadData(Array.from({ length: 15 }, () => ['', '', '', '']));
+        hot.loadData(Array.from({ length: 100 }, () => ['', '', '', '']));
       }
     }
   </script>
