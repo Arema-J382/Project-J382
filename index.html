@@ -105,7 +105,7 @@
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
               </button>
               <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
-                <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
+                <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Database
               </button>
             </div>
           </div>
@@ -401,7 +401,7 @@
       });
 
       btnKirim.disabled = false;
-      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${activeData.length}</span> Baris ke Supabase`;
+      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${activeData.length}</span> Baris ke Database`;
       lucide.createIcons();
 
       if (error) {
