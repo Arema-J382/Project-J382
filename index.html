@@ -234,7 +234,7 @@
             return;
           }
 
-          // JIKA NIP KOSONG, ABAIKAN / JANGAN MASUKKAN KE DATA
+          // JIKA NIP KOSONG, ABAIKAN
           if (!nip) {
             return;
           }
@@ -286,7 +286,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM SUPER CEPAT MENGGUNAKAN SUPABASE RPC
+    // FUNGSI KIRIM KE TABEL laporan_sales MENGGUNAKAN RPC
     async function kirimKeSupabase() {
       if (parsedData.length === 0) {
         alert('Belum ada data valid yang akan dikirim!');
@@ -299,7 +299,7 @@
       btnKirim.disabled = true;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
-      // Memanggil fungsi RPC PostgreSQL di Supabase (Hapus & Insert sekaligus dalam 1 request)
+      // Memanggil fungsi RPC 'replace_laporan_sales' di Supabase
       const { error } = await supabaseClient.rpc('replace_laporan_sales', {
         new_data: parsedData
       });
@@ -314,7 +314,7 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil diperbarui dengan sangat cepat!`;
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil diperbarui ke laporan_sales!`;
         statusMsg.classList.remove('hidden');
       }
     }
