@@ -65,20 +65,22 @@
           </button>
           
           <div id="submenuTv" class="pl-6 mt-1 space-y-1">
-            <!-- MENU INPUT TARGET TODAY -->
+            <!-- MENU 1: INPUT TARGET TODAY -->
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="target" class="w-4 h-4"></i>
               <span>INPUT TARGET TODAY</span>
             </a>
+            <!-- MENU 2: DAILY SALES -->
             <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition">
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>DAILY SALES</span>
             </a>
+            <!-- MENU 3: DAILY DEPARTEMEN -->
             <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
-            <!-- MENU MTD SALES -->
+            <!-- MENU 4: MTD SALES -->
             <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>MTD SALES</span>
@@ -105,7 +107,7 @@
       <section class="p-6 flex-1 flex flex-col">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
           
-          <!-- Notifikasi Global (Berfungsi di Semua Menu) -->
+          <!-- NOTIFIKASI GLOBAL DI SEMUA MENU -->
           <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
           <!-- TAMPILAN VIEW TARGET TODAY -->
@@ -186,7 +188,7 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // State Aplikasi
+    // State Aplikasi untuk Keempat Menu
     let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
@@ -201,7 +203,7 @@
       }
     });
 
-    // Fungsi Format Rupiah Otomatis saat Mengetik
+    // Fungsi Format Rupiah Otomatis saat Mengetik di Menu Target
     function formatRupiah(element) {
       let angka = element.value.replace(/[^,\d]/g, '').toString();
       let split = angka.split(',');
@@ -269,7 +271,7 @@
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
-      } else {
+      } else if (view === 'departemen') {
         menuDepartemen.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerText = "Departemen Sync";
@@ -331,7 +333,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel
+    // Penanganan Paste Excel untuk Berbagai Menu
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -393,6 +395,7 @@
       }, 100);
     }
 
+    // Render Tabel Berdasarkan Menu Aktif
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -478,7 +481,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE (Menu Target)
+    // FUNGSI KIRIM TARGET KE SUPABASE (Menu 1: Input Target Today)
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -507,7 +510,6 @@
         statusMsg.innerText = 'Gagal menyimpan target: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
-        // Notifikasi Sukses Menu Target
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
         statusMsg.classList.remove('hidden');
@@ -515,7 +517,7 @@
       }
     }
 
-    // FUNGSI KIRIM SALES / MTD SALES / DEPARTEMEN KE SUPABASE (Menu Sales, MTD Sales, & Departemen)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Menu: Daily Sales, MTD Sales, & Daily Departemen)
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -560,7 +562,6 @@
         statusMsg.innerText = 'Gagal memproses data: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
-        // PERBAIKAN: Menggunakan remove('hidden') agar notifikasi sukses tampil di Daily Sales, MTD Sales, & Departemen
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
         statusMsg.classList.remove('hidden'); 
