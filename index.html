@@ -74,9 +74,9 @@
         <!-- Notifikasi -->
         <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
-        <!-- Container Tabel Excel Dinamis dengan Tinggi Pasti -->
+        <!-- Container Tabel Excel Dinamis -->
         <div class="border rounded-lg overflow-hidden bg-white">
-          <div id="excelGrid" style="width: 100%; height: 550px;"></div>
+          <div id="excelGrid" style="width: 100%; height: 500px;"></div>
         </div>
 
       </div>
@@ -99,32 +99,44 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Inisialisasi awal 100 baris kosong
-    const initialData = Array.from({ length: 100 }, () => ['', '', '', '']);
+    let hot;
 
-    const container = document.getElementById('excelGrid');
-    const hot = new Handsontable(container, {
-      data: initialData,
-      colHeaders: ['NIP', 'NAMA', 'DEPT', 'TOTAL'],
-      columns: [
-        { type: 'text' },
-        { type: 'text' },
-        { type: 'text' },
-        { type: 'numeric', numericFormat: { pattern: '0,0' } }
-      ],
-      rowHeaders: true,
-      height: '550px',
-      minSpareRows: 1, 
-      stretchH: 'all',
-      contextMenu: true,
-      licenseKey: 'non-commercial-and-evaluation'
+    // Pastikan skrip berjalan setelah halaman selesai dimuat sepenuhnya
+    document.addEventListener("DOMContentLoaded", function() {
+      const container = document.getElementById('excelGrid');
+      const initialData = Array.from({ length: 100 }, () => ['', '', '', '']);
+
+      hot = new Handsontable(container, {
+        data: initialData,
+        colHeaders: ['NIP', 'NAMA', 'DEPT', 'TOTAL'],
+        columns: [
+          { type: 'text' },
+          { type: 'text' },
+          { type: 'text' },
+          { type: 'numeric', numericFormat: { pattern: '0,0' } }
+        ],
+        rowHeaders: true,
+        height: '500px',
+        minSpareRows: 1, 
+        stretchH: 'all',
+        contextMenu: true,
+        licenseKey: 'non-commercial-and-evaluation'
+      });
+
+      // Paksa render ulang agar tabel langsung terlihat
+      setTimeout(() => {
+        hot.render();
+      }, 200);
     });
 
     function tambahBaris() {
-      hot.alter('insert_row_below', hot.countRows() - 1, 100);
+      if (hot) {
+        hot.alter('insert_row_below', hot.countRows() - 1, 100);
+      }
     }
 
     async function kirimKeSupabase() {
+      if (!hot) return;
       const rawData = hot.getData();
       const payload = [];
 
