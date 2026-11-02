@@ -64,10 +64,14 @@
             <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
           </button>
           
-          <div id="submenuTv" class="pl-9 mt-1 space-y-1">
-            <a href="#" class="block p-2 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
+          <div id="submenuTv" class="pl-6 mt-1 space-y-1">
+            <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition">
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>DAILY SALES</span>
+            </a>
+            <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>DAILY DEPARTEMEN</span>
             </a>
           </div>
         </div>
@@ -84,8 +88,8 @@
     <!-- CONTENT AREA -->
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
       <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
-        <h1 class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
-        <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Lightning Fast RPC Sync</span>
+        <h1 id="pageTitle" class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
+        <span id="pageBadge" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Sales Sync</span>
       </header>
 
       <section class="p-6 flex-1 flex flex-col">
@@ -93,14 +97,13 @@
           
           <div class="flex justify-between items-center mb-4">
             <div>
-              <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
+              <h2 id="sectionTitle" class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
               <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
             </div>
             <div class="flex gap-2">
               <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
               </button>
-              <!-- TOMBOL SELALU TERLIHAT -->
               <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
                 <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
               </button>
@@ -120,18 +123,12 @@
           <!-- TABEL UTAMA -->
           <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
             <table class="w-full border-collapse text-left text-sm">
-              <thead class="bg-slate-800 text-white sticky top-0 z-10">
-                <tr>
-                  <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
-                  <th class="border border-slate-600 px-4 py-2.5">NIP</th>
-                  <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
-                  <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
-                  <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
-                </tr>
+              <thead id="previewTableHead" class="bg-slate-800 text-white sticky top-0 z-10">
+                <!-- Header dinamis diatur lewat JavaScript -->
               </thead>
               <tbody id="previewTableBody" class="divide-y divide-gray-200">
                 <tr>
-                  <td colspan="5" class="text-center py-12 text-gray-400 italic">
+                  <td colspan="7" class="text-center py-12 text-gray-400 italic">
                     Belum ada data. Silakan paste data dari Excel ke kotak di atas.
                   </td>
                 </tr>
@@ -151,14 +148,48 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Cek sesi login saat halaman pertama kali dimuat
+    // State Aplikasi
+    let currentView = 'sales'; // 'sales' atau 'departemen'
+    let salesData = [];
+    let departemenData = [];
+
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
+      switchView('sales');
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         showAdminPanel();
       }
     });
+
+    // Fungsi Pindah Menu (Switch View)
+    function switchView(view) {
+      currentView = view;
+      const menuSales = document.getElementById('menuSales');
+      const menuDepartemen = document.getElementById('menuDepartemen');
+      const pageTitle = document.getElementById('pageTitle');
+      const pageBadge = document.getElementById('pageBadge');
+      const sectionTitle = document.getElementById('sectionTitle');
+
+      document.getElementById('statusMsg').classList.add('hidden');
+      document.getElementById('excelPasteInput').value = '';
+
+      if (view === 'sales') {
+        menuSales.className = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition";
+        menuDepartemen.className = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition";
+        pageTitle.innerText = "TV DASHBOARD / DAILY SALES";
+        pageBadge.innerText = "Sales Sync";
+        sectionTitle.innerText = "Lembar Kerja Data Penjualan (Sales)";
+      } else {
+        menuDepartemen.className = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition";
+        menuSales.className = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition";
+        pageTitle.innerText = "TV DASHBOARD / DAILY DEPARTEMEN";
+        pageBadge.innerText = "Departemen Sync";
+        sectionTitle.innerText = "Lembar Kerja Data Departemen";
+      }
+
+      renderTableRows();
+    }
 
     // Fungsi Login
     async function handleLogin(e) {
@@ -189,7 +220,6 @@
       }
     }
 
-    // Fungsi Logout
     async function handleLogout() {
       await supabaseClient.auth.signOut();
       document.getElementById('adminPanel').classList.add('hidden');
@@ -210,85 +240,152 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    let parsedData = [];
-
+    // Penanganan Paste Excel
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
         if (!pastedText.trim()) return;
 
         const rows = pastedText.split('\n');
-        parsedData = [];
+        let parsed = [];
 
         rows.forEach((row, index) => {
           if (!row.trim()) return;
           const cols = row.split('\t');
 
-          let nip = cols[0] ? cols[0].trim() : '';
-          let nama = cols[1] ? cols[1].trim() : '';
-          let dept = cols[2] ? cols[2].trim() : '';
-          let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+          if (currentView === 'sales') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let dept = cols[2] ? cols[2].trim() : '';
+            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
-          // Abaikan baris header
-          if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
-            return;
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip) return;
+
+            parsed.push({
+              nip: String(nip),
+              nama: nama || 'NONAME',
+              dept: dept || '-',
+              total: Number(totalStr) || 0
+            });
+          } else {
+            let kodeDept = cols[0] ? cols[0].trim() : '';
+            let namaDept = cols[1] ? cols[1].trim() : '';
+            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
+            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
+            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
+            if (!kodeDept) return;
+
+            parsed.push({
+              kode_dept: kodeDept,
+              nama_dept: namaDept || '-',
+              total_sku: Number(totalSku) || 0,
+              total_qty: Number(totalQty) || 0,
+              exclude_ppn: Number(excludePpn) || 0,
+              include_ppn: Number(includePpn) || 0
+            });
           }
-
-          // JIKA NIP KOSONG, ABAIKAN
-          if (!nip) {
-            return;
-          }
-
-          parsedData.push({
-            nip: String(nip),
-            nama: nama || 'NONAME',
-            dept: dept || '-',
-            total: Number(totalStr) || 0
-          });
         });
+
+        if (currentView === 'sales') {
+          salesData = parsed;
+        } else {
+          departemenData = parsed;
+        }
 
         renderTableRows();
       }, 100);
     }
 
     function renderTableRows() {
+      const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
       const totalBarisSpan = document.getElementById('totalBaris');
+      const activeData = (currentView === 'sales') ? salesData : departemenData;
 
-      if (parsedData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Data tidak valid atau semua baris NIP kosong.</td></tr>`;
+      if (currentView === 'sales') {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+            <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
+          </tr>
+        `;
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">KODE DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL SKU</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">EXCLUDE PPN</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">INCLUDE PPN</th>
+          </tr>
+        `;
+      }
+
+      if (activeData.length === 0) {
+        const colSpan = currentView === 'sales' ? 5 : 7;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
       }
 
       let html = '';
-      parsedData.forEach((item, idx) => {
-        html += `
-          <tr class="hover:bg-blue-50/50 transition">
-            <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
-            <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
-            <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
-            <td class="border border-gray-300 px-4 py-2 text-center font-semibold text-blue-600">${item.dept}</td>
-            <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
-          </tr>
-        `;
+      activeData.forEach((item, idx) => {
+        if (currentView === 'sales') {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
+              <td class="border border-gray-300 px-4 py-2 text-center font-semibold text-blue-600">${item.dept}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        } else {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono font-semibold text-blue-600">${item.kode_dept}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama_dept}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total_sku.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total_qty.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.exclude_ppn.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.include_ppn.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        }
       });
 
       tbody.innerHTML = html;
-      totalBarisSpan.innerText = parsedData.length;
+      totalBarisSpan.innerText = activeData.length;
     }
 
     function resetData() {
-      parsedData = [];
+      if (currentView === 'sales') {
+        salesData = [];
+      } else {
+        departemenData = [];
+      }
       document.getElementById('excelPasteInput').value = '';
-      document.getElementById('previewTableBody').innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Belum ada data. Silakan paste data dari Excel ke kotak di atas.</td></tr>`;
-      document.getElementById('totalBaris').innerText = '0';
+      renderTableRows();
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM KE TABEL laporan_sales MENGGUNAKAN RPC
+    // FUNGSI KIRIM KE SUPABASE MENGGUNAKAN RPC
     async function kirimKeSupabase() {
-      if (parsedData.length === 0) {
+      const activeData = (currentView === 'sales') ? salesData : departemenData;
+      const rpcName = (currentView === 'sales') ? 'replace_laporan_sales' : 'replace_laporan_departemen';
+      const tableName = (currentView === 'sales') ? 'laporan_sales' : 'laporan_departemen';
+
+      if (activeData.length === 0) {
         alert('Belum ada data valid yang akan dikirim!');
         return;
       }
@@ -299,13 +396,12 @@
       btnKirim.disabled = true;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
-      // Memanggil fungsi RPC 'replace_laporan_sales' di Supabase
-      const { error } = await supabaseClient.rpc('replace_laporan_sales', {
-        new_data: parsedData
+      const { error } = await supabaseClient.rpc(rpcName, {
+        new_data: activeData
       });
 
       btnKirim.disabled = false;
-      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${parsedData.length}</span> Baris ke Supabase`;
+      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${activeData.length}</span> Baris ke Supabase`;
       lucide.createIcons();
 
       if (error) {
@@ -314,7 +410,7 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil diperbarui`;
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke ${tableName}!`;
         statusMsg.classList.remove('hidden');
       }
     }
