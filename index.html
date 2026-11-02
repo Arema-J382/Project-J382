@@ -54,13 +54,12 @@
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
-            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel[cite: 8].</p>
+            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
           </div>
           <div class="flex gap-2">
             <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
               <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
             </button>
-            <!-- TOMBOL SELALU TERLIHAT -->
             <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
               <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
             </button>
@@ -104,7 +103,7 @@
   </main>
 
   <script>
-    // Konfigurasi Supabase Anda
+    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon key Anda dari Project Settings -> API
 
@@ -137,12 +136,18 @@
           let dept = cols[2] ? cols[2].trim() : '';
           let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
+          // Abaikan baris header
           if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
             return;
           }
 
+          // JIKA NIP KOSONG, BARIS INI OTOMATIS DIABAIKAN / TIDAK DIMASUKKAN
+          if (!nip) {
+            return;
+          }
+
           parsedData.push({
-            nip: nip ? Number(nip) : 0,
+            nip: Number(nip) || 0,
             nama: nama || 'NONAME',
             dept: dept || '-',
             total: Number(totalStr) || 0
@@ -158,7 +163,7 @@
       const totalBarisSpan = document.getElementById('totalBaris');
 
       if (parsedData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Data tidak valid. Pastikan format copy benar.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 text-gray-400 italic">Data tidak valid atau semua baris NIP kosong.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
       }
@@ -191,7 +196,7 @@
     // FUNGSI KIRIM: HAPUS SEMUA DATA LAMA, LALU MASUKKAN DATA BARU
     async function kirimKeSupabase() {
       if (parsedData.length === 0) {
-        alert('Belum ada data yang dimasukkan atau dipaste!');
+        alert('Belum ada data valid yang akan dikirim!');
         return;
       }
 
@@ -201,7 +206,7 @@
       btnKirim.disabled = true;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
 
-      // 1. Hapus seluruh data lama di Supabase berdasarkan kolom total
+      // 1. Hapus seluruh data lama di Supabase
       const { error: deleteError } = await supabaseClient
         .from('laporan_departemen')
         .delete()
@@ -218,7 +223,7 @@
         return;
       }
 
-      // 2. Masukkan data baru secara massal ke Supabase
+      // 2. Masukkan data baru ke Supabase
       const { data, error: insertError } = await supabaseClient
         .from('laporan_departemen')
         .insert(parsedData);
@@ -233,7 +238,7 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data baru berhasil disimpan ke Supabase!`;
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data bersih berhasil disimpan ke Supabase!`;
         statusMsg.classList.remove('hidden');
       }
     }
