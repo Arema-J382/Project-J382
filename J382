@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Laporan Departemen</title>
+  <!-- Tailwind CSS CDN untuk tampilan rapi -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white shadow-md rounded-lg p-6 max-w-md w-full">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">Form Input Data Laporan</h2>
+    
+    <!-- Pesan Notifikasi -->
+    <div id="status-message" class="hidden mb-4 p-3 rounded text-sm font-medium"></div>
+
+    <form id="laporanForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">NIP</label>
+        <input type="text" id="nip" placeholder="Contoh: 108671 (opsional)" 
+               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">NAMA <span class="text-red-500">*</span></label>
+        <input type="text" id="nama" required placeholder="Contoh: SRI GANDINI" 
+               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">DEPT <span class="text-red-500">*</span></label>
+        <input type="text" id="dept" required placeholder="Contoh: AJ / BM" 
+               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">TOTAL <span class="text-red-500">*</span></label>
+        <input type="number" id="total" required placeholder="Contoh: 144144" 
+               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <button type="submit" id="btnSubmit" 
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
+        Kirim ke Supabase
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // 1. Ganti Kunci API Supabase Anda di sini
+    const SUPABASE_URL = 'vxsopsnopeurnxdkfsbe'; // Ganti dengan Project URL Anda
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon/public key Anda
+
+    // Inisialisasi client Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById('laporanForm');
+    const statusMsg = document.getElementById('status-message');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    // 2. Fungsi Submit Form
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Ambil nilai dari input form
+      const nip = document.getElementById('nip').value.trim() || null;
+      const nama = document.getElementById('nama').value.trim();
+      const dept = document.getElementById('dept').value.trim();
+      const total = parseFloat(document.getElementById('total').value);
+
+      // Tampilkan indikator loading pada tombol
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = 'Mengirim...';
+      statusMsg.classList.add('hidden');
+
+      // 3. Kirim data ke tabel laporan_departemen
+      const { data, error } = await supabaseClient
+        .from('laporan_departemen')
+        .insert([
+          { nip: nip, nama: nama, dept: dept, total: total }
+        ]);
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerText = 'Kirim ke Supabase';
+
+      // 4. Penanganan Hasil
+      if (error) {
+        statusMsg.className = 'mb-4 p-3 rounded text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.innerText = 'Gagal menyimpan data: ' + error.message;
+        statusMsg.classList.remove('hidden');
+      } else {
+        statusMsg.className = 'mb-4 p-3 rounded text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.innerText = 'Data berhasil disimpan!';
+        statusMsg.classList.remove('hidden');
+
+        // Reset form setelah sukses
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
