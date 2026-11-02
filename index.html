@@ -3,103 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Input Laporan Departemen</title>
-  <!-- Tailwind CSS CDN untuk tampilan rapi -->
+  <title>TV Dashboard - Input Data</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS Client library -->
+  <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Handsontable CSS & JS (Untuk fitur Copy-Paste seperti Excel) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
 
-  <div class="bg-white shadow-md rounded-lg p-6 max-w-md w-full">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">Form Input Data Laporan</h2>
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
+    <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2">
+      <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400"></i>
+      <span>ADMIN PANEL</span>
+    </div>
     
-    <!-- Pesan Notifikasi -->
-    <div id="status-message" class="hidden mb-4 p-3 rounded text-sm font-medium"></div>
-
-    <form id="laporanForm" class="space-y-4">
+    <nav class="flex-1 p-4 space-y-2">
+      <!-- Menu Dropdown: TV DASHBOARD -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">NIP</label>
-        <input type="text" id="nip" placeholder="Contoh: 108671 (opsional)" 
-               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <button id="btnTvDashboard" onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
+          <div class="flex items-center gap-3">
+            <i data-lucide="tv" class="w-5 h-5 text-blue-400"></i>
+            <span>TV DASHBOARD</span>
+          </div>
+          <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200"></i>
+        </button>
+        
+        <!-- Submenu: DAILY SALES -->
+        <div id="submenuTv" class="pl-9 mt-1 space-y-1">
+          <a href="#" onclick="openMenu('daily-sales')" class="block p-2 rounded-md hover:bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
+            <i data-lucide="table" class="w-4 h-4"></i>
+            <span>DAILY SALES</span>
+          </a>
+        </div>
       </div>
+    </nav>
+  </aside>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">NAMA <span class="text-red-500">*</span></label>
-        <input type="text" id="nama" required placeholder="Contoh: SRI GANDINI" 
-               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  <!-- CONTENT AREA -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <!-- Header -->
+    <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
+      <h1 id="pageTitle" class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
+      <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Bulk Data Paste</span>
+    </header>
+
+    <!-- Main Section -->
+    <section class="p-8 flex-1">
+      <div id="daily-sales-view" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-gray-800">Lembar Input Penjualan</h2>
+            <p class="text-sm text-gray-500">Anda dapat langsung melakukan <b>Copy & Paste (Ctrl+V)</b> dari Excel ke tabel di bawah ini.</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="tambahBaris()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-2 rounded-lg text-sm border flex items-center gap-1">
+              <i data-lucide="plus" class="w-4 h-4"></i> Tambah 10 Baris
+            </button>
+            <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
+              <i data-lucide="send" class="w-4 h-4"></i> Kirim Semua ke Supabase
+            </button>
+          </div>
+        </div>
+
+        <!-- Notifikasi -->
+        <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+        <!-- Container Tabel Excel Dinamis -->
+        <div class="border rounded-lg overflow-hidden">
+          <div id="excelGrid" class="w-full"></div>
+        </div>
       </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">DEPT <span class="text-red-500">*</span></label>
-        <input type="text" id="dept" required placeholder="Contoh: AJ / BM" 
-               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none uppercase">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">TOTAL <span class="text-red-500">*</span></label>
-        <input type="number" id="total" required placeholder="Contoh: 144144" 
-               class="mt-1 w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
-      </div>
-
-      <button type="submit" id="btnSubmit" 
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-        Kirim ke Supabase
-      </button>
-    </form>
-  </div>
+    </section>
+  </main>
 
   <script>
-    // 1. Ganti Kunci API Supabase Anda di sini
-    const SUPABASE_URL = 'vxsopsnopeurnxdkfsbe'; // Ganti dengan Project URL Anda
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon/public key Anda
+    // 1. ISI SUPABASE URL DAN ANON KEY ANDA DI SINI
+    const SUPABASE_URL = 'vxsopsnopeurnxdkfsbe'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
-    // Inisialisasi client Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const form = document.getElementById('laporanForm');
-    const statusMsg = document.getElementById('status-message');
-    const btnSubmit = document.getElementById('btnSubmit');
+    // Inisialisasi Icons
+    lucide.createIcons();
 
-    // 2. Fungsi Submit Form
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Toggle Dropdown Menu SideBar
+    function toggleMenu(id) {
+      const menu = document.getElementById(id);
+      const arrow = document.getElementById('arrowTv');
+      menu.classList.toggle('hidden');
+      arrow.classList.toggle('rotate-180');
+    }
 
-      // Ambil nilai dari input form
-      const nip = document.getElementById('nip').value.trim() || null;
-      const nama = document.getElementById('nama').value.trim();
-      const dept = document.getElementById('dept').value.trim();
-      const total = parseFloat(document.getElementById('total').value);
+    function openMenu(menuName) {
+      if(menuName === 'daily-sales') {
+        document.getElementById('daily-sales-view').classList.remove('hidden');
+        document.getElementById('pageTitle').innerText = 'TV DASHBOARD / DAILY SALES';
+      }
+    }
 
-      // Tampilkan indikator loading pada tombol
-      btnSubmit.disabled = true;
-      btnSubmit.innerText = 'Mengirim...';
-      statusMsg.classList.add('hidden');
+    // 2. Setup Tabel Excel Dinamis (Handsontable)
+    const container = document.getElementById('excelGrid');
+    
+    // Data bawaan awal (awal 15 baris kosong)
+    const initialData = Array.from({ length: 15 }, () => ['', '', '', '']);
 
-      // 3. Kirim data ke tabel laporan_departemen
+    const hot = new Handsontable(container, {
+      data: initialData,
+      colHeaders: ['NIP', 'NAMA', 'DEPT', 'TOTAL'],
+      columns: [
+        { type: 'text' },
+        { type: 'text' },
+        { type: 'text' },
+        { type: 'numeric', numericFormat: { pattern: '0,0' } }
+      ],
+      rowHeaders: true,
+      height: '450px',
+      minSpareRows: 1, // Otomatis menambah baris jika baris paling bawah diisi
+      stretchH: 'all',
+      contextMenu: true, // Klik kanan untuk copy/paste/insert row
+      licenseKey: 'non-commercial-and-evaluation'
+    });
+
+    function tambahBaris() {
+      hot.alter('insert_row_below', hot.countRows() - 1, 10);
+    }
+
+    // 3. Fungsi Kirim Data Banyak (Bulk Insert) ke Supabase
+    async function kirimKeSupabase() {
+      const rawData = hot.getData();
+      const payload = [];
+
+      // Filter baris yang tidak kosong (minimal NAMA atau TOTAL terisi)
+      rawData.forEach(row => {
+        const nip = row[0] ? String(row[0]).trim() : null;
+        const nama = row[1] ? String(row[1]).trim() : null;
+        const dept = row[2] ? String(row[2]).trim() : null;
+        const total = row[3] !== null && row[3] !== '' ? Number(row[3]) : null;
+
+        // Ambil baris yang setidaknya berisi Nama/Dept/Total
+        if (nama || dept || total !== null || nip) {
+          payload.push({
+            nip: nip,
+            nama: nama || 'NONAME',
+            dept: dept || '-',
+            total: total || 0
+          });
+        }
+      });
+
+      const statusMsg = document.getElementById('statusMsg');
+      const btnKirim = document.getElementById('btnKirim');
+
+      if (payload.length === 0) {
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800';
+        statusMsg.innerText = 'Tidak ada data untuk dikirim! Silakan paste atau isi tabel terlebih dahulu.';
+        statusMsg.classList.remove('hidden');
+        return;
+      }
+
+      btnKirim.disabled = true;
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data...';
+
+      // Bulk Insert ke Supabase
       const { data, error } = await supabaseClient
         .from('laporan_departemen')
-        .insert([
-          { nip: nip, nama: nama, dept: dept, total: total }
-        ]);
+        .insert(payload);
 
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = 'Kirim ke Supabase';
+      btnKirim.disabled = false;
+      btnKirim.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Semua ke Supabase';
+      lucide.createIcons();
 
-      // 4. Penanganan Hasil
       if (error) {
-        statusMsg.className = 'mb-4 p-3 rounded text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
         statusMsg.innerText = 'Gagal menyimpan data: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
-        statusMsg.className = 'mb-4 p-3 rounded text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = 'Data berhasil disimpan!';
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.innerText = `Berhasil menyimpan ${payload.length} baris data ke Supabase!`;
         statusMsg.classList.remove('hidden');
 
-        // Reset form setelah sukses
-        form.reset();
+        // Reset grid setelah berhasil
+        hot.loadData(Array.from({ length: 15 }, () => ['', '', '', '']));
       }
-    });
+    }
   </script>
 </body>
 </html>
