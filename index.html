@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV Dashboard - Input Data</title>
+  <title>TV Dashboard - Admin Login</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,95 +12,136 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
+<body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
-  <!-- SIDEBAR -->
-  <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
-    <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2">
-      <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400"></i>
-      <span>ADMIN PANEL</span>
-    </div>
-    
-    <nav class="flex-1 p-4 space-y-2">
-      <div>
-        <button onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
-          <div class="flex items-center gap-3">
-            <i data-lucide="tv" class="w-5 h-5 text-blue-400"></i>
-            <span>TV DASHBOARD</span>
-          </div>
-          <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
+  <!-- ================= SECTION LOGIN (MUNCUL JIKA BELUM LOGIN) ================= -->
+  <div id="loginSection" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-96 max-w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="bg-blue-100 text-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800">Admin Login</h2>
+        <p class="text-sm text-gray-500">Silakan login untuk mengakses panel data.</p>
+      </div>
+
+      <div id="loginError" class="hidden mb-4 p-3 rounded-lg text-xs font-medium bg-red-100 text-red-700"></div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">EMAIL</label>
+          <input type="email" id="loginEmail" required placeholder="admin@email.com"
+            class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-blue-600">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">PASSWORD</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••"
+            class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-blue-600">
+        </div>
+        <button type="submit" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin
         </button>
-        
-        <div id="submenuTv" class="pl-9 mt-1 space-y-1">
-          <a href="#" class="block p-2 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
-            <i data-lucide="table" class="w-4 h-4"></i>
-            <span>DAILY SALES</span>
-          </a>
-        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN PANEL (TERSEMBUNYI SEBELUM LOGIN) ================= -->
+  <div id="adminPanel" class="flex h-screen w-full overflow-hidden hidden">
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
+      <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2">
+        <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400"></i>
+        <span>ADMIN PANEL</span>
       </div>
-    </nav>
-  </aside>
-
-  <!-- CONTENT AREA -->
-  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-    <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
-      <h1 class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
-      <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Excel Paste Sync</span>
-    </header>
-
-    <section class="p-6 flex-1 flex flex-col">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
-        
-        <div class="flex justify-between items-center mb-4">
-          <div>
-            <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
-            <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
-            </button>
-            <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
-              <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
-            </button>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <div>
+          <button onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
+            <div class="flex items-center gap-3">
+              <i data-lucide="tv" class="w-5 h-5 text-blue-400"></i>
+              <span>TV DASHBOARD</span>
+            </div>
+            <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
+          </button>
+          
+          <div id="submenuTv" class="pl-9 mt-1 space-y-1">
+            <a href="#" class="block p-2 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>DAILY SALES</span>
+            </a>
           </div>
         </div>
+      </nav>
 
-        <!-- Notifikasi -->
-        <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
-
-        <!-- KOTAK AREA PASTE -->
-        <div class="mb-4">
-          <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
-            class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
-            onpaste="handleExcelPaste(event)"></textarea>
-        </div>
-
-        <!-- TABEL UTAMA -->
-        <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
-          <table class="w-full border-collapse text-left text-sm">
-            <thead class="bg-slate-800 text-white sticky top-0 z-10">
-              <tr>
-                <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
-                <th class="border border-slate-600 px-4 py-2.5">NIP</th>
-                <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
-                <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
-                <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
-              </tr>
-            </thead>
-            <tbody id="previewTableBody" class="divide-y divide-gray-200">
-              <tr>
-                <td colspan="5" class="text-center py-12 text-gray-400 italic">
-                  Belum ada data. Silakan paste data dari Excel ke kotak di atas.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+      <!-- TOMBOL LOGOUT DI BAWAH SIDEBAR -->
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="handleLogout()" class="w-full flex items-center gap-2 p-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 transition">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
       </div>
-    </section>
-  </main>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
+        <h1 class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
+        <span class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Secure Auth & Sync</span>
+      </header>
+
+      <section class="p-6 flex-1 flex flex-col">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
+          
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
+              <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
+              </button>
+              <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
+                <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Supabase
+              </button>
+            </div>
+          </div>
+
+          <!-- Notifikasi -->
+          <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+          <!-- KOTAK AREA PASTE -->
+          <div class="mb-4">
+            <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
+              class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
+              onpaste="handleExcelPaste(event)"></textarea>
+          </div>
+
+          <!-- TABEL UTAMA -->
+          <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
+            <table class="w-full border-collapse text-left text-sm">
+              <thead class="bg-slate-800 text-white sticky top-0 z-10">
+                <tr>
+                  <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+                  <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+                  <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+                  <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
+                  <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="previewTableBody" class="divide-y divide-gray-200">
+                <tr>
+                  <td colspan="5" class="text-center py-12 text-gray-400 italic">
+                    Belum ada data. Silakan paste data dari Excel ke kotak di atas.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script>
     // Konfigurasi Supabase
@@ -108,7 +149,58 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon key Anda dari Project Settings -> API
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    lucide.createIcons();
+
+    // Cek status sesi saat halaman pertama kali dibuka
+    document.addEventListener("DOMContentLoaded", async () => {
+      lucide.createIcons();
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        showAdminPanel();
+      }
+    });
+
+    // Fungsi Login
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const btnLogin = document.getElementById('btnLogin');
+      const loginError = document.getElementById('loginError');
+
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin';
+      lucide.createIcons();
+
+      if (error) {
+        loginError.innerText = 'Login gagal: ' + error.message;
+        loginError.classList.remove('hidden');
+      } else {
+        showAdminPanel();
+      }
+    }
+
+    // Fungsi Logout
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('loginPassword').value = '';
+    }
+
+    function showAdminPanel() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      lucide.createIcons();
+    }
 
     function toggleMenu(id) {
       const menu = document.getElementById(id);
@@ -136,15 +228,11 @@
           let dept = cols[2] ? cols[2].trim() : '';
           let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
-          // Abaikan baris header
           if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) {
             return;
           }
 
-          // JIKA NIP KOSONG, BARIS INI OTOMATIS DIABAIKAN / TIDAK DIMASUKKAN
-          if (!nip) {
-            return;
-          }
+          if (!nip) return; // Abaikan jika NIP kosong
 
           parsedData.push({
             nip: Number(nip) || 0,
@@ -193,7 +281,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM: HAPUS SEMUA DATA LAMA, LALU MASUKKAN DATA BARU
+    // KIRIM KE SUPABASE DENGAN RLS AKTIF
     async function kirimKeSupabase() {
       if (parsedData.length === 0) {
         alert('Belum ada data valid yang akan dikirim!');
@@ -206,7 +294,7 @@
       btnKirim.disabled = true;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
 
-      // 1. Hapus seluruh data lama di Supabase
+      // 1. Hapus data lama (diizinkan karena user sudah login & RLS aktif)
       const { error: deleteError } = await supabaseClient
         .from('laporan_departemen')
         .delete()
@@ -238,7 +326,7 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data bersih berhasil disimpan ke Supabase!`;
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${parsedData.length} baris data berhasil disimpan dengan aman!`;
         statusMsg.classList.remove('hidden');
       }
     }
