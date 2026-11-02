@@ -78,6 +78,11 @@
               <i data-lucide="table" class="w-4 h-4"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
+            <!-- MENU BARU: MTD SALES -->
+            <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>MTD SALES</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -117,7 +122,6 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-semibold text-gray-600 mb-1">TARGET SALES (RP)</label>
-                  <!-- Input type text dengan format rupiah otomatis -->
                   <input type="text" id="inputTargetSales" placeholder="Contoh: 50.000.000" onkeyup="formatRupiah(this)"
                     class="w-full px-4 py-2.5 border rounded-lg text-base font-semibold focus:outline-none focus:border-blue-600 bg-white">
                 </div>
@@ -129,7 +133,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL (SALES & DEPARTEMEN) -->
+          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, DEPARTEMEN & MTD SALES) -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
@@ -186,6 +190,7 @@
     let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
+    let mtdSalesData = []; // State baru untuk MTD Sales
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -219,6 +224,7 @@
       const menuTarget = document.getElementById('menuTarget');
       const menuSales = document.getElementById('menuSales');
       const menuDepartemen = document.getElementById('menuDepartemen');
+      const menuMtdSales = document.getElementById('menuMtdSales');
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
@@ -235,6 +241,7 @@
       menuTarget.className = inactiveClass;
       menuSales.className = inactiveClass;
       menuDepartemen.className = inactiveClass;
+      if (menuMtdSales) menuMtdSales.className = inactiveClass;
 
       if (view === 'target') {
         menuTarget.className = activeClass;
@@ -248,6 +255,15 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerText = "Sales Sync";
         sectionTitle.innerText = "Data Daily Sales SMT";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdSales') {
+        menuMtdSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "MTD Sales Sync";
+        sectionTitle.innerText = "Data MTD Sales SMT";
 
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
@@ -327,7 +343,7 @@
           if (!row.trim()) return;
           const cols = row.split('\t');
 
-          if (currentView === 'sales') {
+          if (currentView === 'sales' || currentView === 'mtdSales') {
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
@@ -366,6 +382,8 @@
 
         if (currentView === 'sales') {
           salesData = parsed;
+        } else if (currentView === 'mtdSales') {
+          mtdSalesData = parsed;
         } else if (currentView === 'departemen') {
           departemenData = parsed;
         }
@@ -378,9 +396,13 @@
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
       const totalBarisSpan = document.getElementById('totalBaris');
-      const activeData = (currentView === 'sales') ? salesData : departemenData;
+      
+      let activeData = salesData;
+      if (currentView === 'sales') activeData = salesData;
+      else if (currentView === 'mtdSales') activeData = mtdSalesData;
+      else if (currentView === 'departemen') activeData = departemenData;
 
-      if (currentView === 'sales') {
+      if (currentView === 'sales' || currentView === 'mtdSales') {
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
@@ -405,7 +427,7 @@
       }
 
       if (activeData.length === 0) {
-        const colSpan = currentView === 'sales' ? 5 : 7;
+        const colSpan = (currentView === 'sales' || currentView === 'mtdSales') ? 5 : 7;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
@@ -413,7 +435,7 @@
 
       let html = '';
       activeData.forEach((item, idx) => {
-        if (currentView === 'sales') {
+        if (currentView === 'sales' || currentView === 'mtdSales') {
           html += `
             <tr class="hover:bg-blue-50/50 transition">
               <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
@@ -445,6 +467,8 @@
     function resetData() {
       if (currentView === 'sales') {
         salesData = [];
+      } else if (currentView === 'mtdSales') {
+        mtdSalesData = [];
       } else if (currentView === 'departemen') {
         departemenData = [];
       }
@@ -453,10 +477,9 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE (MEMBERSIHKAN TITIK SEBELUM DIKIRIM)
+    // FUNGSI KIRIM TARGET KE SUPABASE
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
-      // Menghilangkan titik (.) agar menjadi angka murni
       const cleanTarget = targetRaw.replace(/\./g, '');
       const statusMsg = document.getElementById('statusMsg');
       const btnKirimTarget = document.getElementById('btnKirimTarget');
@@ -490,11 +513,25 @@
       }
     }
 
-    // FUNGSI KIRIM SALES / DEPARTEMEN KE SUPABASE MENGGUNAKAN RPC
+    // FUNGSI KIRIM SALES / MTD SALES / DEPARTEMEN KE SUPABASE MENGGUNAKAN RPC
     async function kirimKeSupabase() {
-      const activeData = (currentView === 'sales') ? salesData : departemenData;
-      const rpcName = (currentView === 'sales') ? 'replace_laporan_sales' : 'replace_laporan_departemen';
-      const tableName = (currentView === 'sales') ? 'laporan_sales' : 'laporan_departemen';
+      let activeData = [];
+      let rpcName = '';
+      let tableName = '';
+
+      if (currentView === 'sales') {
+        activeData = salesData;
+        rpcName = 'replace_laporan_sales';
+        tableName = 'laporan_sales';
+      } else if (currentView === 'mtdSales') {
+        activeData = mtdSalesData;
+        rpcName = 'replace_mtd_sales'; // Fungsi RPC di Supabase untuk mtd_sales
+        tableName = 'mtd_sales';
+      } else if (currentView === 'departemen') {
+        activeData = departemenData;
+        rpcName = 'replace_laporan_departemen';
+        tableName = 'laporan_departemen';
+      }
 
       if (activeData.length === 0) {
         alert('Belum ada data valid yang akan dikirim!');
@@ -523,7 +560,7 @@
       } else {
         statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
         statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke ${tableName}!`;
-        statusMsg.classList.remove('hidden');
+        statusMsg.classList.add('hidden'); // Anda bisa menghapus .add('hidden') jika ingin pesannya tampil secara permanen sampai diganti aksi berikutnya
       }
     }
   </script>
