@@ -88,7 +88,7 @@
     <!-- CONTENT AREA -->
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
       <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
-        <h1 id="pageTitle" class="text-xl font-bold text-gray-800">TV DASHBOARD / DAILY SALES</h1>
+        <h1 id="pageTitle" class="text-xl font-bold text-gray-800">INFORMA MOG MALANG (J382)</h1>
         <span id="pageBadge" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Sales Sync</span>
       </header>
 
@@ -97,7 +97,7 @@
           
           <div class="flex justify-between items-center mb-4">
             <div>
-              <h2 id="sectionTitle" class="text-lg font-bold text-gray-800">Lembar Kerja Data Penjualan</h2>
+              <h2 id="sectionTitle" class="text-lg font-bold text-gray-800">Data Daily Sales SMT</h2>
               <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
             </div>
             <div class="flex gap-2">
@@ -144,7 +144,7 @@
   <script>
     // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; // Ganti dengan anon key Anda dari Project Settings -> API
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54dkdrc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -240,7 +240,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel
+    // Penanganan Paste Excel (Dengan Filter Primary Key Kosong atau '0')
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -260,7 +260,9 @@
             let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip) return;
+            
+            // FILTRASI: Jika NIP kosong atau bernilai '0', abaikan baris ini
+            if (!nip || nip === '0') return;
 
             parsed.push({
               nip: String(nip),
@@ -277,7 +279,9 @@
             let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
 
             if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
-            if (!kodeDept) return;
+            
+            // FILTRASI: Jika KODE DEPT kosong atau bernilai '0', abaikan baris ini
+            if (!kodeDept || kodeDept === '0') return;
 
             parsed.push({
               kode_dept: kodeDept,
@@ -394,6 +398,7 @@
       const btnKirim = document.getElementById('btnKirim');
 
       btnKirim.disabled = true;
+      btnKiriimHtml = btnKirim.innerHTML;
       btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
 
       const { error } = await supabaseClient.rpc(rpcName, {
