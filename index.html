@@ -2,621 +2,571 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
-  <title>TV Dashboard - Laporan Sales, Gauge & Top 1 MTD Sales</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV Dashboard - Admin Panel</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS SDK v2 -->
+  <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <style>
-    /* Mengunci ukuran layout pas Full HD 1920x1080 piksel */
-    body {
-      width: 1920px;
-      height: 1080px;
-      overflow: hidden;
-    }
-
-    /* CONTAINER UTAMA 3 KOLOM SIDE-BY-SIDE */
-    .dashboard-grid {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 2.5rem;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* AREA GAUGE CHART (DI SEBELAH KIRI) */
-    .gauge-section-container {
-      width: 500px;
-      height: 520px;
-      background: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      border: 1px solid #bfdbfe;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      z-index: 10;
-    }
-
-    /* AREA TABEL LIVE TOP SALES TODAY (DI TENGAH) */
-    .custom-table-container {
-      width: 600px;               
-      height: 520px;            
-      margin: 0;         
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      z-index: 10;
-    }
-
-    /* AREA TOP 1 MTD SALES (DI SEBELAH KANAN) */
-    .mtd-top1-container {
-      width: 460px;
-      height: 520px;
-      background: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      border: 2px solid #eab308;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-      z-index: 10;
-      animation: goldGlow 2s infinite ease-in-out;
-    }
-
-    /* Animasi Scrolling Vertikal */
-    @keyframes scrollUp {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-50%); }
-    }
-
-    .animate-scroll-infinite {
-      animation: scrollUp linear infinite;
-    }
-    
-    .scroll-container:hover .animate-scroll-infinite {
-      animation-play-state: paused;
-    }
-
-    /* OUTLINE PUTIH TIPIS PADA TEKS KHUSUS RANKING */
-    .text-outline-white {
-      text-shadow: 
-        -0.75px -0.75px 0 #fff,  
-         0.75px -0.75px 0 #fff,
-        -0.75px  0.75px 0 #fff,
-         0.75px  0.75px 0 #fff,
-         0px     1px    2px rgba(0, 0, 0, 0.12);
-    }
-
-    /* EFEK GLOW / API UNTUK RANKING & TOP 1 MTD */
-    @keyframes goldGlow {
-      0%, 100% { box-shadow: 0 0 10px rgba(234, 179, 8, 0.5), 0 0 20px rgba(245, 158, 11, 0.3); }
-      50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.9), 0 0 30px rgba(239, 68, 68, 0.6); }
-    }
-
-    @keyframes silverGlow {
-      0%, 100% { box-shadow: 0 0 8px rgba(148, 163, 184, 0.5), 0 0 16px rgba(56, 189, 248, 0.3); }
-      50% { box-shadow: 0 0 16px rgba(148, 163, 184, 0.9), 0 0 24px rgba(56, 189, 248, 0.6); }
-    }
-
-    @keyframes bronzeGlow {
-      0%, 100% { box-shadow: 0 0 8px rgba(217, 119, 6, 0.5), 0 0 16px rgba(234, 88, 12, 0.3); }
-      50% { box-shadow: 0 0 16px rgba(217, 119, 6, 0.9), 0 0 24px rgba(220, 38, 38, 0.6); }
-    }
-
-    .fire-box-1 {
-      background-color: #fefce8;
-      border: 2px solid #eab308;
-      border-radius: 0.75rem;
-      animation: goldGlow 1.8s infinite ease-in-out;
-    }
-
-    .fire-box-2 {
-      background-color: #f8fafc;
-      border: 2px solid #94a3b8;
-      border-radius: 0.75rem;
-      animation: silverGlow 2.2s infinite ease-in-out;
-    }
-
-    .fire-box-3 {
-      background-color: #fff7ed;
-      border: 2px solid #d97706;
-      border-radius: 0.75rem;
-      animation: bronzeGlow 2s infinite ease-in-out;
-    }
-  </style>
 </head>
-<body class="bg-blue-50 text-slate-800 flex flex-col font-sans select-none">
+<body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
-  <!-- ================= HEADER DASHBOARD ================= -->
-  <header class="bg-slate-900 border-b border-slate-800 px-12 py-5 flex justify-between items-center shadow-md z-20 shrink-0 text-white">
-    <div class="flex items-center gap-4">
-      <div class="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-600/30">
-        <i data-lucide="tv" class="w-7 h-7"></i>
+  <!-- ================= SECTION LOGIN ================= -->
+  <div id="loginSection" class="fixed inset-0 bg-slate-900 z-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-96 max-w-full mx-4">
+      <div class="text-center mb-6">
+        <div class="bg-blue-100 text-blue-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800">Admin Login</h2>
+        <p class="text-sm text-gray-500">Silakan login untuk mengakses panel data.</p>
       </div>
-      <div>
-        <h1 class="text-2xl font-bold tracking-wide">INFORMA MOG MALANG (J382)</h1>
-        <p class="text-xs text-blue-400 font-medium">LIVE TV DASHBOARD - LAPORAN SALES</p>
-      </div>
-    </div>
-    
-    <div class="flex items-center gap-8">
-      <div class="text-right">
-        <div id="currentTime" class="text-3xl font-mono font-bold text-slate-100">00:00:00</div>
-        <div id="currentDate" class="text-xs text-slate-400">-</div>
-      </div>
-      <div id="syncStatusBadge" class="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-        <span id="syncStatusText">LIVE SYNC ACTIVE</span>
-      </div>
-    </div>
-  </header>
 
-  <!-- ================= SUB-HEADER STATISTIK ================= -->
-  <div class="bg-slate-900/90 border-b border-slate-800 px-12 py-3 flex justify-between items-center text-xs text-slate-300 z-20 shrink-0">
-    <div class="flex items-center gap-10">
-      <span>Total Sales: <strong id="totalDataCount" class="text-white font-mono text-sm">0</strong> Orang</span>
-      <span>Akumulasi Penjualan Sales: <strong id="totalSumSales" class="text-green-400 font-mono text-base">Rp 0</strong></span>
+      <div id="loginError" class="hidden mb-4 p-3 rounded-lg text-xs font-medium bg-red-100 text-red-700"></div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">EMAIL</label>
+          <input type="email" id="loginEmail" required placeholder="admin@email.com"
+            class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-blue-600">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">PASSWORD</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••"
+            class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-blue-600">
+        </div>
+        <button type="submit" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- ================= MAIN VIEW (KONTEN UTAMA) ================= -->
-  <main class="flex-1 relative overflow-hidden bg-blue-50 p-6 flex items-center justify-center">
-    
-    <!-- CONTAINER UTAMA 3 KOLOM -->
-    <div class="dashboard-grid">
-
-      <!-- ================= 1. GAUGE CHART SECTION (KIRI) ================= -->
-      <div id="gaugeContainer" class="gauge-section-container">
-        
-        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 border-b border-slate-800 shadow-md tracking-wider">
-          TARGET TODAY
-        </div>
-
-        <div class="flex-1 flex flex-col items-center justify-center p-6 relative bg-gradient-to-b from-slate-50 to-white">
+  <!-- ================= ADMIN PANEL ================= -->
+  <div id="adminPanel" class="flex h-screen w-full overflow-hidden hidden">
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
+      <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2">
+        <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400"></i>
+        <span>ADMIN PANEL</span>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <div>
+          <button onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
+            <div class="flex items-center gap-3">
+              <i data-lucide="tv" class="w-5 h-5 text-blue-400"></i>
+              <span>TV DASHBOARD</span>
+            </div>
+            <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
+          </button>
           
-          <div class="relative w-80 h-40 flex items-center justify-center mt-2">
-            <svg class="w-full h-full overflow-visible" viewBox="0 0 200 100">
-              <defs>
-                <path id="textArcAchieved" d="M 20 90 A 80 80 0 0 1 180 90" />
-              </defs>
-
-              <path id="gaugeBackgroundArc" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#cbd5e1" stroke-width="26" stroke-linecap="round"/>
-              <path id="gaugeProgressArc" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#3b82f6" stroke-width="26" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2" style="transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;"/>
-              
-              <text dy="4.5" fill="#ffffff" font-size="9.5" font-weight="900" font-family="monospace">
-                <textPath id="gaugeTextAchieved" href="#textArcAchieved" startOffset="0%" text-anchor="start" style="transition: startOffset 1s ease-in-out;">
-                  0.0%
-                </textPath>
-              </text>
-
-              <g id="gaugeNeedle" style="transform-origin: 100px 90px; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); transform: rotate(-90deg);">
-                <line x1="100" y1="90" x2="100" y2="24" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
-                <circle cx="100" cy="90" r="7.5" fill="#0f172a"/>
-                <circle cx="100" cy="90" r="3" fill="#ffffff"/>
-              </g>
-            </svg>
+          <div id="submenuTv" class="pl-6 mt-1 space-y-1">
+            <!-- MENU 1: INPUT TARGET TODAY -->
+            <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
+              <i data-lucide="target" class="w-4 h-4"></i>
+              <span>INPUT TARGET TODAY</span>
+            </a>
+            <!-- MENU 2: DAILY SALES -->
+            <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>DAILY SALES</span>
+            </a>
+            <!-- MENU 3: DAILY DEPARTEMEN -->
+            <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>DAILY DEPARTEMEN</span>
+            </a>
+            <!-- MENU 4: MTD SALES -->
+            <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
+              <i data-lucide="table" class="w-4 h-4"></i>
+              <span>MTD SALES</span>
+            </a>
           </div>
+        </div>
+      </nav>
 
-          <div class="w-full grid grid-cols-2 gap-4 mt-8 bg-slate-100 p-4 rounded-xl border border-slate-200 shadow-inner">
-            <div class="text-center border-r border-slate-200 pr-2">
-              <div class="text-xl text-slate-500 font-bold uppercase">Realisasi</div>
-              <div id="gaugeRealtimeValue" class="text-2xl font-extrabold font-mono text-emerald-600 mt-1">Rp 0</div>
+      <!-- TOMBOL LOGOUT -->
+      <div class="p-4 border-t border-slate-800">
+        <button onclick="handleLogout()" class="w-full flex items-center gap-2 p-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 transition">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
+        <h1 id="pageTitle" class="text-xl font-bold text-gray-800">INFORMA MOG MALANG (J382)</h1>
+        <span id="pageBadge" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Sales Sync</span>
+      </header>
+
+      <section class="p-6 flex-1 flex flex-col">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
+          
+          <!-- NOTIFIKASI GLOBAL DI SEMUA MENU -->
+          <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+          <!-- TAMPILAN VIEW TARGET TODAY -->
+          <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
+            <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50 shadow-sm space-y-5">
+              <div>
+                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <i data-lucide="target" class="w-5 h-5 text-blue-600"></i>
+                  Input Target Today
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">Masukkan nominal target penjualan untuk hari ini.</p>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600 mb-1">TARGET SALES (RP)</label>
+                  <input type="text" id="inputTargetSales" placeholder="Contoh: 50.000.000" onkeyup="formatRupiah(this)"
+                    class="w-full px-4 py-2.5 border rounded-lg text-base font-semibold focus:outline-none focus:border-blue-600 bg-white">
+                </div>
+
+                <button id="btnKirimTarget" onclick="kirimTargetKeSupabase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition">
+                  <i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini
+                </button>
+              </div>
             </div>
-            <div class="text-center pl-2">
-              <div class="text-xl text-slate-500 font-bold uppercase">Target Today</div>
-              <div id="gaugeTargetValue" class="text-2xl font-extrabold font-mono text-red-600 mt-1">Rp 0</div>
+          </div>
+
+          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, DEPARTEMEN & MTD SALES) -->
+          <div id="viewExcelSection" class="flex-1 flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+              <div>
+                <h2 id="sectionTitle" class="text-lg font-bold text-gray-800">Data Daily Sales SMT</h2>
+                <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
+                </button>
+                <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
+                  <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Database
+                </button>
+              </div>
+            </div>
+
+            <!-- KOTAK AREA PASTE -->
+            <div class="mb-4">
+              <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
+                class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
+                onpaste="handleExcelPaste(event)"></textarea>
+            </div>
+
+            <!-- TABEL UTAMA -->
+            <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
+              <table class="w-full border-collapse text-left text-sm">
+                <thead id="previewTableHead" class="bg-slate-800 text-white sticky top-0 z-10">
+                  <!-- Header dinamis diatur lewat JavaScript -->
+                </thead>
+                <tbody id="previewTableBody" class="divide-y divide-gray-200">
+                  <tr>
+                    <td colspan="7" class="text-center py-12 text-gray-400 italic">
+                      Belum ada data. Silakan paste data dari Excel ke kotak di atas.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
         </div>
-      </div>
-      <!-- ================= AKHIR GAUGE CHART SECTION ================= -->
-
-
-      <!-- ================= 2. LIVE TOP SALES TODAY (TENGAH) ================= -->
-      <div class="custom-table-container flex flex-col relative z-10">
-        
-        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 rounded-t-xl border-b border-slate-800 shadow-md z-10 shrink-0 tracking-wider">
-          LIVE TOP SALES TODAY
-        </div>
-
-        <div id="emptyStatus" class="hidden absolute inset-0 pt-16 flex flex-col items-center justify-center z-20 bg-white/90 backdrop-blur-sm rounded-b-xl">
-          <i data-lucide="database-backup" class="w-16 h-16 text-slate-400 mb-3"></i>
-          <div id="statusMessage" class="text-slate-600 text-base font-medium">Belum ada data laporan sales di database.</div>
-          <p class="text-slate-400 text-xs mt-1">Silakan input data melalui Admin Panel.</p>
-        </div>
-
-        <div class="flex-1 overflow-hidden relative border-x border-b border-blue-200 rounded-b-xl bg-white scroll-container shadow-lg">
-          <div id="scrollWrapper" class="absolute w-full animate-scroll-infinite">
-            <div id="tableContentOriginal" class="space-y-3 p-3"></div>
-            <div id="tableContentClone" class="space-y-3 p-3" aria-hidden="true"></div>
-          </div>
-        </div>
-
-      </div>
-      <!-- ================= AKHIR LIVE TOP SALES TODAY ================= -->
-
-
-      <!-- ================= 3. TOP 1 MTD SALES (KANAN) ================= -->
-      <div class="mtd-top1-container flex flex-col relative z-10">
-        
-        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 border-b border-slate-800 shadow-md z-10 shrink-0 tracking-wider flex items-center justify-center gap-2">
-          <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
-          BEST SALES
-        </div>
-
-        <div id="mtdTop1Content" class="flex-1 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-amber-50/50 to-white">
-          <div class="flex flex-col items-center justify-center text-slate-400 py-12">
-            <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-2"></i>
-            <p class="text-sm font-medium">Memuat Top 1 MTD Sales...</p>
-          </div>
-        </div>
-
-      </div>
-      <!-- ================= AKHIR TOP 1 MTD SALES ================= -->
-
-    </div>
-  </main>
+      </section>
+    </main>
+  </div>
 
   <script>
+    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let salesList = [];
+    // State Aplikasi untuk Keempat Menu
+    let currentView = 'sales'; 
+    let salesData = [];
+    let departemenData = [];
+    let mtdSalesData = []; 
 
-    // Jam Digital Dashboard
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('currentTime').innerText = now.toLocaleTimeString('id-ID');
-      document.getElementById('currentDate').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.addEventListener("DOMContentLoaded", async () => {
+      lucide.createIcons();
+      switchView('sales');
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        showAdminPanel();
+      }
+    });
+
+    // Fungsi Format Rupiah Otomatis saat Mengetik di Menu Target
+    function formatRupiah(element) {
+      let angka = element.value.replace(/[^,\d]/g, '').toString();
+      let split = angka.split(',');
+      let sisa = split[0].length % 3;
+      let rupiah = split[0].substr(0, sisa);
+      let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+      if (ribuan) {
+        let separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+      }
+
+      rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+      element.value = rupiah;
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    const scrollWrapper = document.getElementById('scrollWrapper');
-    scrollWrapper.style.animationDuration = '100s';
+    // Fungsi Pindah Menu (Switch View)
+    function switchView(view) {
+      currentView = view;
+      const menuTarget = document.getElementById('menuTarget');
+      const menuSales = document.getElementById('menuSales');
+      const menuDepartemen = document.getElementById('menuDepartemen');
+      const menuMtdSales = document.getElementById('menuMtdSales');
+      const pageTitle = document.getElementById('pageTitle');
+      const pageBadge = document.getElementById('pageBadge');
+      const sectionTitle = document.getElementById('sectionTitle');
 
-    // 1. Fetch & Render Top Sales Data (Daily Sales)
-    async function fetchSalesData() {
-      const emptyStatus = document.getElementById('emptyStatus');
-      const statusMessage = document.getElementById('statusMessage');
+      const viewTargetSection = document.getElementById('viewTargetSection');
+      const viewExcelSection = document.getElementById('viewExcelSection');
 
-      try {
-        const { data, error } = await supabaseClient
-          .from('laporan_sales')
-          .select('*')
-          .order('total', { ascending: false });
+      // Sembunyikan pesan status saat berpindah menu
+      document.getElementById('statusMsg').classList.add('hidden');
+      document.getElementById('excelPasteInput').value = '';
 
-        if (error) {
-          console.error('Gagal mengambil data sales:', error);
-          emptyStatus.classList.remove('hidden');
-          statusMessage.innerText = 'Gagal memuat data: ' + error.message;
-          return;
-        }
+      const activeClass = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition";
+      const inactiveClass = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition";
 
-        if (data) {
-          salesList = data;
-          renderDashboard();
-        }
-      } catch (err) {
-        console.error('Terjadi kesalahan:', err);
-        emptyStatus.classList.remove('hidden');
-        statusMessage.innerText = 'Terjadi kesalahan sistem.';
+      menuTarget.className = inactiveClass;
+      menuSales.className = inactiveClass;
+      menuDepartemen.className = inactiveClass;
+      if (menuMtdSales) menuMtdSales.className = inactiveClass;
+
+      if (view === 'target') {
+        menuTarget.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "Target Sync";
+        
+        viewTargetSection.classList.remove('hidden');
+        viewExcelSection.classList.add('hidden');
+      } else if (view === 'sales') {
+        menuSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "Sales Sync";
+        sectionTitle.innerText = "Data Daily Sales SMT";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdSales') {
+        menuMtdSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "MTD Sales Sync";
+        sectionTitle.innerText = "Data MTD Sales SMT";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'departemen') {
+        menuDepartemen.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "Departemen Sync";
+        sectionTitle.innerText = "Data Daily Sales Departemen";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      }
+      lucide.createIcons();
+    }
+
+    // Fungsi Login
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const btnLogin = document.getElementById('btnLogin');
+      const loginError = document.getElementById('loginError');
+
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin';
+      lucide.createIcons();
+
+      if (error) {
+        loginError.innerText = 'Login gagal: ' + error.message;
+        loginError.classList.remove('hidden');
+      } else {
+        showAdminPanel();
       }
     }
 
-    function renderDashboard() {
-      const origContainer = document.getElementById('tableContentOriginal');
-      const cloneContainer = document.getElementById('tableContentClone');
-      const totalDataCount = document.getElementById('totalDataCount');
-      const totalSumSales = document.getElementById('totalSumSales');
-      const emptyStatus = document.getElementById('emptyStatus');
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('loginPassword').value = '';
+    }
 
-      totalDataCount.innerText = salesList.length;
+    function showAdminPanel() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      lucide.createIcons();
+    }
 
-      let sumTotal = salesList.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
-      totalSumSales.innerText = 'Rp ' + sumTotal.toLocaleString('id-ID');
+    function toggleMenu(id) {
+      const menu = document.getElementById(id);
+      const arrow = document.getElementById('arrowTv');
+      menu.classList.toggle('hidden');
+      arrow.classList.toggle('rotate-180');
+    }
 
-      if (salesList.length === 0) {
-        emptyStatus.classList.remove('hidden');
-        origContainer.innerHTML = '';
-        cloneContainer.innerHTML = '';
+    // Penanganan Paste Excel untuk Berbagai Menu
+    function handleExcelPaste(e) {
+      setTimeout(() => {
+        const pastedText = document.getElementById('excelPasteInput').value;
+        if (!pastedText.trim()) return;
+
+        const rows = pastedText.split('\n');
+        let parsed = [];
+
+        rows.forEach((row, index) => {
+          if (!row.trim()) return;
+          const cols = row.split('\t');
+
+          if (currentView === 'sales' || currentView === 'mtdSales') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let dept = cols[2] ? cols[2].trim() : '';
+            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip: String(nip),
+              nama: nama || 'NONAME',
+              dept: dept || '-',
+              total: Number(totalStr) || 0
+            });
+          } else if (currentView === 'departemen') {
+            let kodeDept = cols[0] ? cols[0].trim() : '';
+            let namaDept = cols[1] ? cols[1].trim() : '';
+            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
+            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
+            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
+            if (!kodeDept || kodeDept === '0') return;
+
+            parsed.push({
+              kode_dept: kodeDept,
+              nama_dept: namaDept || '-',
+              total_sku: Number(totalSku) || 0,
+              total_qty: Number(totalQty) || 0,
+              exclude_ppn: Number(excludePpn) || 0,
+              include_ppn: Number(includePpn) || 0
+            });
+          }
+        });
+
+        if (currentView === 'sales') {
+          salesData = parsed;
+        } else if (currentView === 'mtdSales') {
+          mtdSalesData = parsed;
+        } else if (currentView === 'departemen') {
+          departemenData = parsed;
+        }
+
+        renderTableRows();
+      }, 100);
+    }
+
+    // Render Tabel Berdasarkan Menu Aktif
+    function renderTableRows() {
+      const thead = document.getElementById('previewTableHead');
+      const tbody = document.getElementById('previewTableBody');
+      const totalBarisSpan = document.getElementById('totalBaris');
+      
+      let activeData = salesData;
+      if (currentView === 'sales') activeData = salesData;
+      else if (currentView === 'mtdSales') activeData = mtdSalesData;
+      else if (currentView === 'departemen') activeData = departemenData;
+
+      if (currentView === 'sales' || currentView === 'mtdSales') {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+            <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
+          </tr>
+        `;
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">KODE DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA DEPT</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL SKU</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">EXCLUDE PPN</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">INCLUDE PPN</th>
+          </tr>
+        `;
+      }
+
+      if (activeData.length === 0) {
+        const colSpan = (currentView === 'sales' || currentView === 'mtdSales') ? 5 : 7;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
+        totalBarisSpan.innerText = '0';
         return;
       }
 
-      emptyStatus.classList.add('hidden');
-
-      let htmlRows = '';
-      salesList.forEach((item, index) => {
-        const rank = index + 1;
-        const bucketName = 'FOTO SALES';
-        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucketName)}/${item.nip}.jpg`;
-        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=0D8ABC&color=fff&size=128`;
-
-        let rowClass = "bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl";
-        let crownMarkup = "";
-        let borderPhotoStyle = "border-blue-500";
-        let textEffectClass = "";
-        let numberStyle = "text-slate-700";
-
-        if (rank === 1) {
-          rowClass = "fire-box-1";
-          borderPhotoStyle = "border-yellow-500 shadow-yellow-300";
-          textEffectClass = "text-outline-white font-bold";
-          numberStyle = "text-outline-white font-extrabold text-xl";
-          crownMarkup = `
-            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-yellow-500 drop-shadow-[0_2px_4px_rgba(234,179,8,0.8)]">
-              <i data-lucide="crown" class="w-6 h-6 fill-yellow-400"></i>
-            </div>`;
-        } else if (rank === 2) {
-          rowClass = "fire-box-2";
-          borderPhotoStyle = "border-slate-400 shadow-slate-300";
-          textEffectClass = "text-outline-white font-bold";
-          numberStyle = "text-outline-white font-extrabold text-xl";
-          crownMarkup = `
-            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-slate-400 drop-shadow-[0_2px_4px_rgba(148,163,184,0.8)]">
-              <i data-lucide="crown" class="w-6 h-6 fill-slate-300"></i>
-            </div>`;
-        } else if (rank === 3) {
-          rowClass = "fire-box-3";
-          borderPhotoStyle = "border-amber-600 shadow-amber-300";
-          textEffectClass = "text-outline-white font-bold";
-          numberStyle = "text-outline-white font-extrabold text-xl";
-          crownMarkup = `
-            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-amber-600 drop-shadow-[0_2px_4px_rgba(217,119,6,0.8)]">
-              <i data-lucide="crown" class="w-6 h-6 fill-amber-500"></i>
-            </div>`;
+      let html = '';
+      activeData.forEach((item, idx) => {
+        if (currentView === 'sales' || currentView === 'mtdSales') {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
+              <td class="border border-gray-300 px-4 py-2 text-center font-semibold text-blue-600">${item.dept}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        } else {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono font-semibold text-blue-600">${item.kode_dept}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama_dept}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total_sku.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total_qty.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.exclude_ppn.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.include_ppn.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
         }
-
-        htmlRows += `
-          <div class="grid grid-cols-12 items-center px-4 py-3 transition shadow-sm ${rowClass}">
-            <div class="col-span-4 flex items-center justify-center gap-3">
-              <span class="font-bold text-lg w-6 text-right ${numberStyle}">${rank}.</span>
-              <div class="relative w-16 h-16 rounded-lg border-2 ${borderPhotoStyle} bg-slate-200 shrink-0 shadow-md">
-                ${crownMarkup}
-                <div class="w-full h-full rounded-[6px] overflow-hidden relative z-10">
-                  <img src="${imageUrl}" alt="${item.nama}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${fallbackAvatar}';">
-                </div>
-              </div>
-            </div>
-            <div class="col-span-4 pl-2">
-              <div class="text-slate-900 text-base tracking-wide ${textEffectClass}">${item.nama}</div>
-              <div class="text-xs font-mono text-blue-600 font-semibold mt-0.5 ${textEffectClass}">NIP: ${item.nip}</div>
-            </div>
-            <div class="col-span-4 text-right font-mono font-bold text-emerald-600 text-lg ${textEffectClass}">
-              Rp ${Number(item.total).toLocaleString('id-ID')}
-            </div>
-          </div>
-        `;
       });
 
-      origContainer.innerHTML = htmlRows;
-      cloneContainer.innerHTML = htmlRows;
-
-      lucide.createIcons();
-      scrollWrapper.style.animationDuration = '100s';
+      tbody.innerHTML = html;
+      totalBarisSpan.innerText = activeData.length;
     }
 
+    function resetData() {
+      if (currentView === 'sales') {
+        salesData = [];
+      } else if (currentView === 'mtdSales') {
+        mtdSalesData = [];
+      } else if (currentView === 'departemen') {
+        departemenData = [];
+      }
+      document.getElementById('excelPasteInput').value = '';
+      renderTableRows();
+      document.getElementById('statusMsg').classList.add('hidden');
+    }
 
-    // 2. Fetch & Render Top 1 MTD Sales (Foto Diperbesar & Tanpa DEPT)
-    async function fetchTop1MtdSales() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('mtd_sales')
-          .select('*')
-          .order('mtd_total', { ascending: false })
-          .limit(1);
+    // FUNGSI KIRIM TARGET KE SUPABASE (Menu 1: Input Target Today)
+    async function kirimTargetKeSupabase() {
+      const targetRaw = document.getElementById('inputTargetSales').value;
+      const cleanTarget = targetRaw.replace(/\./g, '');
+      const statusMsg = document.getElementById('statusMsg');
+      const btnKirimTarget = document.getElementById('btnKirimTarget');
 
-        const container = document.getElementById('mtdTop1Content');
+      if (!cleanTarget || Number(cleanTarget) <= 0) {
+        alert('Masukkan nominal target yang valid!');
+        return;
+      }
 
-        if (error) {
-          console.error("Gagal mengambil MTD Sales:", error.message);
-          return;
-        }
+      btnKirimTarget.disabled = true;
+      btnKirimTarget.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
 
-        if (!data || data.length === 0) {
-          container.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-slate-400 py-12">
-              <i data-lucide="database-backup" class="w-12 h-12 mb-2"></i>
-              <p class="text-sm font-medium">Belum ada data MTD Sales</p>
-            </div>
-          `;
-          lucide.createIcons();
-          return;
-        }
+      const { error } = await supabaseClient.rpc('replace_target_today', {
+        new_target: Number(cleanTarget)
+      });
 
-        const topMtd = data[0];
-        const nip = topMtd.mtd_nip || '-';
-        const nama = topMtd.mtd_nama || 'NONAME';
-        const total = Number(topMtd.mtd_total || 0);
+      btnKirimTarget.disabled = false;
+      btnKirimTarget.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini';
+      lucide.createIcons();
 
-        const bucketName = 'FOTO SALES';
-        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucketName)}/${nip}.jpg`;
-        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(nama)}&background=eab308&color=fff&size=128`;
-
-        container.innerHTML = `
-          <div class="flex flex-col items-center justify-center text-center w-full relative">
-            <div class="relative w-48 h-48 rounded-2xl border-4 border-yellow-500 shadow-xl bg-slate-200 overflow-hidden mb-4">
-              <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20 text-yellow-500 drop-shadow-[0_2px_4px_rgba(234,179,8,0.9)]">
-                <i data-lucide="crown" class="w-12 h-12 fill-yellow-400"></i>
-              </div>
-              <img src="${imageUrl}" alt="${nama}" class="w-full h-full object-cover pt-2" onerror="this.onerror=null; this.src='${fallbackAvatar}';">
-            </div>
-
-            <div class="text-sm font-mono uppercase tracking-widest text-amber-600 font-extrabold mb-1">CHAMPION OF THE MONTH</div>
-            <h3 class="text-3xl font-extrabold text-slate-900 mb-1">${nama}</h3>
-            <div class="text-sm font-semibold text-slate-600 mb-4">NIP: <span class="font-mono text-blue-600 font-bold">${nip}</span></div>
-            
-            <div class="w-full bg-amber-50 border border-amber-200 rounded-xl p-6 shadow-inner">
-              <div class="text-xs font-bold text-amber-800 uppercase tracking-wider">Total MTD Sales</div>
-              <div class="text-3xl font-extrabold font-mono text-emerald-600 mt-1">Rp ${total.toLocaleString('id-ID')}</div>
-            </div>
-          </div>
-        `;
-        lucide.createIcons();
-
-      } catch (err) {
-        console.error('Gagal memuat Top 1 MTD Sales:', err);
+      if (error) {
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.innerText = 'Gagal menyimpan target: ' + error.message;
+        statusMsg.classList.remove('hidden');
+      } else {
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
+        statusMsg.classList.remove('hidden');
+        document.getElementById('inputTargetSales').value = '';
       }
     }
 
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Menu: Daily Sales, MTD Sales, & Daily Departemen)
+    async function kirimKeSupabase() {
+      let activeData = [];
+      let rpcName = '';
+      let tableName = '';
 
-    // 3. Fetch & Compute Realtime Gauge Chart Data
-    async function updateGaugeData() {
-      try {
-        const { data: targetData, error: targetError } = await supabaseClient
-          .from('target_today')
-          .select('*');
+      if (currentView === 'sales') {
+        activeData = salesData;
+        rpcName = 'replace_laporan_sales';
+        tableName = 'laporan_sales';
+      } else if (currentView === 'mtdSales') {
+        activeData = mtdSalesData;
+        rpcName = 'replace_mtd_sales'; 
+        tableName = 'mtd_sales';
+      } else if (currentView === 'departemen') {
+        activeData = departemenData;
+        rpcName = 'replace_laporan_departemen';
+        tableName = 'laporan_departemen';
+      }
 
-        let targetValue = 0;
-        if (!targetError && targetData && targetData.length > 0) {
-          targetData.forEach(row => {
-            const keys = Object.keys(row);
-            let val = 0;
-            if (row.target !== undefined) val = Number(row.target) || 0;
-            else if (row.nilai !== undefined) val = Number(row.nilai) || 0;
-            else if (row.jumlah !== undefined) val = Number(row.jumlah) || 0;
-            else if (keys.length > 0) {
-              for (let k of keys) {
-                if (!isNaN(Number(row[k])) && Number(row[k]) > 0) {
-                  val = Number(row[k]) || 0;
-                  break;
-                }
-              }
-            }
-            targetValue += val;
-          });
-        }
-        if (targetValue <= 0) targetValue = 250000000;
+      if (activeData.length === 0) {
+        alert('Belum ada data valid yang akan dikirim!');
+        return;
+      }
 
-        const { data: deptData, error: deptError } = await supabaseClient
-          .from('laporan_departemen')
-          .select('*');
+      const statusMsg = document.getElementById('statusMsg');
+      const btnKirim = document.getElementById('btnKirim');
 
-        let realtimeSumExcludePpn = 0;
-        if (!deptError && deptData && deptData.length > 0) {
-          deptData.forEach(row => {
-            const keys = Object.keys(row);
-            const matchingKey = keys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === 'excludeppn');
-            
-            let val = 0;
-            if (matchingKey && row[matchingKey] !== undefined) {
-              val = Number(row[matchingKey]) || 0;
-            } else if (row.exclude_ppn !== undefined) {
-              val = Number(row.exclude_ppn) || 0;
-            } else if (keys.length >= 5) {
-              val = Number(row[keys[4]]) || 0;
-            }
-            realtimeSumExcludePpn += val;
-          });
-        }
+      btnKirim.disabled = true;
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
+      lucide.createIcons();
 
-        const percentage = targetValue > 0 ? (realtimeSumExcludePpn / targetValue) * 100 : 0;
-        const clampedPercent = Math.min(Math.max(percentage, 0), 100);
-        
-        const maxDash = 251.2;
-        const dashOffset = maxDash - (clampedPercent / 100) * maxDash;
+      const { error } = await supabaseClient.rpc(rpcName, {
+        new_data: activeData
+      });
 
-        document.getElementById('gaugeProgressArc').style.strokeDashoffset = dashOffset;
-        
-        const needleRotation = -90 + (clampedPercent / 100) * 180;
-        document.getElementById('gaugeNeedle').style.transform = `rotate(${needleRotation}deg)`;
+      btnKirim.disabled = false;
+      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">${activeData.length}</span> Baris ke Database`;
+      lucide.createIcons();
 
-        const textAchieved = document.getElementById('gaugeTextAchieved');
-        if (clampedPercent > 8) {
-          textAchieved.textContent = percentage.toFixed(1) + '%';
-          textAchieved.setAttribute('startOffset', Math.max(2, (clampedPercent / 2) - 4) + '%');
-        } else {
-          textAchieved.textContent = ''; 
-        }
-
-        document.getElementById('gaugeRealtimeValue').innerText = 'Rp ' + realtimeSumExcludePpn.toLocaleString('id-ID');
-        document.getElementById('gaugeTargetValue').innerText = 'Rp ' + targetValue.toLocaleString('id-ID');
-
-        const arcElement = document.getElementById('gaugeProgressArc');
-        if (percentage >= 100) {
-          arcElement.style.stroke = '#10b981';
-        } else if (percentage >= 75) {
-          arcElement.style.stroke = '#3b82f6';
-        } else {
-          arcElement.style.stroke = '#f59e0b';
-        }
-
-      } catch (err) {
-        console.error('Gagal memperbarui gauge:', err);
+      if (error) {
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.innerText = 'Gagal memproses data: ' + error.message;
+        statusMsg.classList.remove('hidden');
+      } else {
+        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
+        statusMsg.classList.remove('hidden'); 
       }
     }
-
-
-    // 4. Saluran Supabase Realtime Sync Terintegrasi Lengkap
-    function setupRealtime() {
-      // Channel 1: Laporan Sales Realtime Sync
-      supabaseClient
-        .channel('realtime_laporan_sales')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'laporan_sales' }, (payload) => {
-          console.log('Perubahan terdeteksi di laporan_sales:', payload);
-          fetchSalesData();
-        })
-        .subscribe((status) => {
-          console.log('Status Realtime Sales:', status);
-        });
-
-      // Channel 2: MTD Sales Realtime Sync
-      supabaseClient
-        .channel('realtime_mtd_sales')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'mtd_sales' }, (payload) => {
-          console.log('Perubahan terdeteksi di mtd_sales:', payload);
-          fetchTop1MtdSales();
-        })
-        .subscribe((status) => {
-          console.log('Status Realtime MTD:', status);
-        });
-
-      // Channel 3: Gauge & Target Realtime Sync
-      supabaseClient
-        .channel('realtime_gauge')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'laporan_departemen' }, (payload) => {
-          console.log('Perubahan terdeteksi di laporan_departemen:', payload);
-          updateGaugeData();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'target_today' }, (payload) => {
-          console.log('Perubahan terdeteksi di target_today:', payload);
-          updateGaugeData();
-        })
-        .subscribe((status) => {
-          console.log('Status Realtime Gauge:', status);
-        });
-    }
-
-    // Polling Cadangan (Backup Sync setiap 10 detik agar tampilan tetap pasti up-to-date)
-    function startBackupPolling() {
-      setInterval(() => {
-        fetchSalesData();
-        fetchTop1MtdSales();
-        updateGaugeData();
-      }, 10000);
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      fetchSalesData();
-      fetchTop1MtdSales();
-      updateGaugeData();
-      setupRealtime();
-      startBackupPolling();
-    });
   </script>
 </body>
 </html>
