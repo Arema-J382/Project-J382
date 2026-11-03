@@ -206,7 +206,7 @@
     let departemenData = [];
     let furniproData = []; 
     let mtdSalesData = []; 
-    let mtdFurniproData = []; // State baru untuk MTD Furnipro
+    let mtdFurniproData = []; 
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -242,7 +242,7 @@
       const menuDepartemen = document.getElementById('menuDepartemen');
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
-      const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); // Menu Baru
+      const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); 
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
@@ -471,7 +471,6 @@
           });
           furniproData = Object.values(map);
         } else if (currentView === 'mtdFurnipro') {
-          // AGREGASI QTY & TOTAL BERDASARKAN NIP_MTDFP UNTUK TABEL mtd_fp
           let map = {};
           parsed.forEach(item => {
             if (map[item.nip_mtdfp]) {
@@ -539,7 +538,6 @@
           </tr>
         `;
       } else if (currentView === 'mtdFurnipro') {
-        // Header sesuai dengan skema tabel mtd_fp (nip_mtdfp, nama_mtdfp, qty_mtdfp, total_mtdfp)
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
@@ -657,7 +655,7 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE (TERMASUK MTD FURNIPRO KE TABEL mtd_fp)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -681,7 +679,7 @@
         tableName = 'daily_furnipro';
       } else if (currentView === 'mtdFurnipro') {
         activeData = mtdFurniproData;
-        rpcName = 'replace_mtd_furnipro'; // Nama RPC Supabase untuk MTD Furnipro
+        rpcName = 'replace_mtd_fp'; // DISESUAIKAN DENGAN NAMA FUNGSI RPC DI SUPABASE ANDA
         tableName = 'mtd_fp';
       }
 
