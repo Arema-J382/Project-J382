@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - SMT, Dept, Target, MTD & Daily Furnipro</title>
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0">
+  <title>TV Dashboard - Laporan Sales, Gauge & Top 1 MTD Sales</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,205 +13,270 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
+    /* Mengunci ukuran layout pas Full HD 1920x1080 piksel */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
     }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+
+    /* CONTAINER UTAMA 3 KOLOM SIDE-BY-SIDE */
+    .dashboard-grid {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      width: 100%;
+      height: 100%;
     }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
+
+    /* AREA GAUGE CHART (DI SEBELAH KIRI) */
+    .gauge-section-container {
+      width: 500px;
+      height: 520px;
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: 1px solid #bfdbfe;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
     }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
+
+    /* AREA TABEL LIVE TOP SALES TODAY (DI TENGAH) */
+    .custom-table-container {
+      width: 600px;               
+      height: 520px;            
+      margin: 0;         
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+
+    /* AREA TOP 1 MTD SALES (DI SEBELAH KANAN) */
+    .mtd-top1-container {
+      width: 460px;
+      height: 520px;
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border: 2px solid #eab308;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      animation: goldGlow 2s infinite ease-in-out;
+    }
+
+    /* Animasi Scrolling Vertikal */
+    @keyframes scrollUp {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    .animate-scroll-infinite {
+      animation: scrollUp linear infinite;
+    }
+    
+    .scroll-container:hover .animate-scroll-infinite {
+      animation-play-state: paused;
+    }
+
+    /* OUTLINE PUTIH TIPIS PADA TEKS KHUSUS RANKING */
+    .text-outline-white {
+      text-shadow: 
+        -0.75px -0.75px 0 #fff,  
+         0.75px -0.75px 0 #fff,
+        -0.75px  0.75px 0 #fff,
+         0.75px  0.75px 0 #fff,
+         0px     1px    2px rgba(0, 0, 0, 0.12);
+    }
+
+    /* EFEK GLOW / API UNTUK RANKING & TOP 1 MTD */
+    @keyframes goldGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(234, 179, 8, 0.5), 0 0 20px rgba(245, 158, 11, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.9), 0 0 30px rgba(239, 68, 68, 0.6); }
+    }
+
+    @keyframes silverGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(148, 163, 184, 0.5), 0 0 16px rgba(56, 189, 248, 0.3); }
+      50% { box-shadow: 0 0 16px rgba(148, 163, 184, 0.9), 0 0 24px rgba(56, 189, 248, 0.6); }
+    }
+
+    @keyframes bronzeGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(217, 119, 6, 0.5), 0 0 16px rgba(234, 88, 12, 0.3); }
+      50% { box-shadow: 0 0 16px rgba(217, 119, 6, 0.9), 0 0 24px rgba(220, 38, 38, 0.6); }
+    }
+
+    .fire-box-1 {
+      background-color: #fefce8;
+      border: 2px solid #eab308;
+      border-radius: 0.75rem;
+      animation: goldGlow 1.8s infinite ease-in-out;
+    }
+
+    .fire-box-2 {
+      background-color: #f8fafc;
+      border: 2px solid #94a3b8;
+      border-radius: 0.75rem;
+      animation: silverGlow 2.2s infinite ease-in-out;
+    }
+
+    .fire-box-3 {
+      background-color: #fff7ed;
+      border: 2px solid #d97706;
+      border-radius: 0.75rem;
+      animation: bronzeGlow 2s infinite ease-in-out;
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 flex flex-col min-h-screen select-none">
+<body class="bg-blue-50 text-slate-800 flex flex-col font-sans select-none">
 
-  <!-- ================= HEADER ADMIN PANEL ================= -->
-  <header class="bg-slate-900 border-b border-slate-800 px-8 py-4 flex justify-between items-center shadow-lg text-white sticky top-0 z-50">
-    <div class="flex items-center gap-3">
-      <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-md shadow-blue-600/30">
-        <i data-lucide="sliders" class="w-6 h-6"></i>
+  <!-- ================= HEADER DASHBOARD ================= -->
+  <header class="bg-slate-900 border-b border-slate-800 px-12 py-5 flex justify-between items-center shadow-md z-20 shrink-0 text-white">
+    <div class="flex items-center gap-4">
+      <div class="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-600/30">
+        <i data-lucide="tv" class="w-7 h-7"></i>
       </div>
       <div>
-        <h1 class="text-xl font-extrabold tracking-wide">ADMIN PANEL INFORMA MOG MALANG</h1>
-        <p class="text-xs text-blue-400 font-medium">MANAJEMEN DATA & INPUT LAPORAN</p>
+        <h1 class="text-2xl font-bold tracking-wide">INFORMA MOG MALANG (J382)</h1>
+        <p class="text-xs text-blue-400 font-medium">LIVE TV DASHBOARD - LAPORAN SALES</p>
       </div>
     </div>
-    <div class="flex items-center gap-4">
+    
+    <div class="flex items-center gap-8">
       <div class="text-right">
-        <div id="currentTime" class="text-lg font-mono font-bold text-slate-100">00:00:00</div>
+        <div id="currentTime" class="text-3xl font-mono font-bold text-slate-100">00:00:00</div>
         <div id="currentDate" class="text-xs text-slate-400">-</div>
       </div>
-      <div class="bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-        <span>CONNECTED</span>
+      <div id="syncStatusBadge" class="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+        <span id="syncStatusText">LIVE SYNC ACTIVE</span>
       </div>
     </div>
   </header>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-8">
-
-    <!-- Navigasi / Tab Menu Admin -->
-    <div class="flex flex-wrap gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-      <button onclick="switchTab('sales')" id="btnTabSales" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-blue-600 text-white shadow-md shadow-blue-600/2anc">
-        <i data-lucide="users" class="w-4 h-4"></i> Daily Sales
-      </button>
-      <button onclick="switchTab('dept')" id="btnTabDept" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
-        <i data-lucide="building-2" class="w-4 h-4"></i> Daily Departemen
-      </button>
-      <!-- MENU BARU: DAILY FURNIPRO (DIBAWAH DAILY DEPARTEMEN) -->
-      <button onclick="switchTab('furnipro')" id="btnTabFurnipro" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
-        <i data-lucide="package" class="w-4 h-4"></i> Daily Furnipro
-      </button>
-      <button onclick="switchTab('target')" id="btnTabTarget" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
-        <i data-lucide="target" class="w-4 h-4"></i> Target Today
-      </button>
-      <button onclick="switchTab('mtd')" id="btnTabMtd" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
-        <i data-lucide="award" class="w-4 h-4"></i> MTD Sales
-      </button>
+  <!-- ================= SUB-HEADER STATISTIK ================= -->
+  <div class="bg-slate-900/90 border-b border-slate-800 px-12 py-3 flex justify-between items-center text-xs text-slate-300 z-20 shrink-0">
+    <div class="flex items-center gap-10">
+      <span>Total Sales: <strong id="totalDataCount" class="text-white font-mono text-sm">0</strong> Orang</span>
+      <span>Akumulasi Penjualan Sales: <strong id="totalSumSales" class="text-green-400 font-mono text-base">Rp 0</strong></span>
     </div>
+  </div>
 
-    <!-- ================= KONTEN 1: DAILY SALES (KODE LAMA UTUH) ================= -->
-    <section id="sectionSales" class="admin-section space-y-4">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <i data-lucide="users" class="w-5 h-5 text-blue-600"></i> Input Daily Sales
-        </h2>
-        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
-        <textarea id="inputSales" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Daily Sales di sini..."></textarea>
-        <div class="flex justify-end mt-4">
-          <button onclick="submitData('laporan_sales', 'inputSales')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
-            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Sales)
-          </button>
+  <!-- ================= MAIN VIEW (KONTEN UTAMA) ================= -->
+  <main class="flex-1 relative overflow-hidden bg-blue-50 p-6 flex items-center justify-center">
+    
+    <!-- CONTAINER UTAMA 3 KOLOM -->
+    <div class="dashboard-grid">
+
+      <!-- ================= 1. GAUGE CHART SECTION (KIRI) ================= -->
+      <div id="gaugeContainer" class="gauge-section-container">
+        
+        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 border-b border-slate-800 shadow-md tracking-wider">
+          TARGET TODAY
         </div>
-      </div>
-    </section>
 
-    <!-- ================= KONTEN 2: DAILY DEPARTEMEN (KODE LAMA UTUH) ================= -->
-    <section id="sectionDept" class="admin-section hidden space-y-4">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> Input Daily Departemen
-        </h2>
-        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
-        <textarea id="inputDept" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Daily Departemen di sini..."></textarea>
-        <div class="flex justify-end mt-4">
-          <button onclick="submitData('laporan_departemen', 'inputDept')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
-            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Departemen)
-          </button>
-        </div>
-      </div>
-    </section>
+        <div class="flex-1 flex flex-col items-center justify-center p-6 relative bg-gradient-to-b from-slate-50 to-white">
+          
+          <div class="relative w-80 h-40 flex items-center justify-center mt-2">
+            <svg class="w-full h-full overflow-visible" viewBox="0 0 200 100">
+              <defs>
+                <path id="textArcAchieved" d="M 20 90 A 80 80 0 0 1 180 90" />
+              </defs>
 
-    <!-- ================= KONTEN 3: DAILY FURNIPRO (MENU BARU) ================= -->
-    <section id="sectionFurnipro" class="admin-section hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> Input & Preview Daily Furnipro
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">Paste data Excel. Kolom <strong>QTY</strong> dan <strong>TOTAL VALUE</strong> akan otomatis dijumlahkan berdasarkan kesamaan <strong>NIP</strong>.</p>
+              <path id="gaugeBackgroundArc" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#cbd5e1" stroke-width="26" stroke-linecap="round"/>
+              <path id="gaugeProgressArc" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#3b82f6" stroke-width="26" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2" style="transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;"/>
+              
+              <text dy="4.5" fill="#ffffff" font-size="9.5" font-weight="900" font-family="monospace">
+                <textPath id="gaugeTextAchieved" href="#textArcAchieved" startOffset="0%" text-anchor="start" style="transition: startOffset 1s ease-in-out;">
+                  0.0%
+                </textPath>
+              </text>
+
+              <g id="gaugeNeedle" style="transform-origin: 100px 90px; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); transform: rotate(-90deg);">
+                <line x1="100" y1="90" x2="100" y2="24" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round"/>
+                <circle cx="100" cy="90" r="7.5" fill="#0f172a"/>
+                <circle cx="100" cy="90" r="3" fill="#ffffff"/>
+              </g>
+            </svg>
           </div>
-          <div id="furniproStats" class="text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 hidden">
-            Total Baris Teragregasi: <span id="furniproRowCount" class="font-bold">0</span>
+
+          <div class="w-full grid grid-cols-2 gap-4 mt-8 bg-slate-100 p-4 rounded-xl border border-slate-200 shadow-inner">
+            <div class="text-center border-r border-slate-200 pr-2">
+              <div class="text-xl text-slate-500 font-bold uppercase">Realisasi</div>
+              <div id="gaugeRealtimeValue" class="text-2xl font-extrabold font-mono text-emerald-600 mt-1">Rp 0</div>
+            </div>
+            <div class="text-center pl-2">
+              <div class="text-xl text-slate-500 font-bold uppercase">Target Today</div>
+              <div id="gaugeTargetValue" class="text-2xl font-extrabold font-mono text-red-600 mt-1">Rp 0</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ================= AKHIR GAUGE CHART SECTION ================= -->
+
+
+      <!-- ================= 2. LIVE TOP SALES TODAY (TENGAH) ================= -->
+      <div class="custom-table-container flex flex-col relative z-10">
+        
+        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 rounded-t-xl border-b border-slate-800 shadow-md z-10 shrink-0 tracking-wider">
+          LIVE TOP SALES TODAY
+        </div>
+
+        <div id="emptyStatus" class="hidden absolute inset-0 pt-16 flex flex-col items-center justify-center z-20 bg-white/90 backdrop-blur-sm rounded-b-xl">
+          <i data-lucide="database-backup" class="w-16 h-16 text-slate-400 mb-3"></i>
+          <div id="statusMessage" class="text-slate-600 text-base font-medium">Belum ada data laporan sales di database.</div>
+          <p class="text-slate-400 text-xs mt-1">Silakan input data melalui Admin Panel.</p>
+        </div>
+
+        <div class="flex-1 overflow-hidden relative border-x border-b border-blue-200 rounded-b-xl bg-white scroll-container shadow-lg">
+          <div id="scrollWrapper" class="absolute w-full animate-scroll-infinite">
+            <div id="tableContentOriginal" class="space-y-3 p-3"></div>
+            <div id="tableContentClone" class="space-y-3 p-3" aria-hidden="true"></div>
           </div>
         </div>
 
-        <!-- Textarea Paste Data -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Area Paste Data Excel:</label>
-          <textarea id="inputFurnipro" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50" placeholder="Paste data Excel di sini (NIP, NAMA, RECEIPT, SKU, DESC, QTY, KET 1, KET 2, TOTAL VALUE)..."></textarea>
-        </div>
-
-        <!-- Tombol Aksi -->
-        <div class="flex justify-end gap-3 pt-2">
-          <button onclick="clearFurnipro()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
-            <i data-lucide="trash-2" class="w-4 h-4"></i> Bersihkan
-          </button>
-          <button onclick="submitFurniproToDatabase()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
-            <i data-lucide="database" class="w-4 h-4"></i> Kirim ke Database Supabase (daily_furnipro)
-          </button>
-        </div>
       </div>
+      <!-- ================= AKHIR LIVE TOP SALES TODAY ================= -->
 
-      <!-- Preview Otomatis di Bawah -->
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="text-md font-extrabold text-slate-900 flex items-center gap-2">
-          <i data-lucide="eye" class="w-5 h-5 text-indigo-600"></i> Hasil Preview Otomatis (Setelah Penjumlahan QTY & Total Value Berdasarkan NIP)
-        </h3>
 
-        <div class="overflow-x-auto border border-slate-200 rounded-xl">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-900 text-white text-xs uppercase tracking-wider">
-                <th class="py-3 px-4 font-bold border-b border-slate-800">NIP</th>
-                <th class="py-3 px-4 font-bold border-b border-slate-800">NAMA</th>
-                <th class="py-3 px-4 font-bold border-b border-slate-800 text-center">QTY (SUM)</th>
-                <th class="py-3 px-4 font-bold border-b border-slate-800 text-right">TOTAL VALUE (SUM)</th>
-              </tr>
-            </thead>
-            <tbody id="furniproPreviewBody" class="divide-y divide-slate-100 text-xs font-mono">
-              <tr>
-                <td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- ================= 3. TOP 1 MTD SALES (KANAN) ================= -->
+      <div class="mtd-top1-container flex flex-col relative z-10">
+        
+        <div class="bg-slate-900 text-white font-extrabold text-center text-2xl py-3.5 border-b border-slate-800 shadow-md z-10 shrink-0 tracking-wider flex items-center justify-center gap-2">
+          <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
+          BEST SALES
         </div>
-      </div>
-    </section>
 
-    <!-- ================= KONTEN 4: TARGET TODAY (KODE LAMA UTUH) ================= -->
-    <section id="sectionTarget" class="admin-section hidden space-y-4">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <i data-lucide="target" class="w-5 h-5 text-blue-600"></i> Input Target Today
-        </h2>
-        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
-        <textarea id="inputTarget" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Target Today di sini..."></textarea>
-        <div class="flex justify-end mt-4">
-          <button onclick="submitData('target_today', 'inputTarget')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
-            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Target)
-          </button>
+        <div id="mtdTop1Content" class="flex-1 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-amber-50/50 to-white">
+          <div class="flex flex-col items-center justify-center text-slate-400 py-12">
+            <i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-2"></i>
+            <p class="text-sm font-medium">Memuat Top 1 MTD Sales...</p>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ================= KONTEN 5: MTD SALES (KODE LAMA UTUH) ================= -->
-    <section id="sectionMtd" class="admin-section hidden space-y-4">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <i data-lucide="award" class="w-5 h-5 text-blue-600"></i> Input MTD Sales
-        </h2>
-        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
-        <textarea id="inputMtd" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data MTD Sales di sini..."></textarea>
-        <div class="flex justify-end mt-4">
-          <button onclick="submitData('mtd_sales', 'inputMtd')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
-            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (MTD)
-          </button>
-        </div>
       </div>
-    </section>
+      <!-- ================= AKHIR TOP 1 MTD SALES ================= -->
 
+    </div>
   </main>
 
   <script>
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
-    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Jam Digital
+    let salesList = [];
+
+    // Jam Digital Dashboard
     function updateClock() {
       const now = new Date();
       document.getElementById('currentTime').innerText = now.toLocaleTimeString('id-ID');
@@ -220,201 +285,337 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Navigasi Tab Admin
-    function switchTab(tabName) {
-      const tabs = ['sales', 'dept', 'furnipro', 'target', 'mtd'];
-      tabs.forEach(t => {
-        const section = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
-        const btn = document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (t === tabName) {
-          section.classList.remove('hidden');
-          btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-blue-600 text-white shadow-md shadow-blue-600/20";
-        } else {
-          section.classList.add('hidden');
-          btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200";
-        }
-      });
-      lucide.createIcons();
-    }
+    const scrollWrapper = document.getElementById('scrollWrapper');
+    scrollWrapper.style.animationDuration = '100s';
 
-    // Fungsi Submit Umum (Kode Lama Tetap Berjalan)
-    async function submitData(tableName, textareaId) {
-      const rawText = document.getElementById(textareaId).value.trim();
-      if (!rawText) {
-        alert('Data masih kosong. Silakan paste data terlebih dahulu.');
-        return;
-      }
+    // 1. Fetch & Render Top Sales Data (Daily Sales)
+    async function fetchSalesData() {
+      const emptyStatus = document.getElementById('emptyStatus');
+      const statusMessage = document.getElementById('statusMessage');
 
       try {
-        const lines = rawText.split('\n');
-        if (lines.length < 2) {
-          alert('Format data tidak valid.');
+        const { data, error } = await supabaseClient
+          .from('laporan_sales')
+          .select('*')
+          .order('total', { ascending: false });
+
+        if (error) {
+          console.error('Gagal mengambil data sales:', error);
+          emptyStatus.classList.remove('hidden');
+          statusMessage.innerText = 'Gagal memuat data: ' + error.message;
           return;
         }
 
-        const headers = lines[0].split('\t').map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, '_'));
-        const rowsToInsert = [];
-
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split('\t');
-          if (cols.length <= 1) continue;
-          
-          let rowObj = {};
-          headers.forEach((h, index) => {
-            let val = cols[index] !== undefined ? cols[index].trim() : '';
-            if (!isNaN(val) && val !== '') {
-              val = Number(val);
-            }
-            rowObj[h] = val;
-          });
-          rowsToInsert.push(rowObj);
+        if (data) {
+          salesList = data;
+          renderDashboard();
         }
-
-        if (rowsToInsert.length === 0) {
-          alert('Tidak ada baris valid untuk dikirim.');
-          return;
-        }
-
-        if (!supabaseClient) {
-          alert('Koneksi Supabase belum terkonfigurasi.');
-          return;
-        }
-
-        // Hapus data lama terlebih dahulu (opsional sesuai sistem lama)
-        await supabaseClient.from(tableName).delete().neq('id', 0);
-
-        const { error } = await supabaseClient.from(tableName).insert(rowsToInsert);
-        if (error) throw error;
-
-        alert('Data berhasil dikirim ke database ' + tableName + '!');
-        document.getElementById(textareaId).value = '';
       } catch (err) {
-        console.error(err);
-        alert('Gagal mengirim data: ' + err.message);
+        console.error('Terjadi kesalahan:', err);
+        emptyStatus.classList.remove('hidden');
+        statusMessage.innerText = 'Terjadi kesalahan sistem.';
       }
     }
 
-    // ================= LOGIKA KHUSUS DAILY FURNIPRO =================
-    let parsedFurniproData = [];
+    function renderDashboard() {
+      const origContainer = document.getElementById('tableContentOriginal');
+      const cloneContainer = document.getElementById('tableContentClone');
+      const totalDataCount = document.getElementById('totalDataCount');
+      const totalSumSales = document.getElementById('totalSumSales');
+      const emptyStatus = document.getElementById('emptyStatus');
 
-    document.getElementById('inputFurnipro').addEventListener('input', function() {
-      const rawText = this.value.trim();
-      const tbody = document.getElementById('furniproPreviewBody');
-      const statsBadge = document.getElementById('furniproStats');
-      const rowCountSpan = document.getElementById('furniproRowCount');
+      totalDataCount.innerText = salesList.length;
 
-      if (!rawText) {
-        parsedFurniproData = [];
-        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td></tr>`;
-        statsBadge.classList.add('hidden');
+      let sumTotal = salesList.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+      totalSumSales.innerText = 'Rp ' + sumTotal.toLocaleString('id-ID');
+
+      if (salesList.length === 0) {
+        emptyStatus.classList.remove('hidden');
+        origContainer.innerHTML = '';
+        cloneContainer.innerHTML = '';
         return;
       }
 
-      const lines = rawText.split('\n');
-      if (lines.length < 2) return;
+      emptyStatus.classList.add('hidden');
 
-      const headers = lines[0].split('\t').map(h => h.trim().toUpperCase());
-      
-      const nipIdx = headers.findIndex(h => h.includes('NIP'));
-      const namaIdx = headers.findIndex(h => h.includes('NAMA'));
-      const qtyIdx = headers.findIndex(h => h.includes('QTY') || h.includes('QUANTITY'));
-      const totalValIdx = headers.findIndex(h => h.includes('TOTAL VALUE') || h.includes('TOTAL'));
+      let htmlRows = '';
+      salesList.forEach((item, index) => {
+        const rank = index + 1;
+        const bucketName = 'FOTO SALES';
+        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucketName)}/${item.nip}.jpg`;
+        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=0D8ABC&color=fff&size=128`;
 
-      const aggregatedMap = new Map();
+        let rowClass = "bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl";
+        let crownMarkup = "";
+        let borderPhotoStyle = "border-blue-500";
+        let textEffectClass = "";
+        let numberStyle = "text-slate-700";
 
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split('\t');
-        if (cols.length <= 1) continue;
-
-        const nip = nipIdx !== -1 ? cols[nipIdx]?.trim() : cols[0]?.trim();
-        const nama = namaIdx !== -1 ? cols[namaIdx]?.trim() : cols[1]?.trim();
-        
-        // Parse Qty (pastikan angka bersih dari koma/titik format mata uang jika ada)
-        let qtyVal = 0;
-        if (qtyIdx !== -1 && cols[qtyIdx]) {
-          qtyVal = parseFloat(cols[qtyIdx].replace(/[^0-9.-]+/g, "")) || 0;
+        if (rank === 1) {
+          rowClass = "fire-box-1";
+          borderPhotoStyle = "border-yellow-500 shadow-yellow-300";
+          textEffectClass = "text-outline-white font-bold";
+          numberStyle = "text-outline-white font-extrabold text-xl";
+          crownMarkup = `
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-yellow-500 drop-shadow-[0_2px_4px_rgba(234,179,8,0.8)]">
+              <i data-lucide="crown" class="w-6 h-6 fill-yellow-400"></i>
+            </div>`;
+        } else if (rank === 2) {
+          rowClass = "fire-box-2";
+          borderPhotoStyle = "border-slate-400 shadow-slate-300";
+          textEffectClass = "text-outline-white font-bold";
+          numberStyle = "text-outline-white font-extrabold text-xl";
+          crownMarkup = `
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-slate-400 drop-shadow-[0_2px_4px_rgba(148,163,184,0.8)]">
+              <i data-lucide="crown" class="w-6 h-6 fill-slate-300"></i>
+            </div>`;
+        } else if (rank === 3) {
+          rowClass = "fire-box-3";
+          borderPhotoStyle = "border-amber-600 shadow-amber-300";
+          textEffectClass = "text-outline-white font-bold";
+          numberStyle = "text-outline-white font-extrabold text-xl";
+          crownMarkup = `
+            <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 text-amber-600 drop-shadow-[0_2px_4px_rgba(217,119,6,0.8)]">
+              <i data-lucide="crown" class="w-6 h-6 fill-amber-500"></i>
+            </div>`;
         }
 
-        // Parse Total Value
-        let totalVal = 0;
-        if (totalValIdx !== -1 && cols[totalValIdx]) {
-          totalVal = parseFloat(cols[totalValIdx].replace(/[^0-9.-]+/g, "")) || 0;
-        }
-
-        if (!nip) continue;
-
-        if (aggregatedMap.has(nip)) {
-          let existing = aggregatedMap.get(nip);
-          existing.qty += qtyVal;
-          existing.total_value += totalVal;
-        } else {
-          aggregatedMap.set(nip, {
-            nip: nip,
-            nama: nama || '-',
-            qty: qtyVal,
-            total_value: totalVal
-          });
-        }
-      }
-
-      parsedFurniproData = Array.from(aggregatedMap.values());
-      rowCountSpan.innerText = parsedFurniproData.length;
-      statsBadge.classList.remove('hidden');
-
-      if (parsedFurniproData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Tidak ada data valid yang dapat diproses.</td></tr>`;
-        return;
-      }
-
-      let html = '';
-      parsedFurniproData.forEach(item => {
-        html += `
-          <tr class="hover:bg-indigo-50/50 transition">
-            <td class="py-3 px-4 font-bold text-indigo-600">${item.nip}</td>
-            <td class="py-3 px-4 text-slate-900 font-sans font-medium">${item.nama}</td>
-            <td class="py-3 px-4 text-center font-bold text-slate-700">${item.qty.toLocaleString('id-ID')}</td>
-            <td class="py-3 px-4 text-right font-bold text-emerald-600">Rp ${item.total_value.toLocaleString('id-ID')}</td>
-          </tr>
+        htmlRows += `
+          <div class="grid grid-cols-12 items-center px-4 py-3 transition shadow-sm ${rowClass}">
+            <div class="col-span-4 flex items-center justify-center gap-3">
+              <span class="font-bold text-lg w-6 text-right ${numberStyle}">${rank}.</span>
+              <div class="relative w-16 h-16 rounded-lg border-2 ${borderPhotoStyle} bg-slate-200 shrink-0 shadow-md">
+                ${crownMarkup}
+                <div class="w-full h-full rounded-[6px] overflow-hidden relative z-10">
+                  <img src="${imageUrl}" alt="${item.nama}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${fallbackAvatar}';">
+                </div>
+              </div>
+            </div>
+            <div class="col-span-4 pl-2">
+              <div class="text-slate-900 text-base tracking-wide ${textEffectClass}">${item.nama}</div>
+              <div class="text-xs font-mono text-blue-600 font-semibold mt-0.5 ${textEffectClass}">NIP: ${item.nip}</div>
+            </div>
+            <div class="col-span-4 text-right font-mono font-bold text-emerald-600 text-lg ${textEffectClass}">
+              Rp ${Number(item.total).toLocaleString('id-ID')}
+            </div>
+          </div>
         `;
       });
-      tbody.innerHTML = html;
-    });
 
-    function clearFurnipro() {
-      document.getElementById('inputFurnipro').value = '';
-      parsedFurniproData = [];
-      document.getElementById('furniproPreviewBody').innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td></tr>`;
-      document.getElementById('furniproStats').classList.add('hidden');
+      origContainer.innerHTML = htmlRows;
+      cloneContainer.innerHTML = htmlRows;
+
+      lucide.createIcons();
+      scrollWrapper.style.animationDuration = '100s';
     }
 
-    async function submitFurniproToDatabase() {
-      if (parsedFurniproData.length === 0) {
-        alert('Belum ada data tersetor atau hasil preview kosong.');
-        return;
-      }
 
-      if (!supabaseClient) {
-        alert('Koneksi Supabase belum terkonfigurasi.');
-        return;
-      }
-
+    // 2. Fetch & Render Top 1 MTD Sales (Foto Diperbesar & Tanpa DEPT)
+    async function fetchTop1MtdSales() {
       try {
-        // Hapus data lama di tabel daily_furnipro jika ingin merefresh data harian
-        await supabaseClient.from('daily_furnipro').delete().neq('nip', '0');
+        const { data, error } = await supabaseClient
+          .from('mtd_sales')
+          .select('*')
+          .order('mtd_total', { ascending: false })
+          .limit(1);
 
-        const { error } = await supabaseClient.from('daily_furnipro').insert(parsedFurniproData);
-        if (error) throw error;
+        const container = document.getElementById('mtdTop1Content');
 
-        alert('Data Daily Furnipro berhasil dikirim ke database Supabase!');
-        clearFurnipro();
+        if (error) {
+          console.error("Gagal mengambil MTD Sales:", error.message);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-slate-400 py-12">
+              <i data-lucide="database-backup" class="w-12 h-12 mb-2"></i>
+              <p class="text-sm font-medium">Belum ada data MTD Sales</p>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        const topMtd = data[0];
+        const nip = topMtd.mtd_nip || '-';
+        const nama = topMtd.mtd_nama || 'NONAME';
+        const total = Number(topMtd.mtd_total || 0);
+
+        const bucketName = 'FOTO SALES';
+        const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent(bucketName)}/${nip}.jpg`;
+        const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(nama)}&background=eab308&color=fff&size=128`;
+
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center text-center w-full relative">
+            <div class="relative w-48 h-48 rounded-2xl border-4 border-yellow-500 shadow-xl bg-slate-200 overflow-hidden mb-4">
+              <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20 text-yellow-500 drop-shadow-[0_2px_4px_rgba(234,179,8,0.9)]">
+                <i data-lucide="crown" class="w-12 h-12 fill-yellow-400"></i>
+              </div>
+              <img src="${imageUrl}" alt="${nama}" class="w-full h-full object-cover pt-2" onerror="this.onerror=null; this.src='${fallbackAvatar}';">
+            </div>
+
+            <div class="text-sm font-mono uppercase tracking-widest text-amber-600 font-extrabold mb-1">CHAMPION OF THE MONTH</div>
+            <h3 class="text-3xl font-extrabold text-slate-900 mb-1">${nama}</h3>
+            <div class="text-sm font-semibold text-slate-600 mb-4">NIP: <span class="font-mono text-blue-600 font-bold">${nip}</span></div>
+            
+            <div class="w-full bg-amber-50 border border-amber-200 rounded-xl p-6 shadow-inner">
+              <div class="text-xs font-bold text-amber-800 uppercase tracking-wider">Total MTD Sales</div>
+              <div class="text-3xl font-extrabold font-mono text-emerald-600 mt-1">Rp ${total.toLocaleString('id-ID')}</div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+
       } catch (err) {
-        console.error(err);
-        alert('Gagal mengirim data ke Supabase: ' + err.message);
+        console.error('Gagal memuat Top 1 MTD Sales:', err);
       }
+    }
+
+
+    // 3. Fetch & Compute Realtime Gauge Chart Data
+    async function updateGaugeData() {
+      try {
+        const { data: targetData, error: targetError } = await supabaseClient
+          .from('target_today')
+          .select('*');
+
+        let targetValue = 0;
+        if (!targetError && targetData && targetData.length > 0) {
+          targetData.forEach(row => {
+            const keys = Object.keys(row);
+            let val = 0;
+            if (row.target !== undefined) val = Number(row.target) || 0;
+            else if (row.nilai !== undefined) val = Number(row.nilai) || 0;
+            else if (row.jumlah !== undefined) val = Number(row.jumlah) || 0;
+            else if (keys.length > 0) {
+              for (let k of keys) {
+                if (!isNaN(Number(row[k])) && Number(row[k]) > 0) {
+                  val = Number(row[k]) || 0;
+                  break;
+                }
+              }
+            }
+            targetValue += val;
+          });
+        }
+        if (targetValue <= 0) targetValue = 250000000;
+
+        const { data: deptData, error: deptError } = await supabaseClient
+          .from('laporan_departemen')
+          .select('*');
+
+        let realtimeSumExcludePpn = 0;
+        if (!deptError && deptData && deptData.length > 0) {
+          deptData.forEach(row => {
+            const keys = Object.keys(row);
+            const matchingKey = keys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === 'excludeppn');
+            
+            let val = 0;
+            if (matchingKey && row[matchingKey] !== undefined) {
+              val = Number(row[matchingKey]) || 0;
+            } else if (row.exclude_ppn !== undefined) {
+              val = Number(row.exclude_ppn) || 0;
+            } else if (keys.length >= 5) {
+              val = Number(row[keys[4]]) || 0;
+            }
+            realtimeSumExcludePpn += val;
+          });
+        }
+
+        const percentage = targetValue > 0 ? (realtimeSumExcludePpn / targetValue) * 100 : 0;
+        const clampedPercent = Math.min(Math.max(percentage, 0), 100);
+        
+        const maxDash = 251.2;
+        const dashOffset = maxDash - (clampedPercent / 100) * maxDash;
+
+        document.getElementById('gaugeProgressArc').style.strokeDashoffset = dashOffset;
+        
+        const needleRotation = -90 + (clampedPercent / 100) * 180;
+        document.getElementById('gaugeNeedle').style.transform = `rotate(${needleRotation}deg)`;
+
+        const textAchieved = document.getElementById('gaugeTextAchieved');
+        if (clampedPercent > 8) {
+          textAchieved.textContent = percentage.toFixed(1) + '%';
+          textAchieved.setAttribute('startOffset', Math.max(2, (clampedPercent / 2) - 4) + '%');
+        } else {
+          textAchieved.textContent = ''; 
+        }
+
+        document.getElementById('gaugeRealtimeValue').innerText = 'Rp ' + realtimeSumExcludePpn.toLocaleString('id-ID');
+        document.getElementById('gaugeTargetValue').innerText = 'Rp ' + targetValue.toLocaleString('id-ID');
+
+        const arcElement = document.getElementById('gaugeProgressArc');
+        if (percentage >= 100) {
+          arcElement.style.stroke = '#10b981';
+        } else if (percentage >= 75) {
+          arcElement.style.stroke = '#3b82f6';
+        } else {
+          arcElement.style.stroke = '#f59e0b';
+        }
+
+      } catch (err) {
+        console.error('Gagal memperbarui gauge:', err);
+      }
+    }
+
+
+    // 4. Saluran Supabase Realtime Sync Terintegrasi Lengkap
+    function setupRealtime() {
+      // Channel 1: Laporan Sales Realtime Sync
+      supabaseClient
+        .channel('realtime_laporan_sales')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'laporan_sales' }, (payload) => {
+          console.log('Perubahan terdeteksi di laporan_sales:', payload);
+          fetchSalesData();
+        })
+        .subscribe((status) => {
+          console.log('Status Realtime Sales:', status);
+        });
+
+      // Channel 2: MTD Sales Realtime Sync
+      supabaseClient
+        .channel('realtime_mtd_sales')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'mtd_sales' }, (payload) => {
+          console.log('Perubahan terdeteksi di mtd_sales:', payload);
+          fetchTop1MtdSales();
+        })
+        .subscribe((status) => {
+          console.log('Status Realtime MTD:', status);
+        });
+
+      // Channel 3: Gauge & Target Realtime Sync
+      supabaseClient
+        .channel('realtime_gauge')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'laporan_departemen' }, (payload) => {
+          console.log('Perubahan terdeteksi di laporan_departemen:', payload);
+          updateGaugeData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'target_today' }, (payload) => {
+          console.log('Perubahan terdeteksi di target_today:', payload);
+          updateGaugeData();
+        })
+        .subscribe((status) => {
+          console.log('Status Realtime Gauge:', status);
+        });
+    }
+
+    // Polling Cadangan (Backup Sync setiap 10 detik agar tampilan tetap pasti up-to-date)
+    function startBackupPolling() {
+      setInterval(() => {
+        fetchSalesData();
+        fetchTop1MtdSales();
+        updateGaugeData();
+      }, 10000);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
+      fetchSalesData();
+      fetchTop1MtdSales();
+      updateGaugeData();
+      setupRealtime();
+      startBackupPolling();
     });
   </script>
 </body>
