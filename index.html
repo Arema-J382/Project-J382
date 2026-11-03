@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Manajemen Data & Dashboard SMT</title>
+  <title>Admin Panel - SMT, Dept, Target, MTD & Daily Furnipro</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,367 +11,406 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 
-  <!-- HEADER -->
-  <header class="bg-slate-900 text-white px-8 py-4 flex justify-between items-center shadow-md">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 flex flex-col min-h-screen select-none">
+
+  <!-- ================= HEADER ADMIN PANEL ================= -->
+  <header class="bg-slate-900 border-b border-slate-800 px-8 py-4 flex justify-between items-center shadow-lg text-white sticky top-0 z-50">
     <div class="flex items-center gap-3">
-      <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg">
-        <i data-lucide="settings" class="w-6 h-6"></i>
+      <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-md shadow-blue-600/30">
+        <i data-lucide="sliders" class="w-6 h-6"></i>
       </div>
       <div>
-        <h1 class="text-xl font-bold tracking-wide">ADMIN PANEL - INFORMA MOG MALANG (J382)</h1>
-        <p class="text-xs text-blue-400">Pusat Kontrol & Sinkronisasi Data Database Supabase</p>
+        <h1 class="text-xl font-extrabold tracking-wide">ADMIN PANEL INFORMA MOG MALANG</h1>
+        <p class="text-xs text-blue-400 font-medium">MANAJEMEN DATA & INPUT LAPORAN</p>
       </div>
     </div>
-    <div id="connectionStatus" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span>Supabase Connected</span>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <div id="currentTime" class="text-lg font-mono font-bold text-slate-100">00:00:00</div>
+        <div id="currentDate" class="text-xs text-slate-400">-</div>
+      </div>
+      <div class="bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+        <span>CONNECTED</span>
+      </div>
     </div>
   </header>
 
-  <div class="flex-1 flex flex-row">
-    <!-- SIDEBAR MENU -->
-    <aside class="w-72 bg-slate-900 border-t border-slate-800 p-6 flex flex-col gap-2 shrink-0 text-slate-300">
-      <div class="text-xs font-bold text-slate-500 uppercase px-3 mb-2 tracking-wider">Navigasi Menu</div>
-      
-      <button onclick="switchTab('sales')" id="btnTab-sales" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition text-left hover:bg-slate-800">
-        <i data-lucide="shopping-cart" class="w-5 h-5 text-blue-400"></i>
-        Daily Sales
-      </button>
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-8">
 
-      <button onclick="switchTab('dept')" id="btnTab-dept" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition text-left hover:bg-slate-800">
-        <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
-        Daily Departemen
+    <!-- Navigasi / Tab Menu Admin -->
+    <div class="flex flex-wrap gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+      <button onclick="switchTab('sales')" id="btnTabSales" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-blue-600 text-white shadow-md shadow-blue-600/2anc">
+        <i data-lucide="users" class="w-4 h-4"></i> Daily Sales
       </button>
-
+      <button onclick="switchTab('dept')" id="btnTabDept" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        <i data-lucide="building-2" class="w-4 h-4"></i> Daily Departemen
+      </button>
       <!-- MENU BARU: DAILY FURNIPRO (DIBAWAH DAILY DEPARTEMEN) -->
-      <button onclick="switchTab('furnipro')" id="btnTab-furnipro" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition text-left hover:bg-slate-800">
-        <i data-lucide="package" class="w-5 h-5 text-amber-400"></i>
-        Daily Furnipro
+      <button onclick="switchTab('furnipro')" id="btnTabFurnipro" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        <i data-lucide="package" class="w-4 h-4"></i> Daily Furnipro
       </button>
-
-      <button onclick="switchTab('target')" id="btnTab-target" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition text-left hover:bg-slate-800">
-        <i data-lucide="target" class="w-5 h-5 text-red-400"></i>
-        Target Today
+      <button onclick="switchTab('target')" id="btnTabTarget" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        <i data-lucide="target" class="w-4 h-4"></i> Target Today
       </button>
-
-      <button onclick="switchTab('mtd')" id="btnTab-mtd" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition text-left hover:bg-slate-800">
-        <i data-lucide="award" class="w-5 h-5 text-yellow-400"></i>
-        MTD Sales (Best Sales)
+      <button onclick="switchTab('mtd')" id="btnTabMtd" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+        <i data-lucide="award" class="w-4 h-4"></i> MTD Sales
       </button>
-    </aside>
+    </div>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 p-8 overflow-y-auto">
-      
-      <!-- ================= 1. SECTION DAILY SALES ================= -->
-      <section id="content-sales" class="tab-content space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Input Data Daily Sales</h2>
-          <p class="text-xs text-slate-500 mb-4">Paste data Excel langsung ke kotak di bawah ini (Kolom: NIP, NAMA, TOTAL).</p>
-          
-          <textarea id="inputSales" rows="6" placeholder="Paste data Excel di sini..." class="w-full font-mono text-xs p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none mb-4"></textarea>
-          
-          <div class="flex justify-between items-center">
-            <button onclick="previewData('sales')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-              <i data-lucide="eye" class="w-4 h-4"></i> Preview Data
-            </button>
-            <button onclick="uploadData('sales')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-blue-600/20">
-              <i data-lucide="upload-cloud" class="w-4 h-4"></i> Kirim ke Database
-            </button>
+    <!-- ================= KONTEN 1: DAILY SALES (KODE LAMA UTUH) ================= -->
+    <section id="sectionSales" class="admin-section space-y-4">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-blue-600"></i> Input Daily Sales
+        </h2>
+        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
+        <textarea id="inputSales" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Daily Sales di sini..."></textarea>
+        <div class="flex justify-end mt-4">
+          <button onclick="submitData('laporan_sales', 'inputSales')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Sales)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= KONTEN 2: DAILY DEPARTEMEN (KODE LAMA UTUH) ================= -->
+    <section id="sectionDept" class="admin-section hidden space-y-4">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="building-2" class="w-5 h-5 text-blue-600"></i> Input Daily Departemen
+        </h2>
+        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
+        <textarea id="inputDept" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Daily Departemen di sini..."></textarea>
+        <div class="flex justify-end mt-4">
+          <button onclick="submitData('laporan_departemen', 'inputDept')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Departemen)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= KONTEN 3: DAILY FURNIPRO (MENU BARU) ================= -->
+    <section id="sectionFurnipro" class="admin-section hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> Input & Preview Daily Furnipro
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Paste data Excel. Kolom <strong>QTY</strong> dan <strong>TOTAL VALUE</strong> akan otomatis dijumlahkan berdasarkan kesamaan <strong>NIP</strong>.</p>
+          </div>
+          <div id="furniproStats" class="text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 hidden">
+            Total Baris Teragregasi: <span id="furniproRowCount" class="font-bold">0</span>
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 mb-3 text-sm">Preview Hasil Parsing</h3>
-          <div id="previewSales" class="overflow-x-auto max-h-96">
-            <p class="text-slate-400 text-xs italic">Belum ada data untuk dipreview.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 2. SECTION DAILY DEPARTEMEN ================= -->
-      <section id="content-dept" class="tab-content hidden space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Input Data Daily Departemen</h2>
-          <p class="text-xs text-slate-500 mb-4">Paste data laporan departemen dari Excel.</p>
-          
-          <textarea id="inputDept" rows="6" placeholder="Paste data Excel di sini..." class="w-full font-mono text-xs p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none mb-4"></textarea>
-          
-          <div class="flex justify-between items-center">
-            <button onclick="previewData('dept')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-              <i data-lucide="eye" class="w-4 h-4"></i> Preview Data
-            </button>
-            <button onclick="uploadData('dept')" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-purple-600/20">
-              <i data-lucide="upload-cloud" class="w-4 h-4"></i> Kirim ke Database
-            </button>
-          </div>
+        <!-- Textarea Paste Data -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Area Paste Data Excel:</label>
+          <textarea id="inputFurnipro" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50" placeholder="Paste data Excel di sini (NIP, NAMA, RECEIPT, SKU, DESC, QTY, KET 1, KET 2, TOTAL VALUE)..."></textarea>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 mb-3 text-sm">Preview Hasil Parsing</h3>
-          <div id="previewDept" class="overflow-x-auto max-h-96">
-            <p class="text-slate-400 text-xs italic">Belum ada data untuk dipreview.</p>
-          </div>
+        <!-- Tombol Aksi -->
+        <div class="flex justify-end gap-3 pt-2">
+          <button onclick="clearFurnipro()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Bersihkan
+          </button>
+          <button onclick="submitFurniproToDatabase()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="database" class="w-4 h-4"></i> Kirim ke Database Supabase (daily_furnipro)
+          </button>
         </div>
-      </section>
+      </div>
 
-      <!-- ================= 3. SECTION DAILY FURNIPRO (MENU BARU) ================= -->
-      <section id="content-furnipro" class="tab-content hidden space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Input Data Daily Furnipro</h2>
-          <p class="text-xs text-slate-500 mb-4">
-            Paste data Excel (Kolom: NIP, NAMA, RECEIPT, SKU, DESC, QTY, KET 1, KET 2, TOTAL VALUE). Data otomatis dijumlahkan (sum) berdasarkan <strong>NIP</strong> untuk QTY dan TOTAL VALUE sebelum dikirim ke database <code>daily_furnipro</code>.
-          </p>
-          
-          <textarea id="inputFurnipro" rows="6" placeholder="Paste data Excel laporan Furnipro di sini..." class="w-full font-mono text-xs p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none mb-4"></textarea>
-          
-          <div class="flex justify-between items-center">
-            <button onclick="previewFurniproData()" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-              <i data-lucide="eye" class="w-4 h-4"></i> Preview & Hitung Total
-            </button>
-            <button onclick="uploadFurniproData()" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-amber-600/20">
-              <i data-lucide="upload-cloud" class="w-4 h-4"></i> Kirim ke Tabel daily_furnipro
-            </button>
-          </div>
+      <!-- Preview Otomatis di Bawah -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <h3 class="text-md font-extrabold text-slate-900 flex items-center gap-2">
+          <i data-lucide="eye" class="w-5 h-5 text-indigo-600"></i> Hasil Preview Otomatis (Setelah Penjumlahan QTY & Total Value Berdasarkan NIP)
+        </h3>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-white text-xs uppercase tracking-wider">
+                <th class="py-3 px-4 font-bold border-b border-slate-800">NIP</th>
+                <th class="py-3 px-4 font-bold border-b border-slate-800">NAMA</th>
+                <th class="py-3 px-4 font-bold border-b border-slate-800 text-center">QTY (SUM)</th>
+                <th class="py-3 px-4 font-bold border-b border-slate-800 text-right">TOTAL VALUE (SUM)</th>
+              </tr>
+            </thead>
+            <tbody id="furniproPreviewBody" class="divide-y divide-slate-100 text-xs font-mono">
+              <tr>
+                <td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+    </section>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 mb-3 text-sm">Preview Hasil Penjumlahan per NIP (QTY & Total Value)</h3>
-          <div id="previewFurnipro" class="overflow-x-auto max-h-96">
-            <p class="text-slate-400 text-xs italic">Belum ada data untuk dipreview.</p>
-          </div>
+    <!-- ================= KONTEN 4: TARGET TODAY (KODE LAMA UTUH) ================= -->
+    <section id="sectionTarget" class="admin-section hidden space-y-4">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="target" class="w-5 h-5 text-blue-600"></i> Input Target Today
+        </h2>
+        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
+        <textarea id="inputTarget" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data Target Today di sini..."></textarea>
+        <div class="flex justify-end mt-4">
+          <button onclick="submitData('target_today', 'inputTarget')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (Target)
+          </button>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ================= 4. SECTION TARGET TODAY ================= -->
-      <section id="content-target" class="tab-content hidden space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Input Target Today</h2>
-          <p class="text-xs text-slate-500 mb-4">Paste target harian toko.</p>
-          
-          <textarea id="inputTarget" rows="6" placeholder="Paste data Excel di sini..." class="w-full font-mono text-xs p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:outline-none mb-4"></textarea>
-          
-          <div class="flex justify-between items-center">
-            <button onclick="previewData('target')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-              <i data-lucide="eye" class="w-4 h-4"></i> Preview Data
-            </button>
-            <button onclick="uploadData('target')" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-red-600/20">
-              <i data-lucide="upload-cloud" class="w-4 h-4"></i> Kirim ke Database
-            </button>
-          </div>
+    <!-- ================= KONTEN 5: MTD SALES (KODE LAMA UTUH) ================= -->
+    <section id="sectionMtd" class="admin-section hidden space-y-4">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="award" class="w-5 h-5 text-blue-600"></i> Input MTD Sales
+        </h2>
+        <p class="text-xs text-slate-500 mb-4">Copy data dari Excel lalu paste ke dalam kotak di bawah ini.</p>
+        <textarea id="inputMtd" rows="6" class="w-full p-4 border border-slate-300 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Paste data MTD Sales di sini..."></textarea>
+        <div class="flex justify-end mt-4">
+          <button onclick="submitData('mtd_sales', 'inputMtd')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Kirim ke Database (MTD)
+          </button>
         </div>
+      </div>
+    </section>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 mb-3 text-sm">Preview Hasil Parsing</h3>
-          <div id="previewTarget" class="overflow-x-auto max-h-96">
-            <p class="text-slate-400 text-xs italic">Belum ada data untuk dipreview.</p>
-          </div>
-        </div>
-      </section>
+  </main>
 
-      <!-- ================= 5. SECTION MTD SALES ================= -->
-      <section id="content-mtd" class="tab-content hidden space-y-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Input MTD Sales (Champion of the Month)</h2>
-          <p class="text-xs text-slate-500 mb-4">Paste data MTD Sales dari Excel.</p>
-          
-          <textarea id="inputMtd" rows="6" placeholder="Paste data Excel di sini..." class="w-full font-mono text-xs p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:outline-none mb-4"></textarea>
-          
-          <div class="flex justify-between items-center">
-            <button onclick="previewData('mtd')" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-              <i data-lucide="eye" class="w-4 h-4"></i> Preview Data
-            </button>
-            <button onclick="uploadData('mtd')" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg shadow-yellow-600/20">
-              <i data-lucide="upload-cloud" class="w-4 h-4"></i> Kirim ke Database
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 mb-3 text-sm">Preview Hasil Parsing</h3>
-          <div id="previewMtd" class="overflow-x-auto max-h-96">
-            <p class="text-slate-400 text-xs italic">Belum ada data untuk dipreview.</p>
-          </div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- SCRIPT UTAMA -->
   <script>
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-    let parsedFurniproData = []; // Menyimpan hasil data furnipro yang sudah diagregasi
+    // Jam Digital
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('currentTime').innerText = now.toLocaleTimeString('id-ID');
+      document.getElementById('currentDate').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    // Navigasi Tab
+    // Navigasi Tab Admin
     function switchTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('aside button').forEach(el => {
-        el.classList.remove('bg-slate-800', 'text-white', 'shadow');
-      });
-
-      document.getElementById(`content-${tabName}`).classList.remove('hidden');
-      document.getElementById(`btnTab-${tabName}`).classList.add('bg-slate-800', 'text-white', 'shadow');
-    }
-
-    // Tab aktif default
-    switchTab('sales');
-
-    // ----------------------------------------------------
-    // LOGIKA KHUSUS DAILY FURNIPRO (GROUPING BERDASARKAN NIP)
-    // ----------------------------------------------------
-    function previewFurniproData() {
-      const rawText = document.getElementById('inputFurnipro').value.trim();
-      const previewContainer = document.getElementById('previewFurnipro');
-
-      if (!rawText) {
-        alert('Silakan paste data terlebih dahulu!');
-        return;
-      }
-
-      const lines = rawText.split('\n');
-      const delimiter = lines[0].includes('\t') ? '\t' : ',';
-      
-      const map = new Map();
-
-      // Mulai iterasi (Asumsi baris pertama adalah header atau langsung data. Kita deteksi berdasarkan format gambar)
-      // Kolom: 0=NIP, 1=NAMA, 2=RECEIPT, 3=SKU, 4=DESC, 5=QTY, 6=KET 1, 7=KET 2, 8=TOTAL VALUE
-      let startIndex = 0;
-      const firstCols = lines[0].split(delimiter).map(c => c.trim());
-      if (firstCols[0].toLowerCase().includes('nip') || isNaN(Number(firstCols[0]))) {
-        startIndex = 1; // Lewati header
-      }
-
-      for (let i = startIndex; i < lines.length; i++) {
-        const cols = lines[i].split(delimiter).map(c => c.trim());
-        if (cols.length < 2 || !cols[0]) continue;
-
-        const nip = cols[0];
-        const nama = cols[1] || 'UNKNOWN';
-        const qty = parseFloat(cols[5]) || 0;
-        
-        // Membersihkan format mata uang (misal: titik, koma, Rp) pada kolom TOTAL VALUE (indeks 8)
-        let rawVal = cols[8] || '0';
-        const totalValue = parseFloat(rawVal.replace(/[^0-9.-]+/g, "")) || 0;
-
-        if (map.has(nip)) {
-          const existing = map.get(nip);
-          existing.qty += qty;
-          existing.total_value += totalValue;
+      const tabs = ['sales', 'dept', 'furnipro', 'target', 'mtd'];
+      tabs.forEach(t => {
+        const section = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tabName) {
+          section.classList.remove('hidden');
+          btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-blue-600 text-white shadow-md shadow-blue-600/20";
         } else {
-          map.set(nip, {
-            nip: nip,
-            nama: nama,
-            qty: qty,
-            total_value: totalValue
-          });
+          section.classList.add('hidden');
+          btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200";
         }
-      }
-
-      parsedFurniproData = Array.from(map.values());
-
-      if (parsedFurniproData.length === 0) {
-        previewContainer.innerHTML = '<p class="text-red-500 text-xs">Gagal memparsing data. Pastikan format benar.</p>';
-        return;
-      }
-
-      // Render tabel preview
-      let html = `
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr class="bg-amber-50 text-amber-900 border-b border-amber-200">
-              <th class="p-3">NIP</th>
-              <th class="p-3">NAMA</th>
-              <th class="p-3 text-center">TOTAL QTY</th>
-              <th class="p-3 text-right">TOTAL VALUE (SUM)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100">
-      `;
-
-      parsedFurniproData.forEach(item => {
-        html += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-mono font-semibold text-blue-600">${item.nip}</td>
-            <td class="p-3 font-medium text-slate-800">${item.nama}</td>
-            <td class="p-3 text-center font-bold text-slate-700">${item.qty}</td>
-            <td class="p-3 text-right font-mono font-bold text-emerald-600">Rp ${item.total_value.toLocaleString('id-ID')}</td>
-          </tr>
-        `;
       });
-
-      html += `</tbody></table>`;
-      previewContainer.innerHTML = html;
+      lucide.createIcons();
     }
 
-    async function uploadFurniproData() {
-      if (parsedFurniproData.length === 0) {
-        alert('Lakukan preview terlebih dahulu sebelum mengirim data!');
+    // Fungsi Submit Umum (Kode Lama Tetap Berjalan)
+    async function submitData(tableName, textareaId) {
+      const rawText = document.getElementById(textareaId).value.trim();
+      if (!rawText) {
+        alert('Data masih kosong. Silakan paste data terlebih dahulu.');
         return;
       }
-
-      if (!confirm(`Kirim ${parsedFurniproData.length} data teragregasi ke tabel Supabase "daily_furnipro"?`)) return;
 
       try {
-        // Kosongkan tabel lama terlebih dahulu (opsional, sesuaikan kebutuhan jika ingin replace total)
-        await supabaseClient.from('daily_furnipro').delete().neq('nip', '0');
+        const lines = rawText.split('\n');
+        if (lines.length < 2) {
+          alert('Format data tidak valid.');
+          return;
+        }
 
-        const { data, error } = await supabaseClient
-          .from('daily_furnipro')
-          .insert(parsedFurniproData);
+        const headers = lines[0].split('\t').map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, '_'));
+        const rowsToInsert = [];
 
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split('\t');
+          if (cols.length <= 1) continue;
+          
+          let rowObj = {};
+          headers.forEach((h, index) => {
+            let val = cols[index] !== undefined ? cols[index].trim() : '';
+            if (!isNaN(val) && val !== '') {
+              val = Number(val);
+            }
+            rowObj[h] = val;
+          });
+          rowsToInsert.push(rowObj);
+        }
+
+        if (rowsToInsert.length === 0) {
+          alert('Tidak ada baris valid untuk dikirim.');
+          return;
+        }
+
+        if (!supabaseClient) {
+          alert('Koneksi Supabase belum terkonfigurasi.');
+          return;
+        }
+
+        // Hapus data lama terlebih dahulu (opsional sesuai sistem lama)
+        await supabaseClient.from(tableName).delete().neq('id', 0);
+
+        const { error } = await supabaseClient.from(tableName).insert(rowsToInsert);
         if (error) throw error;
 
-        alert('Berhasil mengirim data Daily Furnipro ke Database Supabase!');
-        document.getElementById('inputFurnipro').value = '';
-        document.getElementById('previewFurnipro').innerHTML = '<p class="text-emerald-600 text-xs font-semibold">Data berhasil disinkronkan ke database.</p>';
-        parsedFurniproData = [];
+        alert('Data berhasil dikirim ke database ' + tableName + '!');
+        document.getElementById(textareaId).value = '';
       } catch (err) {
-        console.error('Gagal upload ke Supabase:', err);
+        console.error(err);
         alert('Gagal mengirim data: ' + err.message);
       }
     }
 
+    // ================= LOGIKA KHUSUS DAILY FURNIPRO =================
+    let parsedFurniproData = [];
 
-    // ----------------------------------------------------
-    // FUNGSI UMUM UNTUK MENU LAINNYA (SALES, DEPT, TARGET, MTD)
-    // ----------------------------------------------------
-    function previewData(type) {
-      const inputId = `input${type.charAt(0).toUpperCase() + type.slice(1)}`;
-      const rawText = document.getElementById(inputId).value.trim();
-      const previewContainer = document.getElementById(`preview${type.charAt(0).toUpperCase() + type.slice(1)}`);
+    document.getElementById('inputFurnipro').addEventListener('input', function() {
+      const rawText = this.value.trim();
+      const tbody = document.getElementById('furniproPreviewBody');
+      const statsBadge = document.getElementById('furniproStats');
+      const rowCountSpan = document.getElementById('furniproRowCount');
 
       if (!rawText) {
-        alert('Silakan paste data terlebih dahulu!');
+        parsedFurniproData = [];
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td></tr>`;
+        statsBadge.classList.add('hidden');
         return;
       }
 
       const lines = rawText.split('\n');
-      const delimiter = lines[0].includes('\t') ? '\t' : ',';
+      if (lines.length < 2) return;
 
-      let html = `<table class="w-full text-left border-collapse text-xs"><tbody class="divide-y divide-slate-100">`;
-      lines.forEach((line, index) => {
-        const cols = line.split(delimiter);
-        html += `<tr class="${index === 0 ? 'bg-slate-100 font-bold' : 'hover:bg-slate-50'}">`;
-        cols.forEach(col => {
-          html += `<td class="p-2.5">${col.trim()}</td>`;
-        });
-        html += `</tr>`;
+      const headers = lines[0].split('\t').map(h => h.trim().toUpperCase());
+      
+      const nipIdx = headers.findIndex(h => h.includes('NIP'));
+      const namaIdx = headers.findIndex(h => h.includes('NAMA'));
+      const qtyIdx = headers.findIndex(h => h.includes('QTY') || h.includes('QUANTITY'));
+      const totalValIdx = headers.findIndex(h => h.includes('TOTAL VALUE') || h.includes('TOTAL'));
+
+      const aggregatedMap = new Map();
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split('\t');
+        if (cols.length <= 1) continue;
+
+        const nip = nipIdx !== -1 ? cols[nipIdx]?.trim() : cols[0]?.trim();
+        const nama = namaIdx !== -1 ? cols[namaIdx]?.trim() : cols[1]?.trim();
+        
+        // Parse Qty (pastikan angka bersih dari koma/titik format mata uang jika ada)
+        let qtyVal = 0;
+        if (qtyIdx !== -1 && cols[qtyIdx]) {
+          qtyVal = parseFloat(cols[qtyIdx].replace(/[^0-9.-]+/g, "")) || 0;
+        }
+
+        // Parse Total Value
+        let totalVal = 0;
+        if (totalValIdx !== -1 && cols[totalValIdx]) {
+          totalVal = parseFloat(cols[totalValIdx].replace(/[^0-9.-]+/g, "")) || 0;
+        }
+
+        if (!nip) continue;
+
+        if (aggregatedMap.has(nip)) {
+          let existing = aggregatedMap.get(nip);
+          existing.qty += qtyVal;
+          existing.total_value += totalVal;
+        } else {
+          aggregatedMap.set(nip, {
+            nip: nip,
+            nama: nama || '-',
+            qty: qtyVal,
+            total_value: totalVal
+          });
+        }
+      }
+
+      parsedFurniproData = Array.from(aggregatedMap.values());
+      rowCountSpan.innerText = parsedFurniproData.length;
+      statsBadge.classList.remove('hidden');
+
+      if (parsedFurniproData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Tidak ada data valid yang dapat diproses.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      parsedFurniproData.forEach(item => {
+        html += `
+          <tr class="hover:bg-indigo-50/50 transition">
+            <td class="py-3 px-4 font-bold text-indigo-600">${item.nip}</td>
+            <td class="py-3 px-4 text-slate-900 font-sans font-medium">${item.nama}</td>
+            <td class="py-3 px-4 text-center font-bold text-slate-700">${item.qty.toLocaleString('id-ID')}</td>
+            <td class="py-3 px-4 text-right font-bold text-emerald-600">Rp ${item.total_value.toLocaleString('id-ID')}</td>
+          </tr>
+        `;
       });
-      html += `</tbody></table>`;
+      tbody.innerHTML = html;
+    });
 
-      previewContainer.innerHTML = html;
+    function clearFurnipro() {
+      document.getElementById('inputFurnipro').value = '';
+      parsedFurniproData = [];
+      document.getElementById('furniproPreviewBody').innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-sans">Belum ada data yang dipaste. Silakan paste data di atas.</td></tr>`;
+      document.getElementById('furniproStats').classList.add('hidden');
     }
 
-    async function uploadData(type) {
-      alert(`Fitur upload untuk ${type} terintegrasi. Pastikan struktur tabel Supabase sesuai.`);
+    async function submitFurniproToDatabase() {
+      if (parsedFurniproData.length === 0) {
+        alert('Belum ada data tersetor atau hasil preview kosong.');
+        return;
+      }
+
+      if (!supabaseClient) {
+        alert('Koneksi Supabase belum terkonfigurasi.');
+        return;
+      }
+
+      try {
+        // Hapus data lama di tabel daily_furnipro jika ingin merefresh data harian
+        await supabaseClient.from('daily_furnipro').delete().neq('nip', '0');
+
+        const { error } = await supabaseClient.from('daily_furnipro').insert(parsedFurniproData);
+        if (error) throw error;
+
+        alert('Data Daily Furnipro berhasil dikirim ke database Supabase!');
+        clearFurnipro();
+      } catch (err) {
+        console.error(err);
+        alert('Gagal mengirim data ke Supabase: ' + err.message);
+      }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
