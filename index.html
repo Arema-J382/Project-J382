@@ -92,6 +92,11 @@
               <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
               <span>MTD SALES</span>
             </a>
+            <!-- MENU 6: MTD FURNIPRO (BARU) -->
+            <a href="#" onclick="switchView('mtdFurnipro')" id="menuMtdFurnipro" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="briefcase" class="w-4 h-4 text-orange-400"></i>
+              <span>MTD FURNIPRO</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -201,6 +206,7 @@
     let departemenData = [];
     let furniproData = []; 
     let mtdSalesData = []; 
+    let mtdFurniproData = []; // State baru untuk MTD Furnipro
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -236,6 +242,7 @@
       const menuDepartemen = document.getElementById('menuDepartemen');
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
+      const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); // Menu Baru
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
@@ -254,6 +261,7 @@
       menuDepartemen.className = inactiveClass;
       if (menuFurnipro) menuFurnipro.className = inactiveClass;
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
+      if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
 
       if (view === 'target') {
         menuTarget.className = activeClass;
@@ -294,6 +302,15 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerText = "MTD Sales Sync";
         sectionTitle.innerText = "Data MTD Sales SMT";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdFurnipro') {
+        menuMtdFurnipro.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "MTD Furnipro Sync";
+        sectionTitle.innerText = "Data MTD Furnipro (Summed by NIP)";
 
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
@@ -351,7 +368,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel
+    // Penanganan Paste Excel & Preview Otomatis
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -413,6 +430,21 @@
               qty_fp: Number(qtyStr) || 0,
               total_fp: Number(totalValStr) || 0
             });
+          } else if (currentView === 'mtdFurnipro') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip_mtdfp: String(nip),
+              nama_mtdfp: nama || 'NONAME',
+              qty_mtdfp: Number(qtyStr) || 0,
+              total_mtdfp: Number(totalValStr) || 0
+            });
           }
         });
 
@@ -423,7 +455,6 @@
         } else if (currentView === 'departemen') {
           departemenData = parsed;
         } else if (currentView === 'furnipro') {
-          // PROSES PENJUMLAHAN (AGGREGATE) QTY_FP & TOTAL_FP BERDASARKAN NIP_FP
           let map = {};
           parsed.forEach(item => {
             if (map[item.nip_fp]) {
@@ -439,13 +470,30 @@
             }
           });
           furniproData = Object.values(map);
+        } else if (currentView === 'mtdFurnipro') {
+          // AGREGASI QTY & TOTAL BERDASARKAN NIP_MTDFP UNTUK TABEL mtd_fp
+          let map = {};
+          parsed.forEach(item => {
+            if (map[item.nip_mtdfp]) {
+              map[item.nip_mtdfp].qty_mtdfp += item.qty_mtdfp;
+              map[item.nip_mtdfp].total_mtdfp += item.total_mtdfp;
+            } else {
+              map[item.nip_mtdfp] = {
+                nip_mtdfp: item.nip_mtdfp,
+                nama_mtdfp: item.nama_mtdfp,
+                qty_mtdfp: item.qty_mtdfp,
+                total_mtdfp: item.total_mtdfp
+              };
+            }
+          });
+          mtdFurniproData = Object.values(map);
         }
 
         renderTableRows();
       }, 100);
     }
 
-    // Render Tabel Preview
+    // Render Tabel Preview & Header Otomatis Sesuai Contoh Gambar
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -456,6 +504,7 @@
       else if (currentView === 'mtdSales') activeData = mtdSalesData;
       else if (currentView === 'departemen') activeData = departemenData;
       else if (currentView === 'furnipro') activeData = furniproData;
+      else if (currentView === 'mtdFurnipro') activeData = mtdFurniproData;
 
       if (currentView === 'sales' || currentView === 'mtdSales') {
         thead.innerHTML = `
@@ -489,10 +538,21 @@
             <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE</th>
           </tr>
         `;
+      } else if (currentView === 'mtdFurnipro') {
+        // Header sesuai dengan skema tabel mtd_fp (nip_mtdfp, nama_mtdfp, qty_mtdfp, total_mtdfp)
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP (nip_mtdfp)</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA (nama_mtdfp)</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY (qty_mtdfp)</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE (total_mtdfp)</th>
+          </tr>
+        `;
       }
 
       if (activeData.length === 0) {
-        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro') ? 5 : 7;
+        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro' || currentView === 'mtdFurnipro') ? 5 : 7;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
@@ -532,6 +592,16 @@
               <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_fp.toLocaleString('id-ID')}</td>
             </tr>
           `;
+        } else if (currentView === 'mtdFurnipro') {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip_mtdfp}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama_mtdfp}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-blue-600">${item.qty_mtdfp.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_mtdfp.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
         }
       });
 
@@ -544,6 +614,7 @@
       else if (currentView === 'mtdSales') mtdSalesData = [];
       else if (currentView === 'departemen') departemenData = [];
       else if (currentView === 'furnipro') furniproData = [];
+      else if (currentView === 'mtdFurnipro') mtdFurniproData = [];
       
       document.getElementById('excelPasteInput').value = '';
       renderTableRows();
@@ -586,7 +657,7 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE (TERMASUK MTD FURNIPRO KE TABEL mtd_fp)
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -608,6 +679,10 @@
         activeData = furniproData;
         rpcName = 'replace_daily_furnipro'; 
         tableName = 'daily_furnipro';
+      } else if (currentView === 'mtdFurnipro') {
+        activeData = mtdFurniproData;
+        rpcName = 'replace_mtd_furnipro'; // Nama RPC Supabase untuk MTD Furnipro
+        tableName = 'mtd_fp';
       }
 
       if (activeData.length === 0) {
