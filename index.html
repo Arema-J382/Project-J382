@@ -38,7 +38,7 @@
           <input type="password" id="loginPassword" required placeholder="••••••••"
             class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-blue-600">
         </div>
-        <button type="submit" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
+        <button type="submit" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow-md">
           <i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin
         </button>
       </form>
@@ -48,13 +48,15 @@
   <!-- ================= ADMIN PANEL ================= -->
   <div id="adminPanel" class="flex h-screen w-full overflow-hidden hidden">
     <!-- SIDEBAR -->
-    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0">
-      <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2">
-        <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-400"></i>
+    <aside class="w-64 bg-slate-900 text-slate-200 flex flex-col shrink-0 shadow-lg">
+      <div class="p-5 font-bold text-lg text-white border-b border-slate-800 flex items-center gap-2.5">
+        <div class="bg-blue-600 p-1.5 rounded-lg text-white">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        </div>
         <span>ADMIN PANEL</span>
       </div>
       
-      <nav class="flex-1 p-4 space-y-2">
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
         <div>
           <button onclick="toggleMenu('submenuTv')" class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition text-left font-semibold text-slate-100">
             <div class="flex items-center gap-3">
@@ -64,25 +66,30 @@
             <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
           </button>
           
-          <div id="submenuTv" class="pl-6 mt-1 space-y-1">
+          <div id="submenuTv" class="pl-4 mt-1 space-y-1 border-l border-slate-800 ml-3">
             <!-- MENU 1: INPUT TARGET TODAY -->
-            <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
-              <i data-lucide="target" class="w-4 h-4"></i>
+            <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
               <span>INPUT TARGET TODAY</span>
             </a>
             <!-- MENU 2: DAILY SALES -->
-            <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition">
-              <i data-lucide="table" class="w-4 h-4"></i>
+            <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-400"></i>
               <span>DAILY SALES</span>
             </a>
             <!-- MENU 3: DAILY DEPARTEMEN -->
-            <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
-              <i data-lucide="table" class="w-4 h-4"></i>
+            <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="grid" class="w-4 h-4 text-purple-400"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
-            <!-- MENU 4: MTD SALES -->
-            <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition">
-              <i data-lucide="table" class="w-4 h-4"></i>
+            <!-- MENU 4: DAILY FURNIPRO (BARU) -->
+            <a href="#" onclick="switchView('furnipro')" id="menuFurnipro" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+              <span>DAILY FURNIPRO</span>
+            </a>
+            <!-- MENU 5: MTD SALES -->
+            <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
               <span>MTD SALES</span>
             </a>
           </div>
@@ -91,31 +98,31 @@
 
       <!-- TOMBOL LOGOUT -->
       <div class="p-4 border-t border-slate-800">
-        <button onclick="handleLogout()" class="w-full flex items-center gap-2 p-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 transition">
+        <button onclick="handleLogout()" class="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition">
           <i data-lucide="log-out" class="w-4 h-4"></i> Logout
         </button>
       </div>
     </aside>
 
     <!-- CONTENT AREA -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-gray-50">
       <header class="bg-white border-b p-4 flex justify-between items-center px-8 shadow-sm">
-        <h1 id="pageTitle" class="text-xl font-bold text-gray-800">INFORMA MOG MALANG (J382)</h1>
-        <span id="pageBadge" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">Sales Sync</span>
+        <h1 id="pageTitle" class="text-xl font-bold text-gray-800 tracking-wide">INFORMA MOG MALANG (J382)</h1>
+        <span id="pageBadge" class="text-xs font-semibold bg-blue-100 text-blue-700 px-3.5 py-1.5 rounded-full shadow-sm">Sales Sync</span>
       </header>
 
       <section class="p-6 flex-1 flex flex-col">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex-1 flex flex-col">
           
           <!-- NOTIFIKASI GLOBAL DI SEMUA MENU -->
-          <div id="statusMsg" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+          <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-sm font-medium shadow-sm"></div>
 
           <!-- TAMPILAN VIEW TARGET TODAY -->
           <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
-            <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50 shadow-sm space-y-5">
+            <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
                 <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                  <i data-lucide="target" class="w-5 h-5 text-blue-600"></i>
+                  <i data-lucide="target" class="w-5 h-5 text-emerald-600"></i>
                   Input Target Today
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">Masukkan nominal target penjualan untuk hari ini.</p>
@@ -128,25 +135,25 @@
                     class="w-full px-4 py-2.5 border rounded-lg text-base font-semibold focus:outline-none focus:border-blue-600 bg-white">
                 </div>
 
-                <button id="btnKirimTarget" onclick="kirimTargetKeSupabase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition">
+                <button id="btnKirimTarget" onclick="kirimTargetKeSupabase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition shadow-md">
                   <i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, DEPARTEMEN & MTD SALES) -->
+          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, DEPARTEMEN, FURNIPRO & MTD SALES) -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
                 <h2 id="sectionTitle" class="text-lg font-bold text-gray-800">Data Daily Sales SMT</h2>
-                <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b>Ctrl + V</b> untuk menempelkan data dari Excel.</p>
+                <p class="text-sm text-gray-500">Klik kotak di bawah, lalu tekan <b class="text-blue-600">Ctrl + V</b> untuk menempelkan data dari Excel.</p>
               </div>
               <div class="flex gap-2">
-                <button onclick="resetData()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border flex items-center gap-1">
-                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset / Kosongkan
+                <button onclick="resetData()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4 text-gray-500"></i> Reset / Kosongkan
                 </button>
-                <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition">
+                <button id="btnKirim" onclick="kirimKeSupabase()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg text-sm flex items-center gap-2 transition shadow-md">
                   <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris">0</span> Baris ke Database
                 </button>
               </div>
@@ -155,14 +162,14 @@
             <!-- KOTAK AREA PASTE -->
             <div class="mb-4">
               <textarea id="excelPasteInput" placeholder="Tekan Ctrl + V di sini untuk paste data Excel..." 
-                class="w-full h-24 p-3 border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono"
+                class="w-full h-24 p-3.5 border-2 border-dashed border-blue-400 bg-blue-50/40 rounded-xl focus:outline-none focus:border-blue-600 text-sm font-mono transition"
                 onpaste="handleExcelPaste(event)"></textarea>
             </div>
 
             <!-- TABEL UTAMA -->
-            <div class="flex-1 border border-gray-300 rounded-lg overflow-auto bg-white max-h-[450px] shadow-inner">
+            <div class="flex-1 border border-gray-300 rounded-xl overflow-auto bg-white max-h-[450px] shadow-inner">
               <table class="w-full border-collapse text-left text-sm">
-                <thead id="previewTableHead" class="bg-slate-800 text-white sticky top-0 z-10">
+                <thead id="previewTableHead" class="bg-slate-800 text-white sticky top-0 z-10 shadow-sm">
                   <!-- Header dinamis diatur lewat JavaScript -->
                 </thead>
                 <tbody id="previewTableBody" class="divide-y divide-gray-200">
@@ -188,10 +195,11 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // State Aplikasi untuk Keempat Menu
+    // State Aplikasi untuk Menu-menu
     let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
+    let furniproData = []; // State untuk Daily Furnipro
     let mtdSalesData = []; 
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -226,6 +234,7 @@
       const menuTarget = document.getElementById('menuTarget');
       const menuSales = document.getElementById('menuSales');
       const menuDepartemen = document.getElementById('menuDepartemen');
+      const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
@@ -238,12 +247,13 @@
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
 
-      const activeClass = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2 transition";
-      const inactiveClass = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 font-medium flex items-center gap-2 transition";
+      const activeClass = "block p-2.5 rounded-md bg-slate-800 text-sm text-blue-300 font-medium flex items-center gap-2.5 transition shadow-sm";
+      const inactiveClass = "block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition";
 
       menuTarget.className = inactiveClass;
       menuSales.className = inactiveClass;
       menuDepartemen.className = inactiveClass;
+      if (menuFurnipro) menuFurnipro.className = inactiveClass;
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
 
       if (view === 'target') {
@@ -262,20 +272,29 @@
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
-      } else if (view === 'mtdSales') {
-        menuMtdSales.className = activeClass;
-        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
-        pageBadge.innerText = "MTD Sales Sync";
-        sectionTitle.innerText = "Data MTD Sales SMT";
-
-        viewTargetSection.classList.add('hidden');
-        viewExcelSection.classList.remove('hidden');
-        renderTableRows();
       } else if (view === 'departemen') {
         menuDepartemen.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerText = "Departemen Sync";
         sectionTitle.innerText = "Data Daily Sales Departemen";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'furnipro') {
+        menuFurnipro.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "Furnipro Sync";
+        sectionTitle.innerText = "Data Daily Furnipro (Summed by NIP)";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdSales') {
+        menuMtdSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "MTD Sales Sync";
+        sectionTitle.innerText = "Data MTD Sales SMT";
 
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
@@ -380,6 +399,22 @@
               exclude_ppn: Number(excludePpn) || 0,
               include_ppn: Number(includePpn) || 0
             });
+          } else if (currentView === 'furnipro') {
+            // Sesuai gambar: NIP(0), NAMA(1), RECEIPT(2), SKU(3), DESC(4), QTY(5), KET 1(6), KET 2(7), TOTAL VALUE(8)
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip: String(nip),
+              nama: nama || 'NONAME',
+              qty: Number(qtyStr) || 0,
+              total_value: Number(totalValStr) || 0
+            });
           }
         });
 
@@ -389,6 +424,23 @@
           mtdSalesData = parsed;
         } else if (currentView === 'departemen') {
           departemenData = parsed;
+        } else if (currentView === 'furnipro') {
+          // PROSES PENJUMLAHAN (AGGREGATE) QTY & TOTAL VALUE BERDASARKAN NIP
+          let map = {};
+          parsed.forEach(item => {
+            if (map[item.nip]) {
+              map[item.nip].qty += item.qty;
+              map[item.nip].total_value += item.total_value;
+            } else {
+              map[item.nip] = {
+                nip: item.nip,
+                nama: item.nama,
+                qty: item.qty,
+                total_value: item.total_value
+              };
+            }
+          });
+          furniproData = Object.values(map);
         }
 
         renderTableRows();
@@ -405,6 +457,7 @@
       if (currentView === 'sales') activeData = salesData;
       else if (currentView === 'mtdSales') activeData = mtdSalesData;
       else if (currentView === 'departemen') activeData = departemenData;
+      else if (currentView === 'furnipro') activeData = furniproData;
 
       if (currentView === 'sales' || currentView === 'mtdSales') {
         thead.innerHTML = `
@@ -416,7 +469,7 @@
             <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
           </tr>
         `;
-      } else {
+      } else if (currentView === 'departemen') {
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
@@ -428,10 +481,21 @@
             <th class="border border-slate-600 px-4 py-2.5 text-right">INCLUDE PPN</th>
           </tr>
         `;
+      } else if (currentView === 'furnipro') {
+        // Header sesuai contoh gambar yang diupload untuk preview hasil penjumlahan
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE</th>
+          </tr>
+        `;
       }
 
       if (activeData.length === 0) {
-        const colSpan = (currentView === 'sales' || currentView === 'mtdSales') ? 5 : 7;
+        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro') ? 5 : 7;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
@@ -449,7 +513,7 @@
               <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
             </tr>
           `;
-        } else {
+        } else if (currentView === 'departemen') {
           html += `
             <tr class="hover:bg-blue-50/50 transition">
               <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
@@ -459,6 +523,16 @@
               <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total_qty.toLocaleString('id-ID')}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.exclude_ppn.toLocaleString('id-ID')}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.include_ppn.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        } else if (currentView === 'furnipro') {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-blue-600">${item.qty.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_value.toLocaleString('id-ID')}</td>
             </tr>
           `;
         }
@@ -475,6 +549,8 @@
         mtdSalesData = [];
       } else if (currentView === 'departemen') {
         departemenData = [];
+      } else if (currentView === 'furnipro') {
+        furniproData = [];
       }
       document.getElementById('excelPasteInput').value = '';
       renderTableRows();
@@ -506,18 +582,18 @@
       lucide.createIcons();
 
       if (error) {
-        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-sm font-medium bg-red-100 text-red-700 shadow-sm';
         statusMsg.innerText = 'Gagal menyimpan target: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
-        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-sm font-medium bg-green-100 text-green-700 shadow-sm';
         statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
         statusMsg.classList.remove('hidden');
         document.getElementById('inputTargetSales').value = '';
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Menu: Daily Sales, MTD Sales, & Daily Departemen)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Sales, MTD Sales, Departemen & Furnipro)
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -535,6 +611,10 @@
         activeData = departemenData;
         rpcName = 'replace_laporan_departemen';
         tableName = 'laporan_departemen';
+      } else if (currentView === 'furnipro') {
+        activeData = furniproData;
+        rpcName = 'replace_daily_furnipro'; // Nama RPC Supabase untuk Daily Furnipro
+        tableName = 'daily_furnipro';
       }
 
       if (activeData.length === 0) {
@@ -558,11 +638,11 @@
       lucide.createIcons();
 
       if (error) {
-        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-sm font-medium bg-red-100 text-red-700 shadow-sm';
         statusMsg.innerText = 'Gagal memproses data: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
-        statusMsg.className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-sm font-medium bg-green-100 text-green-700 shadow-sm';
         statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
         statusMsg.classList.remove('hidden'); 
       }
