@@ -82,7 +82,7 @@
               <i data-lucide="grid" class="w-4 h-4 text-purple-400"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
-            <!-- MENU 4: DAILY FURNIPRO (BARU) -->
+            <!-- MENU 4: DAILY FURNIPRO -->
             <a href="#" onclick="switchView('furnipro')" id="menuFurnipro" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
               <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
               <span>DAILY FURNIPRO</span>
@@ -142,7 +142,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, DEPARTEMEN, FURNIPRO & MTD SALES) -->
+          <!-- TAMPILAN VIEW TABLE EXCEL -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
@@ -195,11 +195,11 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // State Aplikasi untuk Menu-menu
+    // State Aplikasi
     let currentView = 'sales'; 
     let salesData = [];
     let departemenData = [];
-    let furniproData = []; // State untuk Daily Furnipro
+    let furniproData = []; 
     let mtdSalesData = []; 
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -243,7 +243,6 @@
       const viewTargetSection = document.getElementById('viewTargetSection');
       const viewExcelSection = document.getElementById('viewExcelSection');
 
-      // Sembunyikan pesan status saat berpindah menu
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
 
@@ -352,7 +351,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel untuk Berbagai Menu
+    // Penanganan Paste Excel
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -400,7 +399,6 @@
               include_ppn: Number(includePpn) || 0
             });
           } else if (currentView === 'furnipro') {
-            // Sesuai gambar: NIP(0), NAMA(1), RECEIPT(2), SKU(3), DESC(4), QTY(5), KET 1(6), KET 2(7), TOTAL VALUE(8)
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
@@ -410,10 +408,10 @@
             if (!nip || nip === '0') return;
 
             parsed.push({
-              nip: String(nip),
-              nama: nama || 'NONAME',
-              qty: Number(qtyStr) || 0,
-              total_value: Number(totalValStr) || 0
+              nip_fp: String(nip),
+              nama_fp: nama || 'NONAME',
+              qty_fp: Number(qtyStr) || 0,
+              total_fp: Number(totalValStr) || 0
             });
           }
         });
@@ -425,18 +423,18 @@
         } else if (currentView === 'departemen') {
           departemenData = parsed;
         } else if (currentView === 'furnipro') {
-          // PROSES PENJUMLAHAN (AGGREGATE) QTY & TOTAL VALUE BERDASARKAN NIP
+          // PROSES PENJUMLAHAN (AGGREGATE) QTY_FP & TOTAL_FP BERDASARKAN NIP_FP
           let map = {};
           parsed.forEach(item => {
-            if (map[item.nip]) {
-              map[item.nip].qty += item.qty;
-              map[item.nip].total_value += item.total_value;
+            if (map[item.nip_fp]) {
+              map[item.nip_fp].qty_fp += item.qty_fp;
+              map[item.nip_fp].total_fp += item.total_fp;
             } else {
-              map[item.nip] = {
-                nip: item.nip,
-                nama: item.nama,
-                qty: item.qty,
-                total_value: item.total_value
+              map[item.nip_fp] = {
+                nip_fp: item.nip_fp,
+                nama_fp: item.nama_fp,
+                qty_fp: item.qty_fp,
+                total_fp: item.total_fp
               };
             }
           });
@@ -447,7 +445,7 @@
       }, 100);
     }
 
-    // Render Tabel Berdasarkan Menu Aktif
+    // Render Tabel Preview
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -482,7 +480,6 @@
           </tr>
         `;
       } else if (currentView === 'furnipro') {
-        // Header sesuai contoh gambar yang diupload untuk preview hasil penjumlahan
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
@@ -529,10 +526,10 @@
           html += `
             <tr class="hover:bg-blue-50/50 transition">
               <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
-              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip}</td>
-              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
-              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-blue-600">${item.qty.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_value.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip_fp}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama_fp}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-blue-600">${item.qty_fp.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_fp.toLocaleString('id-ID')}</td>
             </tr>
           `;
         }
@@ -543,21 +540,17 @@
     }
 
     function resetData() {
-      if (currentView === 'sales') {
-        salesData = [];
-      } else if (currentView === 'mtdSales') {
-        mtdSalesData = [];
-      } else if (currentView === 'departemen') {
-        departemenData = [];
-      } else if (currentView === 'furnipro') {
-        furniproData = [];
-      }
+      if (currentView === 'sales') salesData = [];
+      else if (currentView === 'mtdSales') mtdSalesData = [];
+      else if (currentView === 'departemen') departemenData = [];
+      else if (currentView === 'furnipro') furniproData = [];
+      
       document.getElementById('excelPasteInput').value = '';
       renderTableRows();
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE (Menu 1: Input Target Today)
+    // FUNGSI KIRIM TARGET KE SUPABASE
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -593,7 +586,7 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Sales, MTD Sales, Departemen & Furnipro)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -613,7 +606,7 @@
         tableName = 'laporan_departemen';
       } else if (currentView === 'furnipro') {
         activeData = furniproData;
-        rpcName = 'replace_daily_furnipro'; // Nama RPC Supabase untuk Daily Furnipro
+        rpcName = 'replace_daily_furnipro'; 
         tableName = 'daily_furnipro';
       }
 
