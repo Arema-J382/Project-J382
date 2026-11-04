@@ -77,6 +77,11 @@
               <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-400"></i>
               <span>DAILY SALES</span>
             </a>
+            <!-- MENU BARU: DAILY COMSER (DIBAWAH DAILY SALES) -->
+            <a href="#" onclick="switchView('comser')" id="menuComser" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="headphones" class="w-4 h-4 text-rose-400"></i>
+              <span>DAILY COMSER</span>
+            </a>
             <!-- MENU 3: DAILY DEPARTEMEN -->
             <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
               <i data-lucide="grid" class="w-4 h-4 text-purple-400"></i>
@@ -92,7 +97,7 @@
               <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
               <span>MTD SALES</span>
             </a>
-            <!-- MENU 6: MTD FURNIPRO (BARU) -->
+            <!-- MENU 6: MTD FURNIPRO -->
             <a href="#" onclick="switchView('mtdFurnipro')" id="menuMtdFurnipro" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
               <i data-lucide="briefcase" class="w-4 h-4 text-orange-400"></i>
               <span>MTD FURNIPRO</span>
@@ -119,7 +124,7 @@
       <section class="p-6 flex-1 flex flex-col">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex-1 flex flex-col">
           
-          <!-- NOTIFIKASI GLOBAL DI SEMUA MENU -->
+          <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-sm font-medium shadow-sm"></div>
 
           <!-- TAMPILAN VIEW TARGET TODAY -->
@@ -203,6 +208,7 @@
     // State Aplikasi
     let currentView = 'sales'; 
     let salesData = [];
+    let comserData = []; // State untuk Daily Comser
     let departemenData = [];
     let furniproData = []; 
     let mtdSalesData = []; 
@@ -239,6 +245,7 @@
       currentView = view;
       const menuTarget = document.getElementById('menuTarget');
       const menuSales = document.getElementById('menuSales');
+      const menuComser = document.getElementById('menuComser');
       const menuDepartemen = document.getElementById('menuDepartemen');
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
@@ -258,6 +265,7 @@
 
       menuTarget.className = inactiveClass;
       menuSales.className = inactiveClass;
+      if (menuComser) menuComser.className = inactiveClass;
       menuDepartemen.className = inactiveClass;
       if (menuFurnipro) menuFurnipro.className = inactiveClass;
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
@@ -275,6 +283,15 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerText = "Sales Sync";
         sectionTitle.innerText = "Data Daily Sales SMT";
+
+        viewTargetSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'comser') {
+        menuComser.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerText = "Comser Sync";
+        sectionTitle.innerText = "Data Daily Comser (Summed by NIP)";
 
         viewTargetSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
@@ -396,6 +413,21 @@
               dept: dept || '-',
               total: Number(totalStr) || 0
             });
+          } else if (currentView === 'comser') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip_cnc: String(nip),
+              nama_cnc: nama || 'NONAME',
+              qty_cnc: Number(qtyStr) || 0,
+              total_cnc: Number(totalValStr) || 0
+            });
           } else if (currentView === 'departemen') {
             let kodeDept = cols[0] ? cols[0].trim() : '';
             let namaDept = cols[1] ? cols[1].trim() : '';
@@ -452,6 +484,22 @@
           salesData = parsed;
         } else if (currentView === 'mtdSales') {
           mtdSalesData = parsed;
+        } else if (currentView === 'comser') {
+          let map = {};
+          parsed.forEach(item => {
+            if (map[item.nip_cnc]) {
+              map[item.nip_cnc].qty_cnc += item.qty_cnc;
+              map[item.nip_cnc].total_cnc += item.total_cnc;
+            } else {
+              map[item.nip_cnc] = {
+                nip_cnc: item.nip_cnc,
+                nama_cnc: item.nama_cnc,
+                qty_cnc: item.qty_cnc,
+                total_cnc: item.total_cnc
+              };
+            }
+          });
+          comserData = Object.values(map);
         } else if (currentView === 'departemen') {
           departemenData = parsed;
         } else if (currentView === 'furnipro') {
@@ -501,6 +549,7 @@
       let activeData = salesData;
       if (currentView === 'sales') activeData = salesData;
       else if (currentView === 'mtdSales') activeData = mtdSalesData;
+      else if (currentView === 'comser') activeData = comserData;
       else if (currentView === 'departemen') activeData = departemenData;
       else if (currentView === 'furnipro') activeData = furniproData;
       else if (currentView === 'mtdFurnipro') activeData = mtdFurniproData;
@@ -513,6 +562,16 @@
             <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
             <th class="border border-slate-600 px-4 py-2.5 w-32">DEPT</th>
             <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL</th>
+          </tr>
+        `;
+      } else if (currentView === 'comser') {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP (nip_cnc)</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA (nama_cnc)</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY (qty_cnc)</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE (total_cnc)</th>
           </tr>
         `;
       } else if (currentView === 'departemen') {
@@ -550,7 +609,7 @@
       }
 
       if (activeData.length === 0) {
-        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro' || currentView === 'mtdFurnipro') ? 5 : 7;
+        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro' || currentView === 'mtdFurnipro' || currentView === 'comser') ? 5 : 7;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-12 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
@@ -566,6 +625,16 @@
               <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama}</td>
               <td class="border border-gray-300 px-4 py-2 text-center font-semibold text-blue-600">${item.dept}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono">${item.total.toLocaleString('id-ID')}</td>
+            </tr>
+          `;
+        } else if (currentView === 'comser') {
+          html += `
+            <tr class="hover:bg-blue-50/50 transition">
+              <td class="border border-gray-300 px-4 py-2 text-center text-gray-500 bg-gray-50">${idx + 1}</td>
+              <td class="border border-gray-300 px-4 py-2 font-mono">${item.nip_cnc}</td>
+              <td class="border border-gray-300 px-4 py-2 font-medium text-gray-800">${item.nama_cnc}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-blue-600">${item.qty_cnc.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono font-semibold text-green-600">${item.total_cnc.toLocaleString('id-ID')}</td>
             </tr>
           `;
         } else if (currentView === 'departemen') {
@@ -610,6 +679,7 @@
     function resetData() {
       if (currentView === 'sales') salesData = [];
       else if (currentView === 'mtdSales') mtdSalesData = [];
+      else if (currentView === 'comser') comserData = [];
       else if (currentView === 'departemen') departemenData = [];
       else if (currentView === 'furnipro') furniproData = [];
       else if (currentView === 'mtdFurnipro') mtdFurniproData = [];
@@ -669,6 +739,10 @@
         activeData = mtdSalesData;
         rpcName = 'replace_mtd_sales'; 
         tableName = 'mtd_sales';
+      } else if (currentView === 'comser') {
+        activeData = comserData;
+        rpcName = 'replace_daily_comser'; 
+        tableName = 'daily_comser';
       } else if (currentView === 'departemen') {
         activeData = departemenData;
         rpcName = 'replace_laporan_departemen';
@@ -679,7 +753,7 @@
         tableName = 'daily_furnipro';
       } else if (currentView === 'mtdFurnipro') {
         activeData = mtdFurniproData;
-        rpcName = 'replace_mtd_fp'; // DISESUAIKAN DENGAN NAMA FUNGSI RPC DI SUPABASE ANDA
+        rpcName = 'replace_mtd_fp'; 
         tableName = 'mtd_fp';
       }
 
