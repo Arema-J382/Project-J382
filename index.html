@@ -77,11 +77,6 @@
               <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-400"></i>
               <span>DAILY SALES</span>
             </a>
-            <!-- MENU BARU: DAILY COMSER (DIBAWAH DAILY SALES) -->
-            <a href="#" onclick="switchView('comser')" id="menuComser" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
-              <i data-lucide="headphones" class="w-4 h-4 text-rose-400"></i>
-              <span>DAILY COMSER</span>
-            </a>
             <!-- MENU 3: DAILY DEPARTEMEN -->
             <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
               <i data-lucide="grid" class="w-4 h-4 text-purple-400"></i>
@@ -91,6 +86,11 @@
             <a href="#" onclick="switchView('furnipro')" id="menuFurnipro" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
               <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
               <span>DAILY FURNIPRO</span>
+            </a>
+            <!-- MENU BARU: DAILY COMSER (DIBAWAH DAILY FURNIPRO) -->
+            <a href="#" onclick="switchView('comser')" id="menuComser" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
+              <i data-lucide="headphones" class="w-4 h-4 text-rose-400"></i>
+              <span>DAILY COMSER</span>
             </a>
             <!-- MENU 5: MTD SALES -->
             <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white font-medium flex items-center gap-2.5 transition">
@@ -568,10 +568,10 @@
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
-            <th class="border border-slate-600 px-4 py-2.5">NIP (nip_cnc)</th>
-            <th class="border border-slate-600 px-4 py-2.5">NAMA (nama_cnc)</th>
-            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY (qty_cnc)</th>
-            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE (total_cnc)</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE</th>
           </tr>
         `;
       } else if (currentView === 'departemen') {
@@ -592,7 +592,7 @@
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
             <th class="border border-slate-600 px-4 py-2.5">NIP</th>
             <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
-            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL QTY</th>
             <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE</th>
           </tr>
         `;
@@ -600,10 +600,10 @@
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-600 px-4 py-2.5 w-16 text-center">NO</th>
-            <th class="border border-slate-600 px-4 py-2.5">NIP (nip_mtdfp)</th>
-            <th class="border border-slate-600 px-4 py-2.5">NAMA (nama_mtdfp)</th>
-            <th class="border border-slate-600 px-4 py-2.5 text-right">QTY (qty_mtdfp)</th>
-            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE (total_mtdfp)</th>
+            <th class="border border-slate-600 px-4 py-2.5">NIP</th>
+            <th class="border border-slate-600 px-4 py-2.5">NAMA</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL QTY</th>
+            <th class="border border-slate-600 px-4 py-2.5 text-right">TOTAL VALUE</th>
           </tr>
         `;
       }
