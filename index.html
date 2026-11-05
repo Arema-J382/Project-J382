@@ -112,7 +112,7 @@
             </a>
             <!-- MENU BARU: INPUT RUNNING TEXT (DIBAWAH MTD COMSER) -->
             <a href="#" onclick="switchView('runningText')" id="menuRunningText" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
-              <i data-lucide="message-square" class="w-4 h-4 text-indigo-400"></i>
+              <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
           </div>
@@ -170,26 +170,26 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW INPUT RUNNING TEXT -->
+          <!-- TAMPILAN VIEW INPUT RUNNING TEXT (BARU) -->
           <div id="viewRunningTextSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
                 <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                  <i data-lucide="message-square" class="w-5 h-5 text-indigo-600"></i>
+                  <i data-lucide="megaphone" class="w-5 h-5 text-pink-600"></i>
                   Input Running Text
                 </h2>
-                <p class="text-xs text-gray-500 mt-1">Masukkan teks yang akan dikirim ke TV DASHBOARD.</p>
+                <p class="text-xs text-gray-500 mt-1">Masukkan teks atau angka untuk pengumuman berjalan (running text) pada TV Dashboard.</p>
               </div>
 
               <div class="space-y-4">
                 <div>
-                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">RUNNING TEXT CONTENT</label>
-                  <textarea id="inputRunningText" rows="4" placeholder="Ketik teks atau angka di sini..."
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 bg-white transition"></textarea>
+                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">TEKS / ANGKA RUNNING TEXT</label>
+                  <textarea id="inputRunningTextValue" rows="4" placeholder="Contoh: Selamat Datang di Informa MOG Malang - Promo Spesial Diskon 50%!"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition resize-none"></textarea>
                 </div>
 
-                <button id="btnKirimRunningText" onclick="kirimRunningTextKeSupabase()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/20">
-                  <i data-lucide="send" class="w-4 h-4"></i> Kirim Running Text
+                <button id="btnKirimRunningText" onclick="kirimRunningTextKeSupabase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/20">
+                  <i data-lucide="send" class="w-4 h-4"></i> Kirim Running Text ke Database
                 </button>
               </div>
             </div>
@@ -247,7 +247,7 @@
   <script>
     // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54dktmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -329,15 +329,15 @@
         pageBadge.innerHTML = '<i data-lucide="target" class="w-3.5 h-3.5 text-blue-600"></i> Target Sync';
         
         viewTargetSection.classList.remove('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.add('hidden');
       } else if (view === 'runningText') {
-        if (menuRunningText) menuRunningText.className = activeClass;
+        menuRunningText.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
-        pageBadge.innerHTML = '<i data-lucide="message-square" class="w-3.5 h-3.5 text-blue-600"></i> Running Text Sync';
+        pageBadge.innerHTML = '<i data-lucide="megaphone" class="w-3.5 h-3.5 text-pink-600"></i> Running Text Sync';
         
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.remove('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.remove('hidden');
         viewExcelSection.classList.add('hidden');
       } else if (view === 'sales') {
         menuSales.className = activeClass;
@@ -345,8 +345,8 @@
         pageBadge.innerHTML = '<i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-blue-600"></i> Sales Sync';
         sectionTitle.innerText = "Data Daily Sales SMT";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'comser') {
@@ -355,8 +355,8 @@
         pageBadge.innerHTML = '<i data-lucide="headphones" class="w-3.5 h-3.5 text-blue-600"></i> Comser Sync';
         sectionTitle.innerText = "Data Daily Comser (Summed by NIP)";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdComser') {
@@ -365,8 +365,8 @@
         pageBadge.innerHTML = '<i data-lucide="pie-chart" class="w-3.5 h-3.5 text-blue-600"></i> MTD Comser Sync';
         sectionTitle.innerText = "Data MTD Comser (Summed by NIP)";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'departemen') {
@@ -375,8 +375,8 @@
         pageBadge.innerHTML = '<i data-lucide="grid" class="w-3.5 h-3.5 text-blue-600"></i> Departemen Sync';
         sectionTitle.innerText = "Data Daily Sales Departemen";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'furnipro') {
@@ -385,8 +385,8 @@
         pageBadge.innerHTML = '<i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i> Furnipro Sync';
         sectionTitle.innerText = "Data Daily Furnipro (Summed by NIP)";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdSales') {
@@ -395,8 +395,8 @@
         pageBadge.innerHTML = '<i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-blue-600"></i> MTD Sales Sync';
         sectionTitle.innerText = "Data MTD Sales SMT";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdFurnipro') {
@@ -405,8 +405,8 @@
         pageBadge.innerHTML = '<i data-lucide="briefcase" class="w-3.5 h-3.5 text-blue-600"></i> MTD Furnipro Sync';
         sectionTitle.innerText = "Data MTD Furnipro (Summed by NIP)";
 
-        viewTargetSection.classList.add('hidden');
-        viewRunningTextSection.classList.add('hidden');
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       }
@@ -648,7 +648,7 @@
       }, 100);
     }
 
-    // Render Tabel Preview & Header Otomatis
+    // Render Tabel Preview & Header Otomatis Sesuai Contoh Gambar
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -835,14 +835,14 @@
       }
     }
 
-    // FUNGSI KIRIM RUNNING TEXT KE SUPABASE
+    // FUNGSI KIRIM RUNNING TEXT KE SUPABASE (BARU)
     async function kirimRunningTextKeSupabase() {
-      const textVal = document.getElementById('inputRunningText').value.trim();
+      const textVal = document.getElementById('inputRunningTextValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
       const btnKirimRunningText = document.getElementById('btnKirimRunningText');
 
       if (!textVal) {
-        alert('Masukkan teks atau angka terlebih dahulu!');
+        alert('Running text tidak boleh kosong!');
         return;
       }
 
@@ -850,24 +850,23 @@
       btnKirimRunningText.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
       lucide.createIcons();
 
-      // Menyimpan data ke tabel "running_text" pada kolom "run_text"
-      const { error } = await supabaseClient
-        .from('running_text')
-        .insert([{ run_text: textVal }]);
+      const { error } = await supabaseClient.rpc('replace_running_text', {
+        new_data: [{ run_text: textVal }]
+      });
 
       btnKirimRunningText.disabled = false;
-      btnKirimRunningText.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Running Text';
+      btnKirimRunningText.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Running Text ke Database';
       lucide.createIcons();
 
       if (error) {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
-        statusMsg.innerText = 'Gagal mengirim running text: ' + error.message;
+        statusMsg.innerText = 'Gagal menyimpan running text: ' + error.message;
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = 'Sukses! Running text berhasil dikirim ke tabel running_text.';
+        statusMsg.innerText = 'Sukses! Running text berhasil diperbarui ke database tabel running_text.';
         statusMsg.classList.remove('hidden');
-        document.getElementById('inputRunningText').value = '';
+        document.getElementById('inputRunningTextValue').value = '';
       }
     }
 
