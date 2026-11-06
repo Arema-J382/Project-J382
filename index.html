@@ -467,10 +467,10 @@
                   </span>
                 </div>
 
-                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA AGAR IDENTIK DENGAN DOWNLOAD) -->
+                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA 420x420) -->
                 <div id="twibbonPreviewBox" class="relative bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white shrink-0" style="width: 420px; height: 420px;">
                   
-                  <!-- LAPISAN 1: FOTO SALES (MENGGUNAKAN BACKGROUND CSS AGAR TIDAK GEPENG) -->
+                  <!-- LAPISAN 1: FOTO SALES (MENGGUNAKAN BACKGROUND CSS COVER AGAR TIDAK GEPENG) -->
                   <div id="previewPhotoContainer" class="absolute inset-0 overflow-hidden bg-slate-200">
                     <div id="previewPhotoBg" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     <div id="photoPlaceholderText" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-medium text-center p-4">
@@ -782,7 +782,7 @@
         placeholderText.classList.remove('hidden');
       }
 
-      // Foto Sales Transform (Menggunakan Background Size Cover agar tidak gepeng)
+      // Foto Sales Transform
       const photoScale = document.getElementById('photoScale').value;
       const photoX = document.getElementById('photoX').value;
       const photoY = document.getElementById('photoY').value;
@@ -887,7 +887,7 @@
       }
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD (SAMA PERSIS DENGAN PREVIEW)
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -905,15 +905,13 @@
       lucide.createIcons();
 
       try {
-        // Render kotak Live Preview persis 1:1 tanpa pergeseran tata letak
         const canvas = await html2canvas(previewBox, {
-          scale: 4, // Skala 4x untuk kualitas tajam maksimal Full HD
+          scale: 4,
           useCORS: true,
           allowTaint: false,
           backgroundColor: '#ffffff'
         });
 
-        // Konversi ke format JPG dengan kualitas tinggi (0.95)
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
         
         const twibbonType = document.getElementById('twibbonType').value;
@@ -926,7 +924,6 @@
         link.click();
         document.body.removeChild(link);
 
-        // Notifikasi Sukses
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
         statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Twibbon berhasil didownload dalam format JPG Full HD.`;
@@ -944,7 +941,7 @@
       }
     }
 
-    // FUNGSI SAVE EDITING UNTUK MENYIMPAN SETTINGAN TWIBBON
+    // FUNGSI SAVE EDITING
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
@@ -989,6 +986,7 @@
       alert(`Settingan Twibbon (${twibbonType.toUpperCase()}) Berhasil Disimpan!`);
     }
 
+    // FUNGSI LOAD / DEFAULT SETTINGS (Tersusun berurutan dari atas ke bawah di tengah jika belum disave)
     function loadTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
@@ -1030,34 +1028,35 @@
           console.error(e);
         }
       } else {
+        // DEFAULT BERURUTAN DARI ATAS KE BAWAH DI TENGAH KOTAK PREVIEW (TIDAK MENUMPUK)
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
 
         document.getElementById('sizeNama').value = 16;
         document.getElementById('xNama').value = 0;
-        document.getElementById('yNama').value = 40;
+        document.getElementById('yNama').value = 30; // Posisi atas
         document.getElementById('colorNama').value = '#000000';
         document.getElementById('bgColorNama').value = '#ffffff';
         document.getElementById('transparentNama').checked = true;
 
         document.getElementById('sizeSales').value = 14;
         document.getElementById('xSales').value = 0;
-        document.getElementById('ySales').value = 65;
+        document.getElementById('ySales').value = 65; // Posisi bawah Nama
         document.getElementById('colorSales').value = '#ffffff';
         document.getElementById('bgColorSales').value = '#2563eb';
         document.getElementById('transparentSales').checked = false;
 
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
-        document.getElementById('yQty').value = 90;
+        document.getElementById('yQty').value = 100; // Posisi bawah Sales
         document.getElementById('colorQty').value = '#ffffff';
         document.getElementById('bgColorQty').value = '#059669';
         document.getElementById('transparentQty').checked = false;
 
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
-        document.getElementById('yComser').value = 115;
+        document.getElementById('yComser').value = 135; // Posisi bawah Qty
         document.getElementById('colorComser').value = '#ffffff';
         document.getElementById('bgColorComser').value = '#dc2626';
         document.getElementById('transparentComser').checked = false;
