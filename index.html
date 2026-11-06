@@ -484,23 +484,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (PERFECT MIDDLE ALIGN STABIL HTML2CANVAS) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (100% MIDDLE ALIGNMENT DENGAN PADDING SIMETRIS) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
                     </div>
                   </div>
 
@@ -799,7 +799,7 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background dengan Middle Align Sempurna
+      // Render Masing-Masing Teks & Background dengan 100% Middle Align Sempurna (Inline-Block + Equal Padding)
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
@@ -819,7 +819,7 @@
         const bgNama = document.getElementById('bgColorNama').value;
         if (!isTransNama) {
           inner.style.backgroundColor = bgNama;
-          inner.style.padding = '4px 12px';
+          inner.style.padding = '6px 14px';
           inner.style.borderRadius = '6px';
         } else {
           inner.style.backgroundColor = 'transparent';
@@ -845,7 +845,7 @@
         const bgSales = document.getElementById('bgColorSales').value;
         if (!isTransSales) {
           inner.style.backgroundColor = bgSales;
-          inner.style.padding = '4px 12px';
+          inner.style.padding = '6px 14px';
           inner.style.borderRadius = '6px';
         } else {
           inner.style.backgroundColor = 'transparent';
@@ -871,7 +871,7 @@
         const bgQty = document.getElementById('bgColorQty').value;
         if (!isTransQty) {
           inner.style.backgroundColor = bgQty;
-          inner.style.padding = '4px 12px';
+          inner.style.padding = '6px 14px';
           inner.style.borderRadius = '6px';
         } else {
           inner.style.backgroundColor = 'transparent';
@@ -897,7 +897,7 @@
         const bgComser = document.getElementById('bgColorComser').value;
         if (!isTransComser) {
           inner.style.backgroundColor = bgComser;
-          inner.style.padding = '4px 12px';
+          inner.style.padding = '6px 14px';
           inner.style.borderRadius = '6px';
         } else {
           inner.style.backgroundColor = 'transparent';
@@ -1072,65 +1072,33 @@
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
 
-        if (twibbonType === 'sales') {
-          // DEFAULT UNTUK TWIBBON SALES
-          document.getElementById('sizeNama').value = 18;
-          document.getElementById('xNama').value = 0;
-          document.getElementById('yNama').value = 240;
-          document.getElementById('colorNama').value = '#000000';
-          document.getElementById('bgColorNama').value = '#ffffff';
-          document.getElementById('transparentNama').checked = true;
+        document.getElementById('sizeNama').value = 18;
+        document.getElementById('xNama').value = 0;
+        document.getElementById('yNama').value = 240;
+        document.getElementById('colorNama').value = '#000000';
+        document.getElementById('bgColorNama').value = '#ffffff';
+        document.getElementById('transparentNama').checked = true;
 
-          document.getElementById('sizeSales').value = 14;
-          document.getElementById('xSales').value = 0;
-          document.getElementById('ySales').value = 280;
-          document.getElementById('colorSales').value = '#ffffff';
-          document.getElementById('bgColorSales').value = '#2563eb';
-          document.getElementById('transparentSales').checked = false;
+        document.getElementById('sizeSales').value = 14;
+        document.getElementById('xSales').value = 0;
+        document.getElementById('ySales').value = 280;
+        document.getElementById('colorSales').value = '#ffffff';
+        document.getElementById('bgColorSales').value = '#2563eb';
+        document.getElementById('transparentSales').checked = false;
 
-          document.getElementById('sizeQty').value = 14;
-          document.getElementById('xQty').value = 0;
-          document.getElementById('yQty').value = 315;
-          document.getElementById('colorQty').value = '#ffffff';
-          document.getElementById('bgColorQty').value = '#059669';
-          document.getElementById('transparentQty').checked = false;
+        document.getElementById('sizeQty').value = 14;
+        document.getElementById('xQty').value = 0;
+        document.getElementById('yQty').value = 315;
+        document.getElementById('colorQty').value = '#ffffff';
+        document.getElementById('bgColorQty').value = '#059669';
+        document.getElementById('transparentQty').checked = false;
 
-          document.getElementById('sizeComser').value = 14;
-          document.getElementById('xComser').value = 0;
-          document.getElementById('yComser').value = 350;
-          document.getElementById('colorComser').value = '#ffffff';
-          document.getElementById('bgColorComser').value = '#dc2626';
-          document.getElementById('transparentComser').checked = false;
-        } else {
-          // DEFAULT UNTUK SALES HEBAT, TANGGUH, BOOSTER
-          document.getElementById('sizeNama').value = 18;
-          document.getElementById('xNama').value = 0;
-          document.getElementById('yNama').value = 240;
-          document.getElementById('colorNama').value = '#000000';
-          document.getElementById('bgColorNama').value = '#ffffff';
-          document.getElementById('transparentNama').checked = true;
-
-          document.getElementById('sizeSales').value = 14;
-          document.getElementById('xSales').value = 0;
-          document.getElementById('ySales').value = 280;
-          document.getElementById('colorSales').value = '#ffffff';
-          document.getElementById('bgColorSales').value = '#2563eb';
-          document.getElementById('transparentSales').checked = false;
-
-          document.getElementById('sizeQty').value = 14;
-          document.getElementById('xQty').value = 0;
-          document.getElementById('yQty').value = 315;
-          document.getElementById('colorQty').value = '#ffffff';
-          document.getElementById('bgColorQty').value = '#059669';
-          document.getElementById('transparentQty').checked = false;
-
-          document.getElementById('sizeComser').value = 14;
-          document.getElementById('xComser').value = 0;
-          document.getElementById('yComser').value = 350;
-          document.getElementById('colorComser').value = '#ffffff';
-          document.getElementById('bgColorComser').value = '#dc2626';
-          document.getElementById('transparentComser').checked = false;
-        }
+        document.getElementById('sizeComser').value = 14;
+        document.getElementById('xComser').value = 0;
+        document.getElementById('yComser').value = 350;
+        document.getElementById('colorComser').value = '#ffffff';
+        document.getElementById('bgColorComser').value = '#dc2626';
+        document.getElementById('transparentComser').checked = false;
       }
     }
 
