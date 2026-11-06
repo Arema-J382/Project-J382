@@ -484,16 +484,24 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (STRUKTUR WRAPPER STABIL HTML2CANVAS) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
-                    <div id="previewNamaText" class="absolute font-extrabold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none; left: 50%;"></div>
+                    <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap;"></div>
+                    </div>
                     <!-- Teks Sales -->
-                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; left: 50%;"></div>
+                    <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                    </div>
                     <!-- Teks Qty -->
-                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; left: 50%;"></div>
+                    <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                    </div>
                     <!-- Teks Comser -->
-                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; left: 50%;"></div>
+                    <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                    </div>
                   </div>
 
                 </div>
@@ -791,7 +799,7 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background
+      // Render Masing-Masing Teks & Background via Wrapper & Inner Container Stabil
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
@@ -799,22 +807,24 @@
 
       // 1. Nama Karyawan
       if (nama && !nama.includes('tidak ditemukan') && !nama.includes('Error')) {
-        elNama.innerText = nama;
-        elNama.style.fontSize = document.getElementById('sizeNama').value + 'px';
-        elNama.style.color = document.getElementById('colorNama').value;
         elNama.style.top = document.getElementById('yNama').value + 'px';
         elNama.style.transform = `translateX(calc(-50% + ${document.getElementById('xNama').value}px))`;
+        
+        const inner = elNama.querySelector('.inner-text');
+        inner.innerText = nama;
+        inner.style.fontSize = document.getElementById('sizeNama').value + 'px';
+        inner.style.color = document.getElementById('colorNama').value;
         
         const isTransNama = document.getElementById('transparentNama').checked;
         const bgNama = document.getElementById('bgColorNama').value;
         if (!isTransNama) {
-          elNama.style.backgroundColor = bgNama;
-          elNama.style.padding = '4px 12px';
-          elNama.style.borderRadius = '6px';
+          inner.style.backgroundColor = bgNama;
+          inner.style.padding = '4px 12px';
+          inner.style.borderRadius = '6px';
         } else {
-          elNama.style.backgroundColor = 'transparent';
-          elNama.style.padding = '0';
-          elNama.style.borderRadius = '0';
+          inner.style.backgroundColor = 'transparent';
+          inner.style.padding = '0';
+          inner.style.borderRadius = '0';
         }
         elNama.style.display = 'block';
       } else {
@@ -823,22 +833,24 @@
 
       // 2. Value Sales
       if (valSales) {
-        elSales.innerText = valSales;
-        elSales.style.fontSize = document.getElementById('sizeSales').value + 'px';
-        elSales.style.color = document.getElementById('colorSales').value;
         elSales.style.top = document.getElementById('ySales').value + 'px';
         elSales.style.transform = `translateX(calc(-50% + ${document.getElementById('xSales').value}px))`;
+        
+        const inner = elSales.querySelector('.inner-text');
+        inner.innerText = valSales;
+        inner.style.fontSize = document.getElementById('sizeSales').value + 'px';
+        inner.style.color = document.getElementById('colorSales').value;
         
         const isTransSales = document.getElementById('transparentSales').checked;
         const bgSales = document.getElementById('bgColorSales').value;
         if (!isTransSales) {
-          elSales.style.backgroundColor = bgSales;
-          elSales.style.padding = '4px 12px';
-          elSales.style.borderRadius = '6px';
+          inner.style.backgroundColor = bgSales;
+          inner.style.padding = '4px 12px';
+          inner.style.borderRadius = '6px';
         } else {
-          elSales.style.backgroundColor = 'transparent';
-          elSales.style.padding = '0';
-          elSales.style.borderRadius = '0';
+          inner.style.backgroundColor = 'transparent';
+          inner.style.padding = '0';
+          inner.style.borderRadius = '0';
         }
         elSales.style.display = 'block';
       } else {
@@ -847,22 +859,24 @@
 
       // 3. Qty FP (+ Prefix "FP : ")
       if (qtyFp) {
-        elQty.innerText = 'FP : ' + qtyFp;
-        elQty.style.fontSize = document.getElementById('sizeQty').value + 'px';
-        elQty.style.color = document.getElementById('colorQty').value;
         elQty.style.top = document.getElementById('yQty').value + 'px';
         elQty.style.transform = `translateX(calc(-50% + ${document.getElementById('xQty').value}px))`;
+        
+        const inner = elQty.querySelector('.inner-text');
+        inner.innerText = 'FP : ' + qtyFp;
+        inner.style.fontSize = document.getElementById('sizeQty').value + 'px';
+        inner.style.color = document.getElementById('colorQty').value;
         
         const isTransQty = document.getElementById('transparentQty').checked;
         const bgQty = document.getElementById('bgColorQty').value;
         if (!isTransQty) {
-          elQty.style.backgroundColor = bgQty;
-          elQty.style.padding = '4px 12px';
-          elQty.style.borderRadius = '6px';
+          inner.style.backgroundColor = bgQty;
+          inner.style.padding = '4px 12px';
+          inner.style.borderRadius = '6px';
         } else {
-          elQty.style.backgroundColor = 'transparent';
-          elQty.style.padding = '0';
-          elQty.style.borderRadius = '0';
+          inner.style.backgroundColor = 'transparent';
+          inner.style.padding = '0';
+          inner.style.borderRadius = '0';
         }
         elQty.style.display = 'block';
       } else {
@@ -871,22 +885,24 @@
 
       // 4. Value Comser FP (+ Prefix "COMSER : ")
       if (valComser) {
-        elComser.innerText = 'COMSER : ' + valComser;
-        elComser.style.fontSize = document.getElementById('sizeComser').value + 'px';
-        elComser.style.color = document.getElementById('colorComser').value;
         elComser.style.top = document.getElementById('yComser').value + 'px';
         elComser.style.transform = `translateX(calc(-50% + ${document.getElementById('xComser').value}px))`;
+        
+        const inner = elComser.querySelector('.inner-text');
+        inner.innerText = 'COMSER : ' + valComser;
+        inner.style.fontSize = document.getElementById('sizeComser').value + 'px';
+        inner.style.color = document.getElementById('colorComser').value;
         
         const isTransComser = document.getElementById('transparentComser').checked;
         const bgComser = document.getElementById('bgColorComser').value;
         if (!isTransComser) {
-          elComser.style.backgroundColor = bgComser;
-          elComser.style.padding = '4px 12px';
-          elComser.style.borderRadius = '6px';
+          inner.style.backgroundColor = bgComser;
+          inner.style.padding = '4px 12px';
+          inner.style.borderRadius = '6px';
         } else {
-          elComser.style.backgroundColor = 'transparent';
-          elComser.style.padding = '0';
-          elComser.style.borderRadius = '0';
+          inner.style.backgroundColor = 'transparent';
+          inner.style.padding = '0';
+          inner.style.borderRadius = '0';
         }
         elComser.style.display = 'block';
       } else {
@@ -1057,7 +1073,7 @@
         document.getElementById('photoY').value = 0;
 
         if (twibbonType === 'sales') {
-          // DEFAULT UNTUK TWIBBON SALES (DISAMAKAN POSISI KOTAKNYA SEPERTI TANGGUH/HEBAT/BOOSTER)
+          // DEFAULT UNTUK TWIBBON SALES
           document.getElementById('sizeNama').value = 18;
           document.getElementById('xNama').value = 0;
           document.getElementById('yNama').value = 240;
