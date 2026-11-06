@@ -110,6 +110,11 @@
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
+            <!-- MENU BARU: TWIBBON SALES -->
+            <a href="#" onclick="switchView('twibbonSales')" id="menuTwibbonSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="image" class="w-4 h-4 text-yellow-400"></i>
+              <span>TWIBBON SALES</span>
+            </a>
             <!-- MENU 9: INPUT RUNNING TEXT -->
             <a href="#" onclick="switchView('runningText')" id="menuRunningText" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
@@ -200,6 +205,160 @@
             </div>
           </div>
 
+          <!-- TAMPILAN VIEW TWIBBON SALES -->
+          <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
+            <div class="mb-4">
+              <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih jenis twibbon, masukkan NIP karyawan untuk auto-load nama, isi nilai pendukung, dan atur tata letak sesuai kebutuhan.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+              <!-- KOLOM KIRI: INPUT & PANEL EDIT -->
+              <div class="lg:col-span-6 flex flex-col gap-4">
+                <div class="border border-gray-200 rounded-2xl p-5 bg-slate-50/60 shadow-sm space-y-4 flex-1">
+                  
+                  <!-- TOMBOL SAVE EDITING DI PALING ATAS PANEL -->
+                  <div>
+                    <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
+                      <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
+                    </button>
+                  </div>
+
+                  <hr class="border-gray-200">
+
+                  <!-- DROPDOWN LIST TWIBBON -->
+                  <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">PILIH JENIS TWIBBON</label>
+                    <select id="twibbonType" onchange="onTwibbonTypeChange()" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white shadow-sm">
+                      <option value="sales">TWIBBON SALES</option>
+                      <option value="sales_hebat">TWIBBON SALES HEBAT</option>
+                      <option value="sales_tangguh">TWIBBON SALES TANGGUH</option>
+                      <option value="sales_booster">TWIBBON SALES BOOSTER</option>
+                    </select>
+                  </div>
+
+                  <!-- 1 CARD UNTUK SEMUA TEXTBOX -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="form-input" class="w-4 h-4 text-blue-600"></i> Form Input Data Karyawan & Sales
+                    </h3>
+
+                    <!-- TEXTBOX 1: NIP -->
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 1: INPUT NIP</label>
+                      <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 126785)..." oninput="handleNipInput()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+
+                    <!-- TEXTBOX 2: NAMA (OTOMATIS) -->
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 2: NAMA KARYAWAN (OTOMATIS)</label>
+                      <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari tabel data_karyawan..."
+                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-gray-100 text-gray-700 font-semibold">
+                    </div>
+
+                    <!-- TEXTBOX 3: VALUE SALES -->
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 3: VALUE SALES (TEXT)</label>
+                      <input type="text" id="twibbonValueSales" placeholder="Contoh: Rp 120.000.000" oninput="updateTwibbonPreview()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+
+                    <!-- TEXTBOX 4: QTY FP -->
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 4: QTY FP (TEXT)</label>
+                      <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 Unit" oninput="updateTwibbonPreview()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+
+                    <!-- TEXTBOX 5: VALUE COMSER FP -->
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 5: VALUE COMSER FP (TEXT)</label>
+                      <input type="text" id="twibbonValueComser" placeholder="Contoh: Rp 15.000.000" oninput="updateTwibbonPreview()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
+                    </div>
+                  </div>
+
+                  <!-- PANEL EDIT FOTO SALES -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Panel Edit Foto Sales
+                    </h3>
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN (ZOOM)</label>
+                        <input type="range" id="photoScale" min="0.5" max="2.5" step="0.05" value="1" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER X</label>
+                        <input type="range" id="photoX" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER Y</label>
+                        <input type="range" id="photoY" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PANEL EDIT TEKS & NILAI -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Teks (Nama & Nilai)
+                    </h3>
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN FONT</label>
+                        <input type="range" id="textFontSize" min="10" max="30" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER X</label>
+                        <input type="range" id="textX" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER Y</label>
+                        <input type="range" id="textY" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- KOLOM KANAN: PREVIEW TWIBBON KUNCI UKURAN & LOKASI -->
+              <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6">
+                <div class="mb-3 text-center">
+                  <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Live Preview Otomatis
+                  </span>
+                </div>
+
+                <!-- KOTAK PREVIEW UTAMA (KUNCI UKURAN) -->
+                <div id="twibbonPreviewBox" class="relative w-[380px] h-[380px] sm:w-[420px] sm:h-[420px] bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white flex items-center justify-center">
+                  
+                  <!-- LAPISAN 1: FOTO SALES (DI BELAKANG TWIBBON) -->
+                  <div id="previewPhotoContainer" class="absolute inset-0 flex items-center justify-center overflow-hidden bg-slate-200">
+                    <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" onerror="this.classList.add('hidden')">
+                    <div id="photoPlaceholderText" class="text-xs text-gray-400 font-medium text-center p-4">
+                      Masukkan NIP untuk menampilkan Foto Sales
+                    </div>
+                  </div>
+
+                  <!-- LAPISAN 2: BINGKAI TWIBBON (DI DEPAN FOTO) -->
+                  <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10">
+
+                  <!-- LAPISAN 3: TEKS (NAMA & NILAI-NILAI, DI DEPAN TWIBBON) -->
+                  <div id="previewTextOverlay" class="absolute z-20 flex flex-col items-center text-center transition-all duration-75 pointer-events-none" style="transform: translate(0px, 0px);">
+                    <div id="previewNamaText" class="font-extrabold text-slate-900 drop-shadow-sm px-2 py-0.5 rounded"></div>
+                    <div id="previewValuesContainer" class="flex flex-col gap-0.5 mt-1">
+                      <!-- Nilai Textbox 3, 4, 5 dirender dinamis -->
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- TAMPILAN VIEW TABLE EXCEL -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
@@ -250,7 +409,7 @@
   </div>
 
   <script>
-    // Konfigurasi Supabase (API Key asli diperbaiki)
+    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
@@ -300,6 +459,7 @@
       const menuSales = document.getElementById('menuSales');
       const menuComser = document.getElementById('menuComser');
       const menuMtdComser = document.getElementById('menuMtdComser');
+      const menuTwibbonSales = document.getElementById('menuTwibbonSales');
       const menuRunningText = document.getElementById('menuRunningText');
       const menuKaryawan = document.getElementById('menuKaryawan');
       const menuDepartemen = document.getElementById('menuDepartemen');
@@ -312,6 +472,7 @@
 
       const viewTargetSection = document.getElementById('viewTargetSection');
       const viewRunningTextSection = document.getElementById('viewRunningTextSection');
+      const viewTwibbonSalesSection = document.getElementById('viewTwibbonSalesSection');
       const viewExcelSection = document.getElementById('viewExcelSection');
 
       document.getElementById('statusMsg').classList.add('hidden');
@@ -324,6 +485,7 @@
       menuSales.className = inactiveClass;
       if (menuComser) menuComser.className = inactiveClass;
       if (menuMtdComser) menuMtdComser.className = inactiveClass;
+      if (menuTwibbonSales) menuTwibbonSales.className = inactiveClass;
       if (menuRunningText) menuRunningText.className = inactiveClass;
       if (menuKaryawan) menuKaryawan.className = inactiveClass;
       menuDepartemen.className = inactiveClass;
@@ -331,30 +493,34 @@
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
 
+      // Sembunyikan semua section utama dulu
+      viewTargetSection.classList.add('hidden');
+      if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
+      if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
+      viewExcelSection.classList.add('hidden');
+
       if (view === 'target') {
         menuTarget.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="target" class="w-3.5 h-3.5 text-blue-600"></i> Target Sync';
-        
         viewTargetSection.classList.remove('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
-        viewExcelSection.classList.add('hidden');
       } else if (view === 'runningText') {
         menuRunningText.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="megaphone" class="w-3.5 h-3.5 text-pink-600"></i> Running Text Sync';
-        
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.remove('hidden');
-        viewExcelSection.classList.add('hidden');
+        viewRunningTextSection.classList.remove('hidden');
+      } else if (view === 'twibbonSales') {
+        menuTwibbonSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="image" class="w-3.5 h-3.5 text-yellow-600"></i> Twibbon Sales';
+        viewTwibbonSalesSection.classList.remove('hidden');
+        loadTwibbonSettings();
+        updateTwibbonPreview();
       } else if (view === 'karyawan') {
         menuKaryawan.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i> Karyawan Sync';
         sectionTitle.innerText = "Data Master Karyawan";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'sales') {
@@ -362,9 +528,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-blue-600"></i> Sales Sync';
         sectionTitle.innerText = "Data Daily Sales SMT";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'comser') {
@@ -372,9 +535,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="headphones" class="w-3.5 h-3.5 text-blue-600"></i> Comser Sync';
         sectionTitle.innerText = "Data Daily Comser (Summed by NIP)";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdComser') {
@@ -382,9 +542,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="pie-chart" class="w-3.5 h-3.5 text-blue-600"></i> MTD Comser Sync';
         sectionTitle.innerText = "Data MTD Comser (Summed by NIP)";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'departemen') {
@@ -392,9 +549,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="grid" class="w-3.5 h-3.5 text-blue-600"></i> Departemen Sync';
         sectionTitle.innerText = "Data Daily Sales Departemen";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'furnipro') {
@@ -402,9 +556,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i> Furnipro Sync';
         sectionTitle.innerText = "Data Daily Furnipro (Summed by NIP)";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdSales') {
@@ -412,9 +563,6 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-blue-600"></i> MTD Sales Sync';
         sectionTitle.innerText = "Data MTD Sales SMT";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       } else if (view === 'mtdFurnipro') {
@@ -422,13 +570,152 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="briefcase" class="w-3.5 h-3.5 text-blue-600"></i> MTD Furnipro Sync';
         sectionTitle.innerText = "Data MTD Furnipro (Summed by NIP)";
-
-        if (viewTargetSection) viewTargetSection.classList.add('hidden');
-        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       }
       lucide.createIcons();
+    }
+
+    // --- LOGIKA TWIBBON SALES ---
+    async function handleNipInput() {
+      const nip = document.getElementById('twibbonNip').value.trim();
+      const namaInput = document.getElementById('twibbonNama');
+
+      if (!nip) {
+        namaInput.value = '';
+        updateTwibbonPreview();
+        return;
+      }
+
+      // Ambil nama dari tabel data_karyawan berdasarkan nip_kar
+      const { data, error } = await supabaseClient
+        .from('data_karyawan')
+        .select('nama_kar')
+        .eq('nip_kar', nip)
+        .single();
+
+      if (data && data.nama_kar) {
+        namaInput.value = data.nama_kar;
+      } else {
+        namaInput.value = 'Nama tidak ditemukan di database';
+      }
+
+      updateTwibbonPreview();
+    }
+
+    function onTwibbonTypeChange() {
+      loadTwibbonSettings();
+      updateTwibbonPreview();
+    }
+
+    function updateTwibbonPreview() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      const nip = document.getElementById('twibbonNip').value.trim();
+      const nama = document.getElementById('twibbonNama').value;
+      const valSales = document.getElementById('twibbonValueSales').value;
+      const qtyFp = document.getElementById('twibbonQtyFp').value;
+      const valComser = document.getElementById('twibbonValueComser').value;
+
+      // URL Twibbon dari storage Supabase "TWIBBON"
+      const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
+      document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
+
+      // URL Foto Sales dari storage Supabase "FOTO SALES"
+      const photoImg = document.getElementById('previewPhotoImg');
+      const placeholderText = document.getElementById('photoPlaceholderText');
+
+      if (nip) {
+        const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg`;
+        photoImg.src = photoUrl;
+        photoImg.classList.remove('hidden');
+        placeholderText.classList.add('hidden');
+      } else {
+        photoImg.classList.add('hidden');
+        placeholderText.classList.remove('hidden');
+      }
+
+      // Ambil nilai Slider Foto
+      const photoScale = document.getElementById('photoScale').value;
+      const photoX = document.getElementById('photoX').value;
+      const photoY = document.getElementById('photoY').value;
+      photoImg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
+
+      // Render Teks di Depan Twibbon (Abaikan jika kosong)
+      const previewNamaText = document.getElementById('previewNamaText');
+      const previewValuesContainer = document.getElementById('previewValuesContainer');
+      const textFontSize = document.getElementById('textFontSize').value;
+      const textX = document.getElementById('textX').value;
+      const textY = document.getElementById('textY').value;
+      const textOverlay = document.getElementById('previewTextOverlay');
+
+      textOverlay.style.transform = `translate(${textX}px, ${textY}px)`;
+      textOverlay.style.fontSize = `${textFontSize}px`;
+
+      if (nama && !nama.includes('tidak ditemukan')) {
+        previewNamaText.innerText = nama;
+        previewNamaText.style.display = 'block';
+      } else {
+        previewNamaText.innerText = '';
+        previewNamaText.style.display = 'none';
+      }
+
+      let valuesHtml = '';
+      if (valSales) {
+        valuesHtml += `<span class="bg-blue-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Sales: ${valSales}</span>`;
+      }
+      if (qtyFp) {
+        valuesHtml += `<span class="bg-emerald-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Qty FP: ${qtyFp}</span>`;
+      }
+      if (valComser) {
+        valuesHtml += `<span class="bg-purple-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Comser FP: ${valComser}</span>`;
+      }
+      previewValuesContainer.innerHTML = valuesHtml;
+    }
+
+    function saveTwibbonSettings() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      const settings = {
+        photoScale: document.getElementById('photoScale').value,
+        photoX: document.getElementById('photoX').value,
+        photoY: document.getElementById('photoY').value,
+        textFontSize: document.getElementById('textFontSize').value,
+        textX: document.getElementById('textX').value,
+        textY: document.getElementById('textY').value
+      };
+
+      localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
+      
+      const statusMsg = document.getElementById('statusMsg');
+      statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
+      statusMsg.innerText = `Sukses! Pengaturan ukuran & koordinat untuk "${twibbonType}" berhasil disimpan.`;
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
+    function loadTwibbonSettings() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
+      if (saved) {
+        try {
+          const s = JSON.parse(saved);
+          document.getElementById('photoScale').value = s.photoScale || 1;
+          document.getElementById('photoX').value = s.photoX || 0;
+          document.getElementById('photoY').value = s.photoY || 0;
+          document.getElementById('textFontSize').value = s.textFontSize || 14;
+          document.getElementById('textX').value = s.textX || 0;
+          document.getElementById('textY').value = s.textY || 0;
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        // Default values
+        document.getElementById('photoScale').value = 1;
+        document.getElementById('photoX').value = 0;
+        document.getElementById('photoY').value = 0;
+        document.getElementById('textFontSize').value = 14;
+        document.getElementById('textX').value = 0;
+        document.getElementById('textY').value = 50;
+      }
     }
 
     // Fungsi Login
@@ -699,8 +986,8 @@
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">NIP</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nip_kar</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nama_kar</th>
           </tr>
         `;
       } else if (currentView === 'sales' || currentView === 'mtdSales') {
