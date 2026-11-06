@@ -11,7 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- html2canvas untuk Download Gambar HD -->
+  <!-- html2canvas untuk Download Gambar Full HD -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
@@ -484,23 +484,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (MIDDLE ALIGNED DENGAN FLEXBOX) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (PERFECT MIDDLE ALIGN STABIL HTML2CANVAS) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2;"></div>
                     </div>
                   </div>
 
@@ -799,7 +799,7 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background dengan Middle Align Flexbox
+      // Render Masing-Masing Teks & Background dengan Middle Align Sempurna
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
@@ -910,7 +910,7 @@
       }
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD (CAPTURE PREVIEW LANGSUNG)
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
