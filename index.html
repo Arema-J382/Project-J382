@@ -272,10 +272,13 @@
                     </div>
                   </div>
 
-                  <!-- TOMBOL SAVE EDITING -->
-                  <div>
-                    <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
+                  <!-- TOMBOL SAVE EDITING & RESET DEFAULT -->
+                  <div class="grid grid-cols-2 gap-2">
+                    <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-emerald-500/25">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE FORMAT EDIT
+                    </button>
+                    <button onclick="resetTwibbonSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-amber-500/25">
+                      <i data-lucide="rotate-ccw" class="w-4 h-4"></i> RESET DEFAULT
                     </button>
                   </div>
 
@@ -990,6 +993,22 @@
       alert(`Settingan Twibbon (${twibbonType.toUpperCase()}) Berhasil Disimpan!`);
     }
 
+    // FUNGSI RESET DEFAULT SETTINGS PER TWIBBON
+    function resetTwibbonSettings() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      localStorage.removeItem(`twibbon_settings_${twibbonType}`);
+      loadTwibbonSettings();
+      updateTwibbonPreview();
+
+      const statusMsg = document.getElementById('statusMsg');
+      statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm flex items-center gap-2';
+      statusMsg.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-blue-600"></i> Berhasil mereset format edit "${twibbonType.toUpperCase()}" ke pengaturan default.`;
+      statusMsg.classList.remove('hidden');
+      lucide.createIcons();
+      
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
     // FUNGSI LOAD / DEFAULT SETTINGS
     function loadTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
@@ -1032,38 +1051,70 @@
           console.error(e);
         }
       } else {
-        // DEFAULT ATAS-BAWAH (BERURUTAN DAN LENGKAP MENJANGKAU 0-420px)
+        // DEFAULT BERDASARKAN JENIS TWIBBON
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
 
-        document.getElementById('sizeNama').value = 18;
-        document.getElementById('xNama').value = 0;
-        document.getElementById('yNama').value = 240;
-        document.getElementById('colorNama').value = '#000000';
-        document.getElementById('bgColorNama').value = '#ffffff';
-        document.getElementById('transparentNama').checked = true;
+        if (twibbonType === 'sales') {
+          // DEFAULT UNTUK TWIBBON SALES (DISAMAKAN POSISI KOTAKNYA SEPERTI TANGGUH/HEBAT/BOOSTER)
+          document.getElementById('sizeNama').value = 18;
+          document.getElementById('xNama').value = 0;
+          document.getElementById('yNama').value = 240;
+          document.getElementById('colorNama').value = '#000000';
+          document.getElementById('bgColorNama').value = '#ffffff';
+          document.getElementById('transparentNama').checked = true;
 
-        document.getElementById('sizeSales').value = 14;
-        document.getElementById('xSales').value = 0;
-        document.getElementById('ySales').value = 280;
-        document.getElementById('colorSales').value = '#ffffff';
-        document.getElementById('bgColorSales').value = '#2563eb';
-        document.getElementById('transparentSales').checked = false;
+          document.getElementById('sizeSales').value = 14;
+          document.getElementById('xSales').value = 0;
+          document.getElementById('ySales').value = 280;
+          document.getElementById('colorSales').value = '#ffffff';
+          document.getElementById('bgColorSales').value = '#2563eb';
+          document.getElementById('transparentSales').checked = false;
 
-        document.getElementById('sizeQty').value = 14;
-        document.getElementById('xQty').value = 0;
-        document.getElementById('yQty').value = 315;
-        document.getElementById('colorQty').value = '#ffffff';
-        document.getElementById('bgColorQty').value = '#059669';
-        document.getElementById('transparentQty').checked = false;
+          document.getElementById('sizeQty').value = 14;
+          document.getElementById('xQty').value = 0;
+          document.getElementById('yQty').value = 315;
+          document.getElementById('colorQty').value = '#ffffff';
+          document.getElementById('bgColorQty').value = '#059669';
+          document.getElementById('transparentQty').checked = false;
 
-        document.getElementById('sizeComser').value = 14;
-        document.getElementById('xComser').value = 0;
-        document.getElementById('yComser').value = 350;
-        document.getElementById('colorComser').value = '#ffffff';
-        document.getElementById('bgColorComser').value = '#dc2626';
-        document.getElementById('transparentComser').checked = false;
+          document.getElementById('sizeComser').value = 14;
+          document.getElementById('xComser').value = 0;
+          document.getElementById('yComser').value = 350;
+          document.getElementById('colorComser').value = '#ffffff';
+          document.getElementById('bgColorComser').value = '#dc2626';
+          document.getElementById('transparentComser').checked = false;
+        } else {
+          // DEFAULT UNTUK SALES HEBAT, TANGGUH, BOOSTER
+          document.getElementById('sizeNama').value = 18;
+          document.getElementById('xNama').value = 0;
+          document.getElementById('yNama').value = 240;
+          document.getElementById('colorNama').value = '#000000';
+          document.getElementById('bgColorNama').value = '#ffffff';
+          document.getElementById('transparentNama').checked = true;
+
+          document.getElementById('sizeSales').value = 14;
+          document.getElementById('xSales').value = 0;
+          document.getElementById('ySales').value = 280;
+          document.getElementById('colorSales').value = '#ffffff';
+          document.getElementById('bgColorSales').value = '#2563eb';
+          document.getElementById('transparentSales').checked = false;
+
+          document.getElementById('sizeQty').value = 14;
+          document.getElementById('xQty').value = 0;
+          document.getElementById('yQty').value = 315;
+          document.getElementById('colorQty').value = '#ffffff';
+          document.getElementById('bgColorQty').value = '#059669';
+          document.getElementById('transparentQty').checked = false;
+
+          document.getElementById('sizeComser').value = 14;
+          document.getElementById('xComser').value = 0;
+          document.getElementById('yComser').value = 350;
+          document.getElementById('colorComser').value = '#ffffff';
+          document.getElementById('bgColorComser').value = '#dc2626';
+          document.getElementById('transparentComser').checked = false;
+        }
       }
     }
 
