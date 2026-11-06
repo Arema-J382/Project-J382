@@ -110,10 +110,15 @@
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
-            <!-- MENU BARU: INPUT RUNNING TEXT (DIBAWAH MTD COMSER) -->
+            <!-- MENU 9: INPUT RUNNING TEXT -->
             <a href="#" onclick="switchView('runningText')" id="menuRunningText" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
+            </a>
+            <!-- MENU BARU: UPDATE KARYAWAN (DIBAWAH RUNNING TEXT) -->
+            <a href="#" onclick="switchView('karyawan')" id="menuKaryawan" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
+              <span>UPDATE KARYAWAN</span>
             </a>
           </div>
         </div>
@@ -170,7 +175,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW INPUT RUNNING TEXT (BARU) -->
+          <!-- TAMPILAN VIEW INPUT RUNNING TEXT -->
           <div id="viewRunningTextSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
@@ -195,7 +200,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL -->
+          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, COMSER, FURNIPRO, KARYAWAN, ETC) -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
@@ -260,6 +265,7 @@
     let furniproData = []; 
     let mtdSalesData = []; 
     let mtdFurniproData = []; 
+    let karyawanData = []; // Data Karyawan (Baru)
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -295,6 +301,7 @@
       const menuComser = document.getElementById('menuComser');
       const menuMtdComser = document.getElementById('menuMtdComser');
       const menuRunningText = document.getElementById('menuRunningText');
+      const menuKaryawan = document.getElementById('menuKaryawan');
       const menuDepartemen = document.getElementById('menuDepartemen');
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
@@ -318,6 +325,7 @@
       if (menuComser) menuComser.className = inactiveClass;
       if (menuMtdComser) menuMtdComser.className = inactiveClass;
       if (menuRunningText) menuRunningText.className = inactiveClass;
+      if (menuKaryawan) menuKaryawan.className = inactiveClass;
       menuDepartemen.className = inactiveClass;
       if (menuFurnipro) menuFurnipro.className = inactiveClass;
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
@@ -339,6 +347,16 @@
         if (viewTargetSection) viewTargetSection.classList.add('hidden');
         if (viewRunningTextSection) viewRunningTextSection.classList.remove('hidden');
         viewExcelSection.classList.add('hidden');
+      } else if (view === 'karyawan') {
+        menuKaryawan.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i> Karyawan Sync';
+        sectionTitle.innerText = "Data Master Karyawan";
+
+        if (viewTargetSection) viewTargetSection.classList.add('hidden');
+        if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
       } else if (view === 'sales') {
         menuSales.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
@@ -475,7 +493,18 @@
           if (!row.trim()) return;
           const cols = row.split('\t');
 
-          if (currentView === 'sales' || currentView === 'mtdSales') {
+          if (currentView === 'karyawan') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+
+            if (index === 0 && (nip.toUpperCase().includes('NIP') || nama.toUpperCase().includes('NAMA'))) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip_kar: Number(nip) || 0,
+              nama_kar: nama || '-'
+            });
+          } else if (currentView === 'sales' || currentView === 'mtdSales') {
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
@@ -572,7 +601,9 @@
           }
         });
 
-        if (currentView === 'sales') {
+        if (currentView === 'karyawan') {
+          karyawanData = parsed;
+        } else if (currentView === 'sales') {
           salesData = parsed;
         } else if (currentView === 'mtdSales') {
           mtdSalesData = parsed;
@@ -655,7 +686,8 @@
       const totalBarisSpan = document.getElementById('totalBaris');
       
       let activeData = salesData;
-      if (currentView === 'sales') activeData = salesData;
+      if (currentView === 'karyawan') activeData = karyawanData;
+      else if (currentView === 'sales') activeData = salesData;
       else if (currentView === 'mtdSales') activeData = mtdSalesData;
       else if (currentView === 'comser') activeData = comserData;
       else if (currentView === 'mtdComser') activeData = mtdComserData;
@@ -663,7 +695,15 @@
       else if (currentView === 'furnipro') activeData = furniproData;
       else if (currentView === 'mtdFurnipro') activeData = mtdFurniproData;
 
-      if (currentView === 'sales' || currentView === 'mtdSales') {
+      if (currentView === 'karyawan') {
+        thead.innerHTML = `
+          <tr>
+            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nip_kar</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nama_kar</th>
+          </tr>
+        `;
+      } else if (currentView === 'sales' || currentView === 'mtdSales') {
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
@@ -708,7 +748,10 @@
       }
 
       if (activeData.length === 0) {
-        const colSpan = (currentView === 'sales' || currentView === 'mtdSales' || currentView === 'furnipro' || currentView === 'mtdFurnipro' || currentView === 'comser' || currentView === 'mtdComser') ? 5 : 7;
+        let colSpan = 5;
+        if (currentView === 'karyawan') colSpan = 3;
+        else if (currentView === 'departemen') colSpan = 7;
+        
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-16 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
@@ -716,7 +759,15 @@
 
       let html = '';
       activeData.forEach((item, idx) => {
-        if (currentView === 'sales' || currentView === 'mtdSales') {
+        if (currentView === 'karyawan') {
+          html += `
+            <tr class="hover:bg-indigo-50/50 transition">
+              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono font-semibold text-indigo-600">${item.nip_kar}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_kar}</td>
+            </tr>
+          `;
+        } else if (currentView === 'sales' || currentView === 'mtdSales') {
           html += `
             <tr class="hover:bg-blue-50/50 transition">
               <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
@@ -786,7 +837,8 @@
     }
 
     function resetData() {
-      if (currentView === 'sales') salesData = [];
+      if (currentView === 'karyawan') karyawanData = [];
+      else if (currentView === 'sales') salesData = [];
       else if (currentView === 'mtdSales') mtdSalesData = [];
       else if (currentView === 'comser') comserData = [];
       else if (currentView === 'mtdComser') mtdComserData = [];
@@ -835,7 +887,7 @@
       }
     }
 
-    // FUNGSI KIRIM RUNNING TEXT KE SUPABASE (BARU)
+    // FUNGSI KIRIM RUNNING TEXT KE SUPABASE
     async function kirimRunningTextKeSupabase() {
       const textVal = document.getElementById('inputRunningTextValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
@@ -870,13 +922,17 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE (SUDAH DITAMBAHKAN OPTION KARYAWAN)
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
       let tableName = '';
 
-      if (currentView === 'sales') {
+      if (currentView === 'karyawan') {
+        activeData = karyawanData;
+        rpcName = 'replace_data_karyawan';
+        tableName = 'data_karyawan';
+      } else if (currentView === 'sales') {
         activeData = salesData;
         rpcName = 'replace_laporan_sales';
         tableName = 'laporan_sales';
