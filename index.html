@@ -298,20 +298,32 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS TERPISAH (Geser Y diperluas hingga 300) -->
+                  <!-- PANEL EDIT TEKS TERPISAH & WARNA BACKGROUND -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks & Background
                     </h3>
 
-                    <!-- 1. EDIT PANEL: NAMA -->
+                    <!-- 1. EDIT PANEL: NAMA (Default Transparan / Bisa Diubah) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Teks 2: Nama Karyawan</span>
-                        <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
-                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <input type="color" id="bgColorNama" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
                         </div>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
+                          <input type="checkbox" id="transparentNama" checked onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
+                          Background Transparan
+                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -329,13 +341,19 @@
                       </div>
                     </div>
 
-                    <!-- 2. EDIT PANEL: VALUE SALES (Bg Biru, Text Putih) -->
+                    <!-- 2. EDIT PANEL: VALUE SALES (Default Bg Biru #2563eb) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Teks 3: Value Sales (Bg Biru)</span>
-                        <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <input type="color" id="bgColorSales" value="#2563eb" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -354,13 +372,19 @@
                       </div>
                     </div>
 
-                    <!-- 3. EDIT PANEL: QTY FP (Bg Hijau Emerald, Text Putih) -->
+                    <!-- 3. EDIT PANEL: QTY FP (Default Bg Hijau #059669) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Teks 4: Qty FP (Bg Hijau)</span>
-                        <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <input type="color" id="bgColorQty" value="#059669" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -379,13 +403,19 @@
                       </div>
                     </div>
 
-                    <!-- 4. EDIT PANEL: VALUE COMSER FP (Bg Merah Solid, Text Putih) -->
+                    <!-- 4. EDIT PANEL: VALUE COMSER FP (Default Bg Merah #dc2626) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Teks 5: Comser FP (Bg Merah)</span>
-                        <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <input type="color" id="bgColorComser" value="#dc2626" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          </div>
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -435,12 +465,12 @@
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute font-extrabold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
-                    <!-- Teks Sales (Background Biru) -->
-                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #2563eb; padding: 4px 12px; border-radius: 6px;"></div>
-                    <!-- Teks Qty (Background Hijau Emerald + Prefix FP :) -->
-                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #059669; padding: 4px 12px; border-radius: 6px;"></div>
-                    <!-- Teks Comser (Background Merah Solid #dc2626 + Prefix COMSER :) -->
-                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #dc2626; padding: 4px 12px; border-radius: 6px;"></div>
+                    <!-- Teks Sales -->
+                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none;"></div>
+                    <!-- Teks Qty -->
+                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none;"></div>
+                    <!-- Teks Comser -->
+                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none;"></div>
                   </div>
 
                 </div>
@@ -731,50 +761,71 @@
       const photoY = document.getElementById('photoY').value;
       photoImg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background Berbeda
+      // Render Masing-Masing Teks & Background
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
       const elComser = document.getElementById('previewComserText');
 
-      // 1. Nama Karyawan
+      // 1. Nama Karyawan (Bisa Transparan / Berwarna)
       if (nama && !nama.includes('tidak ditemukan') && !nama.includes('Error')) {
         elNama.innerText = nama;
         elNama.style.fontSize = document.getElementById('sizeNama').value + 'px';
         elNama.style.color = document.getElementById('colorNama').value;
         elNama.style.transform = `translate(${document.getElementById('xNama').value}px, ${document.getElementById('yNama').value}px)`;
+        
+        const isTransNama = document.getElementById('transparentNama').checked;
+        const bgNama = document.getElementById('bgColorNama').value;
+        if (!isTransNama) {
+          elNama.style.backgroundColor = bgNama;
+          elNama.style.padding = '4px 12px';
+          elNama.style.borderRadius = '6px';
+        } else {
+          elNama.style.backgroundColor = 'transparent';
+          elNama.style.padding = '0';
+          elNama.style.borderRadius = '0';
+        }
         elNama.style.display = 'block';
       } else {
         elNama.style.display = 'none';
       }
 
-      // 2. Value Sales (Background Biru Solid #2563eb)
+      // 2. Value Sales (Background Biru / Custom)
       if (valSales) {
         elSales.innerText = valSales;
         elSales.style.fontSize = document.getElementById('sizeSales').value + 'px';
         elSales.style.color = document.getElementById('colorSales').value;
+        elSales.style.backgroundColor = document.getElementById('bgColorSales').value;
+        elSales.style.padding = '4px 12px';
+        elSales.style.borderRadius = '6px';
         elSales.style.transform = `translate(${document.getElementById('xSales').value}px, ${document.getElementById('ySales').value}px)`;
         elSales.style.display = 'block';
       } else {
         elSales.style.display = 'none';
       }
 
-      // 3. Qty FP (Background Hijau Emerald #059669 + Prefix "FP : ")
+      // 3. Qty FP (Background Hijau / Custom + Prefix "FP : ")
       if (qtyFp) {
         elQty.innerText = 'FP : ' + qtyFp;
         elQty.style.fontSize = document.getElementById('sizeQty').value + 'px';
         elQty.style.color = document.getElementById('colorQty').value;
+        elQty.style.backgroundColor = document.getElementById('bgColorQty').value;
+        elQty.style.padding = '4px 12px';
+        elQty.style.borderRadius = '6px';
         elQty.style.transform = `translate(${document.getElementById('xQty').value}px, ${document.getElementById('yQty').value}px)`;
         elQty.style.display = 'block';
       } else {
         elQty.style.display = 'none';
       }
 
-      // 4. Value Comser FP (Background Merah Solid #dc2626 + Prefix "COMSER : ")
+      // 4. Value Comser FP (Background Merah / Custom + Prefix "COMSER : ")
       if (valComser) {
         elComser.innerText = 'COMSER : ' + valComser;
         elComser.style.fontSize = document.getElementById('sizeComser').value + 'px';
         elComser.style.color = document.getElementById('colorComser').value;
+        elComser.style.backgroundColor = document.getElementById('bgColorComser').value;
+        elComser.style.padding = '4px 12px';
+        elComser.style.borderRadius = '6px';
         elComser.style.transform = `translate(${document.getElementById('xComser').value}px, ${document.getElementById('yComser').value}px)`;
         elComser.style.display = 'block';
       } else {
@@ -792,18 +843,23 @@
         xNama: document.getElementById('xNama').value,
         yNama: document.getElementById('yNama').value,
         colorNama: document.getElementById('colorNama').value,
+        bgColorNama: document.getElementById('bgColorNama').value,
+        transparentNama: document.getElementById('transparentNama').checked,
         sizeSales: document.getElementById('sizeSales').value,
         xSales: document.getElementById('xSales').value,
         ySales: document.getElementById('ySales').value,
         colorSales: document.getElementById('colorSales').value,
+        bgColorSales: document.getElementById('bgColorSales').value,
         sizeQty: document.getElementById('sizeQty').value,
         xQty: document.getElementById('xQty').value,
         yQty: document.getElementById('yQty').value,
         colorQty: document.getElementById('colorQty').value,
+        bgColorQty: document.getElementById('bgColorQty').value,
         sizeComser: document.getElementById('sizeComser').value,
         xComser: document.getElementById('xComser').value,
         yComser: document.getElementById('yComser').value,
-        colorComser: document.getElementById('colorComser').value
+        colorComser: document.getElementById('colorComser').value,
+        bgColorComser: document.getElementById('bgColorComser').value
       };
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
@@ -829,21 +885,26 @@
           document.getElementById('xNama').value = s.xNama || 0;
           document.getElementById('yNama').value = s.yNama || 40;
           document.getElementById('colorNama').value = s.colorNama || '#000000';
+          document.getElementById('bgColorNama').value = s.bgColorNama || '#ffffff';
+          document.getElementById('transparentNama').checked = s.transparentNama !== undefined ? s.transparentNama : true;
 
           document.getElementById('sizeSales').value = s.sizeSales || 14;
           document.getElementById('xSales').value = s.xSales || 0;
           document.getElementById('ySales').value = s.ySales || 65;
           document.getElementById('colorSales').value = s.colorSales || '#ffffff';
+          document.getElementById('bgColorSales').value = s.bgColorSales || '#2563eb';
 
           document.getElementById('sizeQty').value = s.sizeQty || 14;
           document.getElementById('xQty').value = s.xQty || 0;
           document.getElementById('yQty').value = s.yQty || 90;
           document.getElementById('colorQty').value = s.colorQty || '#ffffff';
+          document.getElementById('bgColorQty').value = s.bgColorQty || '#059669';
 
           document.getElementById('sizeComser').value = s.sizeComser || 14;
           document.getElementById('xComser').value = s.xComser || 0;
           document.getElementById('yComser').value = s.yComser || 115;
           document.getElementById('colorComser').value = s.colorComser || '#ffffff';
+          document.getElementById('bgColorComser').value = s.bgColorComser || '#dc2626';
         } catch (e) {
           console.error(e);
         }
@@ -855,18 +916,26 @@
         document.getElementById('xNama').value = 0;
         document.getElementById('yNama').value = 40;
         document.getElementById('colorNama').value = '#000000';
+        document.getElementById('bgColorNama').value = '#ffffff';
+        document.getElementById('transparentNama').checked = true;
+
         document.getElementById('sizeSales').value = 14;
         document.getElementById('xSales').value = 0;
         document.getElementById('ySales').value = 65;
         document.getElementById('colorSales').value = '#ffffff';
+        document.getElementById('bgColorSales').value = '#2563eb';
+
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
         document.getElementById('yQty').value = 90;
         document.getElementById('colorQty').value = '#ffffff';
+        document.getElementById('bgColorQty').value = '#059669';
+
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
         document.getElementById('yComser').value = 115;
         document.getElementById('colorComser').value = '#ffffff';
+        document.getElementById('bgColorComser').value = '#dc2626';
       }
     }
 
