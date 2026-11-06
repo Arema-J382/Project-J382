@@ -110,7 +110,7 @@
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
-            <!-- MENU 9: TWIBBON SALES (DIBAWAH MTD COMSER SESUAI PERMINTAAN) -->
+            <!-- MENU 9: TWIBBON SALES -->
             <a href="#" onclick="switchView('twibbonSales')" id="menuTwibbonSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="image" class="w-4 h-4 text-yellow-400"></i>
               <span>TWIBBON SALES</span>
@@ -270,7 +270,7 @@
                     </div>
                   </div>
 
-                  <!-- TOMBOL SAVE EDITING (DIPERINTAHKAN TEPAT DIATASNYA PANEL EDIT FOTO SALES) -->
+                  <!-- TOMBOL SAVE EDITING -->
                   <div>
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
@@ -298,10 +298,10 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS TERPISAH UNTUK MASING-MASING TEXTBOX -->
+                  <!-- PANEL EDIT TEKS TERPISAH (Geser Y Diperluas hingga 300) -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks (Tanpa Background)
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks & Background
                     </h3>
 
                     <!-- 1. EDIT PANEL: NAMA -->
@@ -315,7 +315,7 @@
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
                           <input type="range" id="sizeNama" min="10" max="32" step="1" value="16" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
@@ -324,23 +324,23 @@
                         </div>
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
-                          <input type="range" id="yNama" min="-150" max="150" step="1" value="40" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                          <input type="range" id="yNama" min="-150" max="300" step="1" value="40" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
                     </div>
 
-                    <!-- 2. EDIT PANEL: VALUE SALES -->
+                    <!-- 2. EDIT PANEL: VALUE SALES (Background Biru, Default Text Putih) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 3: Value Sales</span>
+                        <span class="text-[11px] font-bold text-gray-700">Teks 3: Value Sales (Bg Biru)</span>
                         <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
-                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
                           <input type="range" id="sizeSales" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
@@ -349,23 +349,23 @@
                         </div>
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
-                          <input type="range" id="ySales" min="-150" max="150" step="1" value="65" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                          <input type="range" id="ySales" min="-150" max="300" step="1" value="65" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
                     </div>
 
-                    <!-- 3. EDIT PANEL: QTY FP -->
+                    <!-- 3. EDIT PANEL: QTY FP (Background Hijau Emerald, Default Text Putih) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 4: Qty FP</span>
+                        <span class="text-[11px] font-bold text-gray-700">Teks 4: Qty FP (Bg Hijau)</span>
                         <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
-                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
                           <input type="range" id="sizeQty" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
@@ -374,23 +374,23 @@
                         </div>
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
-                          <input type="range" id="yQty" min="-150" max="150" step="1" value="90" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                          <input type="range" id="yQty" min="-150" max="300" step="1" value="90" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
                     </div>
 
-                    <!-- 4. EDIT PANEL: VALUE COMSER FP -->
+                    <!-- 4. EDIT PANEL: VALUE COMSER FP (Background Ungu, Default Text Putih) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 5: Value Comser FP</span>
+                        <span class="text-[11px] font-bold text-gray-700">Teks 5: Comser FP (Bg Ungu)</span>
                         <div class="flex items-center gap-1.5">
-                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
-                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                          <label class="text-[10px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
                           <input type="range" id="sizeComser" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
@@ -399,7 +399,7 @@
                         </div>
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
-                          <input type="range" id="yComser" min="-150" max="150" step="1" value="115" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                          <input type="range" id="yComser" min="-150" max="300" step="1" value="115" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
                     </div>
@@ -417,10 +417,10 @@
                   </span>
                 </div>
 
-                <!-- KOTAK PREVIEW UTAMA (KUNCI UKURAN) -->
+                <!-- KOTAK PREVIEW UTAMA -->
                 <div id="twibbonPreviewBox" class="relative w-[380px] h-[380px] sm:w-[420px] sm:h-[420px] bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white flex items-center justify-center">
                   
-                  <!-- LAPISAN 1: FOTO SALES (DI BELAKANG TWIBBON) -->
+                  <!-- LAPISAN 1: FOTO SALES -->
                   <div id="previewPhotoContainer" class="absolute inset-0 flex items-center justify-center overflow-hidden bg-slate-200">
                     <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" onerror="this.classList.add('hidden')">
                     <div id="photoPlaceholderText" class="text-xs text-gray-400 font-medium text-center p-4">
@@ -428,19 +428,19 @@
                     </div>
                   </div>
 
-                  <!-- LAPISAN 2: BINGKAI TWIBBON (DI DEPAN FOTO) -->
+                  <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING TANPA BACKGROUND DI DEPAN TWIBBON -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute font-extrabold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
-                    <!-- Teks Sales -->
-                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
-                    <!-- Teks Qty -->
-                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
-                    <!-- Teks Comser -->
-                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
+                    <!-- Teks Sales (Background Biru) -->
+                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #2563eb; padding: 4px 12px; border-radius: 6px;"></div>
+                    <!-- Teks Qty (Background Hijau Emerald + Prefix FP :) -->
+                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #059669; padding: 4px 12px; border-radius: 6px;"></div>
+                    <!-- Teks Comser (Background Ungu + Prefix COMSER :) -->
+                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none; background-color: #7c3aed; padding: 4px 12px; border-radius: 6px;"></div>
                   </div>
 
                 </div>
@@ -664,7 +664,7 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA PENCARIAN NIP DENGAN KONVERSI INT8 SUPABASE ---
+    // --- LOGIKA PENCARIAN NIP & AUTO-LOAD NAMA KARYAWAN ---
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -678,7 +678,6 @@
       const nipNum = Number(nipVal);
       const queryVal = isNaN(nipNum) ? nipVal : nipNum;
 
-      // Query ke tabel data_karyawan berdasarkan nip_kar
       const { data, error } = await supabaseClient
         .from('data_karyawan')
         .select('nama_kar')
@@ -687,7 +686,6 @@
 
       if (error) {
         namaInput.value = 'Error koneksi database';
-        console.error("Supabase Error:", error.message);
       } else if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
       } else {
@@ -710,11 +708,10 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      // URL Twibbon dari Storage Supabase "TWIBBON"
+      // URL Bingkai Twibbon & Foto
       const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
       document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
 
-      // URL Foto Sales dari Storage Supabase "FOTO SALES"
       const photoImg = document.getElementById('previewPhotoImg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
@@ -728,19 +725,19 @@
         placeholderText.classList.remove('hidden');
       }
 
-      // Atur Foto Sales (Zoom & Koordinat X/Y)
+      // Foto Sales Transform
       const photoScale = document.getElementById('photoScale').value;
       const photoX = document.getElementById('photoX').value;
       const photoY = document.getElementById('photoY').value;
       photoImg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Teks Masing-Masing (Tanpa Background)
+      // Render Masing-Masing Teks & Background Berbeda
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
       const elComser = document.getElementById('previewComserText');
 
-      // 1. Nama
+      // 1. Nama Karyawan
       if (nama && !nama.includes('tidak ditemukan') && !nama.includes('Error')) {
         elNama.innerText = nama;
         elNama.style.fontSize = document.getElementById('sizeNama').value + 'px';
@@ -751,7 +748,7 @@
         elNama.style.display = 'none';
       }
 
-      // 2. Value Sales
+      // 2. Value Sales (Background Biru Solid #2563eb)
       if (valSales) {
         elSales.innerText = valSales;
         elSales.style.fontSize = document.getElementById('sizeSales').value + 'px';
@@ -762,9 +759,9 @@
         elSales.style.display = 'none';
       }
 
-      // 3. Qty FP
+      // 3. Qty FP (Background Hijau Emerald #059669 + Prefix "FP : ")
       if (qtyFp) {
-        elQty.innerText = qtyFp;
+        elQty.innerText = 'FP : ' + qtyFp;
         elQty.style.fontSize = document.getElementById('sizeQty').value + 'px';
         elQty.style.color = document.getElementById('colorQty').value;
         elQty.style.transform = `translate(${document.getElementById('xQty').value}px, ${document.getElementById('yQty').value}px)`;
@@ -773,9 +770,9 @@
         elQty.style.display = 'none';
       }
 
-      // 4. Value Comser FP
+      // 4. Value Comser FP (Background Ungu #7c3aed + Prefix "COMSER : ")
       if (valComser) {
-        elComser.innerText = valComser;
+        elComser.innerText = 'COMSER : ' + valComser;
         elComser.style.fontSize = document.getElementById('sizeComser').value + 'px';
         elComser.style.color = document.getElementById('colorComser').value;
         elComser.style.transform = `translate(${document.getElementById('xComser').value}px, ${document.getElementById('yComser').value}px)`;
@@ -813,7 +810,7 @@
       
       const statusMsg = document.getElementById('statusMsg');
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-      statusMsg.innerText = `Sukses! Konfigurasi ukuran, koordinat, dan warna untuk "${twibbonType}" berhasil disimpan.`;
+      statusMsg.innerText = `Sukses! Konfigurasi tata letak & warna untuk "${twibbonType}" berhasil disimpan.`;
       statusMsg.classList.remove('hidden');
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
@@ -836,17 +833,17 @@
           document.getElementById('sizeSales').value = s.sizeSales || 14;
           document.getElementById('xSales').value = s.xSales || 0;
           document.getElementById('ySales').value = s.ySales || 65;
-          document.getElementById('colorSales').value = s.colorSales || '#000000';
+          document.getElementById('colorSales').value = s.colorSales || '#ffffff';
 
           document.getElementById('sizeQty').value = s.sizeQty || 14;
           document.getElementById('xQty').value = s.xQty || 0;
           document.getElementById('yQty').value = s.yQty || 90;
-          document.getElementById('colorQty').value = s.colorQty || '#000000';
+          document.getElementById('colorQty').value = s.colorQty || '#ffffff';
 
           document.getElementById('sizeComser').value = s.sizeComser || 14;
           document.getElementById('xComser').value = s.xComser || 0;
           document.getElementById('yComser').value = s.yComser || 115;
-          document.getElementById('colorComser').value = s.colorComser || '#000000';
+          document.getElementById('colorComser').value = s.colorComser || '#ffffff';
         } catch (e) {
           console.error(e);
         }
@@ -861,15 +858,15 @@
         document.getElementById('sizeSales').value = 14;
         document.getElementById('xSales').value = 0;
         document.getElementById('ySales').value = 65;
-        document.getElementById('colorSales').value = '#000000';
+        document.getElementById('colorSales').value = '#ffffff';
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
         document.getElementById('yQty').value = 90;
-        document.getElementById('colorQty').value = '#000000';
+        document.getElementById('colorQty').value = '#ffffff';
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
         document.getElementById('yComser').value = 115;
-        document.getElementById('colorComser').value = '#000000';
+        document.getElementById('colorComser').value = '#ffffff';
       }
     }
 
@@ -1121,7 +1118,7 @@
       }, 100);
     }
 
-    // Render Tabel Preview & Header Otomatis Sesuai Contoh Gambar Supabase
+    // Render Tabel Preview & Header Otomatis
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -1293,7 +1290,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET KE SUPABASE
+    // FUNGSI KIRIM TARGET
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -1329,7 +1326,7 @@
       }
     }
 
-    // FUNGSI KIRIM RUNNING TEXT KE SUPABASE
+    // FUNGSI KIRIM RUNNING TEXT
     async function kirimRunningTextKeSupabase() {
       const textVal = document.getElementById('inputRunningTextValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
@@ -1358,13 +1355,13 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = 'Sukses! Running text berhasil diperbarui ke database tabel running_text.';
+        statusMsg.innerText = 'Sukses! Running text berhasil diperbarui ke database.';
         statusMsg.classList.remove('hidden');
         document.getElementById('inputRunningTextValue').value = '';
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE (Menggunakan RPC upsert_data_karyawan Anda)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -1413,7 +1410,7 @@
       const btnKirim = document.getElementById('btnKirim');
 
       btnKirim.disabled = true;
-      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Super Cepat...';
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
       lucide.createIcons();
 
       const { error } = await supabaseClient.rpc(rpcName, {
@@ -1430,11 +1427,7 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        if (currentView === 'karyawan') {
-          statusMsg.innerText = `Sukses! Data karyawan baru diproses menggunakan fungsi upsert_data_karyawan.`;
-        } else {
-          statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
-        }
+        statusMsg.innerText = `Sukses! Data berhasil diperbarui ke tabel ${tableName}!`;
         statusMsg.classList.remove('hidden'); 
       }
     }
