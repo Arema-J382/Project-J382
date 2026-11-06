@@ -303,10 +303,10 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS & WARNA TEKS (TANPA BACKGROUND) -->
+                  <!-- PANEL EDIT TEKS & WARNA TEKS (DEFAULT HITAM, TANPA BACKGROUND, TANPA SHADOW) -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks (Warna Putih Default)
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks (Warna Hitam Default)
                     </h3>
 
                     <!-- 1. EDIT PANEL: NAMA -->
@@ -315,7 +315,7 @@
                         <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
                         <div class="flex items-center gap-1">
                           <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorNama" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -340,7 +340,7 @@
                         <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
                         <div class="flex items-center gap-1">
                           <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -365,7 +365,7 @@
                         <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
                         <div class="flex items-center gap-1">
                           <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -390,7 +390,7 @@
                         <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
                         <div class="flex items-center gap-1">
                           <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
@@ -436,23 +436,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (TANPA BACKGROUND, WARNA PUTIH, SHADOW JELAS) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (TANPA BACKGROUND, TANPA SHADOW) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-extrabold text-center" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                   </div>
 
@@ -751,7 +751,7 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Teks Masing-Masing (Tanpa Background, Warna Default Putih)
+      // Render Teks Masing-Masing (Tanpa Background, Warna Default Hitam, Tanpa Shadow)
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
@@ -909,22 +909,22 @@
           document.getElementById('sizeNama').value = s.sizeNama || 18;
           document.getElementById('xNama').value = s.xNama || 0;
           document.getElementById('yNama').value = s.yNama !== undefined ? s.yNama : 240;
-          document.getElementById('colorNama').value = s.colorNama || '#ffffff';
+          document.getElementById('colorNama').value = s.colorNama || '#000000';
 
           document.getElementById('sizeSales').value = s.sizeSales || 14;
           document.getElementById('xSales').value = s.xSales || 0;
           document.getElementById('ySales').value = s.ySales !== undefined ? s.ySales : 280;
-          document.getElementById('colorSales').value = s.colorSales || '#ffffff';
+          document.getElementById('colorSales').value = s.colorSales || '#000000';
 
           document.getElementById('sizeQty').value = s.sizeQty || 14;
           document.getElementById('xQty').value = s.xQty || 0;
           document.getElementById('yQty').value = s.yQty !== undefined ? s.yQty : 315;
-          document.getElementById('colorQty').value = s.colorQty || '#ffffff';
+          document.getElementById('colorQty').value = s.colorQty || '#000000';
 
           document.getElementById('sizeComser').value = s.sizeComser || 14;
           document.getElementById('xComser').value = s.xComser || 0;
           document.getElementById('yComser').value = s.yComser !== undefined ? s.yComser : 350;
-          document.getElementById('colorComser').value = s.colorComser || '#ffffff';
+          document.getElementById('colorComser').value = s.colorComser || '#000000';
         } catch (e) {
           console.error(e);
         }
@@ -936,22 +936,22 @@
         document.getElementById('sizeNama').value = 18;
         document.getElementById('xNama').value = 0;
         document.getElementById('yNama').value = 240;
-        document.getElementById('colorNama').value = '#ffffff';
+        document.getElementById('colorNama').value = '#000000';
 
         document.getElementById('sizeSales').value = 14;
         document.getElementById('xSales').value = 0;
         document.getElementById('ySales').value = 280;
-        document.getElementById('colorSales').value = '#ffffff';
+        document.getElementById('colorSales').value = '#000000';
 
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
         document.getElementById('yQty').value = 315;
-        document.getElementById('colorQty').value = '#ffffff';
+        document.getElementById('colorQty').value = '#000000';
 
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
         document.getElementById('yComser').value = 350;
-        document.getElementById('colorComser').value = '#ffffff';
+        document.getElementById('colorComser').value = '#000000';
       }
     }
 
