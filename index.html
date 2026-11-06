@@ -303,32 +303,20 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS TERPISAH & WARNA BACKGROUND -->
+                  <!-- PANEL EDIT TEKS & WARNA TEKS (TANPA BACKGROUND) -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks (Warna Putih Default)
                     </h3>
 
                     <!-- 1. EDIT PANEL: NAMA -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
-                        <div class="flex items-center gap-2">
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                            <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
-                            <input type="color" id="bgColorNama" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorNama" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
-                          <input type="checkbox" id="transparentNama" checked onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
-                          Background Transparan
-                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -350,22 +338,10 @@
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
-                        <div class="flex items-center gap-2">
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                            <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
-                            <input type="color" id="bgColorSales" value="#2563eb" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
-                          <input type="checkbox" id="transparentSales" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
-                          Background Transparan
-                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -387,22 +363,10 @@
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
-                        <div class="flex items-center gap-2">
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                            <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
-                            <input type="color" id="bgColorQty" value="#059669" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
-                          <input type="checkbox" id="transparentQty" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
-                          Background Transparan
-                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -424,22 +388,10 @@
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
-                        <div class="flex items-center gap-2">
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                            <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
-                          <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
-                            <input type="color" id="bgColorComser" value="#dc2626" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                          </div>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                         </div>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
-                          <input type="checkbox" id="transparentComser" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
-                          Background Transparan
-                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -484,23 +436,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (HTML2CANVAS BULLETPROOF MIDDLE ALIGNMENT) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (TANPA BACKGROUND, WARNA PUTIH, SHADOW JELAS) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]" style="white-space: nowrap;"></div>
                     </div>
                   </div>
 
@@ -799,14 +751,13 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background dengan Flexbox & Explicit Height (Html2Canvas Bulletproof)
+      // Render Teks Masing-Masing (Tanpa Background, Warna Default Putih)
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
       const elComser = document.getElementById('previewComserText');
 
-      // Helper function untuk menerapkan styling teks & background yang konsisten di Browser & Html2Canvas
-      function applyTextStyling(el, textContent, sizeId, colorId, bgId, transId, yId, xId) {
+      function applyTextStyling(el, textContent, sizeId, colorId, yId, xId) {
         if (!textContent) {
           el.style.display = 'none';
           return;
@@ -817,49 +768,27 @@
         
         const inner = el.querySelector('.inner-text');
         inner.innerText = textContent;
-        
-        const fontSize = parseInt(document.getElementById(sizeId).value);
-        inner.style.fontSize = fontSize + 'px';
+        inner.style.fontSize = document.getElementById(sizeId).value + 'px';
         inner.style.color = document.getElementById(colorId).value;
         
-        const isTrans = document.getElementById(transId).checked;
-        const bgCol = document.getElementById(bgId).value;
-
-        if (!isTrans) {
-          // Menggunakan Flexbox dengan tinggi eksplisit agar HTML2Canvas merender pas ditengah secara vertikal
-          inner.style.display = 'flex';
-          inner.style.alignItems = 'center';
-          inner.style.justifyContent = 'center';
-          inner.style.height = (fontSize + 14) + 'px'; // Tinggi otomatis proporsional dengan font-size
-          inner.style.padding = '0 14px';
-          inner.style.backgroundColor = bgCol;
-          inner.style.borderRadius = '6px';
-        } else {
-          inner.style.display = 'inline-block';
-          inner.style.height = 'auto';
-          inner.style.backgroundColor = 'transparent';
-          inner.style.padding = '0';
-          inner.style.borderRadius = '0';
-        }
-
         el.style.display = 'block';
       }
 
       // 1. Nama Karyawan
       const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
-      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'bgColorNama', 'transparentNama', 'yNama', 'xNama');
+      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
 
       // 2. Value Sales
-      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'bgColorSales', 'transparentSales', 'ySales', 'xSales');
+      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
 
       // 3. Qty FP
-      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'bgColorQty', 'transparentQty', 'yQty', 'xQty');
+      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
 
       // 4. Value Comser FP
-      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'bgColorComser', 'transparentComser', 'yComser', 'xComser');
+      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD (CAPTURE PREVIEW LANGSUNG)
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -924,26 +853,18 @@
         xNama: document.getElementById('xNama').value,
         yNama: document.getElementById('yNama').value,
         colorNama: document.getElementById('colorNama').value,
-        bgColorNama: document.getElementById('bgColorNama').value,
-        transparentNama: document.getElementById('transparentNama').checked,
         sizeSales: document.getElementById('sizeSales').value,
         xSales: document.getElementById('xSales').value,
         ySales: document.getElementById('ySales').value,
         colorSales: document.getElementById('colorSales').value,
-        bgColorSales: document.getElementById('bgColorSales').value,
-        transparentSales: document.getElementById('transparentSales').checked,
         sizeQty: document.getElementById('sizeQty').value,
         xQty: document.getElementById('xQty').value,
         yQty: document.getElementById('yQty').value,
         colorQty: document.getElementById('colorQty').value,
-        bgColorQty: document.getElementById('bgColorQty').value,
-        transparentQty: document.getElementById('transparentQty').checked,
         sizeComser: document.getElementById('sizeComser').value,
         xComser: document.getElementById('xComser').value,
         yComser: document.getElementById('yComser').value,
-        colorComser: document.getElementById('colorComser').value,
-        bgColorComser: document.getElementById('bgColorComser').value,
-        transparentComser: document.getElementById('transparentComser').checked
+        colorComser: document.getElementById('colorComser').value
       };
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
@@ -988,30 +909,22 @@
           document.getElementById('sizeNama').value = s.sizeNama || 18;
           document.getElementById('xNama').value = s.xNama || 0;
           document.getElementById('yNama').value = s.yNama !== undefined ? s.yNama : 240;
-          document.getElementById('colorNama').value = s.colorNama || '#000000';
-          document.getElementById('bgColorNama').value = s.bgColorNama || '#ffffff';
-          document.getElementById('transparentNama').checked = s.transparentNama !== undefined ? s.transparentNama : true;
+          document.getElementById('colorNama').value = s.colorNama || '#ffffff';
 
           document.getElementById('sizeSales').value = s.sizeSales || 14;
           document.getElementById('xSales').value = s.xSales || 0;
           document.getElementById('ySales').value = s.ySales !== undefined ? s.ySales : 280;
           document.getElementById('colorSales').value = s.colorSales || '#ffffff';
-          document.getElementById('bgColorSales').value = s.bgColorSales || '#2563eb';
-          document.getElementById('transparentSales').checked = s.transparentSales !== undefined ? s.transparentSales : false;
 
           document.getElementById('sizeQty').value = s.sizeQty || 14;
           document.getElementById('xQty').value = s.xQty || 0;
           document.getElementById('yQty').value = s.yQty !== undefined ? s.yQty : 315;
           document.getElementById('colorQty').value = s.colorQty || '#ffffff';
-          document.getElementById('bgColorQty').value = s.bgColorQty || '#059669';
-          document.getElementById('transparentQty').checked = s.transparentQty !== undefined ? s.transparentQty : false;
 
           document.getElementById('sizeComser').value = s.sizeComser || 14;
           document.getElementById('xComser').value = s.xComser || 0;
           document.getElementById('yComser').value = s.yComser !== undefined ? s.yComser : 350;
           document.getElementById('colorComser').value = s.colorComser || '#ffffff';
-          document.getElementById('bgColorComser').value = s.bgColorComser || '#dc2626';
-          document.getElementById('transparentComser').checked = s.transparentComser !== undefined ? s.transparentComser : false;
         } catch (e) {
           console.error(e);
         }
@@ -1023,30 +936,22 @@
         document.getElementById('sizeNama').value = 18;
         document.getElementById('xNama').value = 0;
         document.getElementById('yNama').value = 240;
-        document.getElementById('colorNama').value = '#000000';
-        document.getElementById('bgColorNama').value = '#ffffff';
-        document.getElementById('transparentNama').checked = true;
+        document.getElementById('colorNama').value = '#ffffff';
 
         document.getElementById('sizeSales').value = 14;
         document.getElementById('xSales').value = 0;
         document.getElementById('ySales').value = 280;
         document.getElementById('colorSales').value = '#ffffff';
-        document.getElementById('bgColorSales').value = '#2563eb';
-        document.getElementById('transparentSales').checked = false;
 
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
         document.getElementById('yQty').value = 315;
         document.getElementById('colorQty').value = '#ffffff';
-        document.getElementById('bgColorQty').value = '#059669';
-        document.getElementById('transparentQty').checked = false;
 
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
         document.getElementById('yComser').value = 350;
         document.getElementById('colorComser').value = '#ffffff';
-        document.getElementById('bgColorComser').value = '#dc2626';
-        document.getElementById('transparentComser').checked = false;
       }
     }
 
