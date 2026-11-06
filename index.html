@@ -209,7 +209,7 @@
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih twibbon, masukkan NIP untuk auto-load nama dari tabel <code class="bg-gray-100 text-blue-600 px-1 py-0.5 rounded">data_karyawan</code>, isi data, dan atur tata letak.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -236,36 +236,36 @@
 
                     <!-- TEXTBOX 1: NIP -->
                     <div>
-                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 1: INPUT NIP</label>
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">INPUT NIP</label>
                       <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 147683)..." oninput="handleNipInput()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
                     <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
                     <div>
-                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 2: NAMA KARYAWAN (OTOMATIS)</label>
-                      <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari tabel data_karyawan..."
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">NAMA KARYAWAN (OTOMATIS)</label>
+                      <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari database..."
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-gray-100 text-gray-700 font-semibold">
                     </div>
 
                     <!-- TEXTBOX 3: VALUE SALES -->
                     <div>
-                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 3: VALUE SALES (TEXT)</label>
-                      <input type="text" id="twibbonValueSales" placeholder="Contoh: Rp 120.000.000" oninput="updateTwibbonPreview()"
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE SALES</label>
+                      <input type="text" id="twibbonValueSales" placeholder="Contoh: 120 JT" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
                     <!-- TEXTBOX 4: QTY FP -->
                     <div>
-                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 4: QTY FP (TEXT)</label>
-                      <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 Unit" oninput="updateTwibbonPreview()"
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">QTY FP</label>
+                      <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 PCS" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
                     <!-- TEXTBOX 5: VALUE COMSER FP -->
                     <div>
-                      <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 5: VALUE COMSER FP (TEXT)</label>
-                      <input type="text" id="twibbonValueComser" placeholder="Contoh: Rp 15.000.000" oninput="updateTwibbonPreview()"
+                      <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE COMSER</label>
+                      <input type="text" id="twibbonValueComser" placeholder="Contoh: 800 RIBU" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
                   </div>
@@ -273,26 +273,26 @@
                   <!-- TOMBOL SAVE EDITING -->
                   <div>
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
-                      <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
+                      <i data-lucide="save" class="w-4 h-4"></i> SAVE FORMAT EDIT
                     </button>
                   </div>
 
                   <!-- PANEL EDIT FOTO SALES -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Panel Edit Foto Sales
+                      <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Edit Foto Sales
                     </h3>
                     <div class="grid grid-cols-3 gap-2">
                       <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN (ZOOM)</label>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN FOTO</label>
                         <input type="range" id="photoScale" min="0.5" max="2.5" step="0.05" value="1" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
                       </div>
                       <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER X</label>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER KANAN-KIRI</label>
                         <input type="range" id="photoX" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
                       </div>
                       <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER Y</label>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER ATAS-BAWAH</label>
                         <input type="range" id="photoY" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
                       </div>
                     </div>
@@ -301,20 +301,20 @@
                   <!-- PANEL EDIT TEKS TERPISAH & WARNA BACKGROUND -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks & Background
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks
                     </h3>
 
                     <!-- 1. EDIT PANEL: NAMA -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 2: Nama Karyawan</span>
+                        <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
                         <div class="flex items-center gap-2">
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
                             <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
                             <input type="color" id="bgColorNama" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                         </div>
@@ -327,15 +327,15 @@
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
                           <input type="range" id="sizeNama" min="10" max="32" step="1" value="16" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KANAN-KIRI</label>
                           <input type="range" id="xNama" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
                           <input type="range" id="yNama" min="-150" max="300" step="1" value="40" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
@@ -344,14 +344,14 @@
                     <!-- 2. EDIT PANEL: VALUE SALES (Default Bg Biru #2563eb) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 3: Value Sales (Bg Biru)</span>
+                        <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
                         <div class="flex items-center gap-2">
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
                             <input type="color" id="colorSales" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
                             <input type="color" id="bgColorSales" value="#2563eb" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                         </div>
@@ -364,15 +364,15 @@
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
                           <input type="range" id="sizeSales" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KANAN-KIRI</label>
                           <input type="range" id="xSales" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
                           <input type="range" id="ySales" min="-150" max="300" step="1" value="65" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
@@ -381,14 +381,14 @@
                     <!-- 3. EDIT PANEL: QTY FP (Default Bg Hijau #059669) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 4: Qty FP (Bg Hijau)</span>
+                        <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
                         <div class="flex items-center gap-2">
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
                             <input type="color" id="colorQty" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
                             <input type="color" id="bgColorQty" value="#059669" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                         </div>
@@ -401,15 +401,15 @@
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
                           <input type="range" id="sizeQty" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KANAN-KIRI</label>
                           <input type="range" id="xQty" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
                           <input type="range" id="yQty" min="-150" max="300" step="1" value="90" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
@@ -418,14 +418,14 @@
                     <!-- 4. EDIT PANEL: VALUE COMSER FP (Default Bg Merah #dc2626) -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Teks 5: Comser FP (Bg Merah)</span>
+                        <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
                         <div class="flex items-center gap-2">
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Text:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
                             <input type="color" id="colorComser" value="#ffffff" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                           <div class="flex items-center gap-1">
-                            <label class="text-[9px] font-bold text-gray-500">Bg:</label>
+                            <label class="text-[9px] font-bold text-gray-500">Warna BG:</label>
                             <input type="color" id="bgColorComser" value="#dc2626" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                         </div>
@@ -438,15 +438,15 @@
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
                           <input type="range" id="sizeComser" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KANAN-KIRI</label>
                           <input type="range" id="xComser" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                         <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
                           <input type="range" id="yComser" min="-150" max="300" step="1" value="115" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
                         </div>
                       </div>
@@ -461,7 +461,7 @@
               <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6">
                 <div class="mb-3 text-center">
                   <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
-                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Live Preview Otomatis
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Live Preview
                   </span>
                 </div>
 
@@ -472,7 +472,7 @@
                   <div id="previewPhotoContainer" class="absolute inset-0 flex items-center justify-center overflow-hidden bg-slate-200">
                     <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" onerror="this.classList.add('hidden')">
                     <div id="photoPlaceholderText" class="text-xs text-gray-400 font-medium text-center p-4">
-                      Masukkan NIP untuk menampilkan Foto Sales
+                      Masukkan NIP untuk menampilkan data...
                     </div>
                   </div>
 
@@ -1267,8 +1267,8 @@
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nip_kar</th>
-            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nama_kar</th>
+            <th class="border border-slate-700 px-4 py-3">NIP</th>
+            <th class="border border-slate-700 px-4 py-3">NAMA</th>
           </tr>
         `;
       } else if (currentView === 'sales' || currentView === 'mtdSales') {
