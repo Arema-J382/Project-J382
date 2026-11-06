@@ -842,7 +842,7 @@
       }
     }
 
-    // FUNGSI SAVE EDITING
+    // FUNGSI SAVE EDITING (BEBAS INP ISSUE / TANPA ALERT BLOKIR)
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
@@ -869,6 +869,7 @@
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
       
+      // Menggunakan statusMsg non-blokir agar performa UI tetap mulus dan bebas INP issue
       const statusMsg = document.getElementById('statusMsg');
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
       statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Konfigurasi tata letak & warna untuk "${twibbonType.toUpperCase()}" berhasil disimpan.`;
@@ -876,7 +877,6 @@
       lucide.createIcons();
       
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
-      alert(`Settingan Twibbon (${twibbonType.toUpperCase()}) Berhasil Disimpan!`);
     }
 
     // FUNGSI RESET DEFAULT SETTINGS PER TWIBBON
