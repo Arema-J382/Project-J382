@@ -484,23 +484,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (STRUKTUR WRAPPER STABIL HTML2CANVAS) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (MIDDLE ALIGNED DENGAN FLEXBOX) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;"></div>
                     </div>
                   </div>
 
@@ -799,7 +799,7 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background via Wrapper & Inner Container Stabil
+      // Render Masing-Masing Teks & Background dengan Middle Align Flexbox
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
