@@ -110,7 +110,7 @@
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
-            <!-- MENU 9: MTD COMSER -> DIBAWAHNYA DITAMBAHKAN TWIBBON SALES -->
+            <!-- MENU 9: TWIBBON SALES (DIBAWAH MTD COMSER) -->
             <a href="#" onclick="switchView('twibbonSales')" id="menuTwibbonSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="image" class="w-4 h-4 text-yellow-400"></i>
               <span>TWIBBON SALES</span>
@@ -237,7 +237,7 @@
                     <!-- TEXTBOX 1: NIP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 1: INPUT NIP</label>
-                      <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 126785)..." oninput="handleNipInput()"
+                      <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 147683)..." oninput="handleNipInput()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
@@ -270,7 +270,7 @@
                     </div>
                   </div>
 
-                  <!-- TOMBOL SAVE EDITING (DIPERINTAHKAN DIATASNYA PANEL EDIT FOTO SALES) -->
+                  <!-- TOMBOL SAVE EDITING (DIATASNYA PANEL EDIT FOTO SALES) -->
                   <div>
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
@@ -664,23 +664,26 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA TWIBBON SALES & TABEL data_karyawan ---
+    // --- LOGIKA TWIBBON SALES & TABEL data_karyawan (FIXED TYPE INT8) ---
     async function handleNipInput() {
-      const nip = document.getElementById('twibbonNip').value.trim();
+      const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
 
-      if (!nip) {
+      if (!nipVal) {
         namaInput.value = '';
         updateTwibbonPreview();
         return;
       }
 
+      // Konversi input NIP ke Number agar cocok dengan tipe data int8 di database Supabase
+      const nipNum = Number(nipVal);
+
       // Ambil nama dari tabel "data_karyawan" berdasarkan primary key "nip_kar" -> kolom "nama_kar"
       const { data, error } = await supabaseClient
         .from('data_karyawan')
         .select('nama_kar')
-        .eq('nip_kar', nip)
-        .single();
+        .eq('nip_kar', isNaN(nipNum) ? nipVal : nipNum)
+        .maybeSingle();
 
       if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
