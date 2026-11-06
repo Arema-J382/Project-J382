@@ -484,23 +484,23 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (100% MIDDLE ALIGNMENT DENGAN PADDING SIMETRIS) -->
+                  <!-- LAPISAN 3: TEKS MASING-MASING (HTML2CANVAS BULLETPROOF MIDDLE ALIGNMENT) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
+                      <div class="inner-text font-extrabold text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
                     </div>
                     <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
-                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap; display: inline-block; line-height: 1;"></div>
+                      <div class="inner-text font-bold text-center shadow-sm" style="white-space: nowrap;"></div>
                     </div>
                   </div>
 
@@ -799,115 +799,64 @@
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Masing-Masing Teks & Background dengan 100% Middle Align Sempurna (Inline-Block + Equal Padding)
+      // Render Masing-Masing Teks & Background dengan Flexbox & Explicit Height (Html2Canvas Bulletproof)
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
       const elComser = document.getElementById('previewComserText');
 
-      // 1. Nama Karyawan
-      if (nama && !nama.includes('tidak ditemukan') && !nama.includes('Error')) {
-        elNama.style.top = document.getElementById('yNama').value + 'px';
-        elNama.style.transform = `translateX(calc(-50% + ${document.getElementById('xNama').value}px))`;
+      // Helper function untuk menerapkan styling teks & background yang konsisten di Browser & Html2Canvas
+      function applyTextStyling(el, textContent, sizeId, colorId, bgId, transId, yId, xId) {
+        if (!textContent) {
+          el.style.display = 'none';
+          return;
+        }
+
+        el.style.top = document.getElementById(yId).value + 'px';
+        el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
         
-        const inner = elNama.querySelector('.inner-text');
-        inner.innerText = nama;
-        inner.style.fontSize = document.getElementById('sizeNama').value + 'px';
-        inner.style.color = document.getElementById('colorNama').value;
+        const inner = el.querySelector('.inner-text');
+        inner.innerText = textContent;
         
-        const isTransNama = document.getElementById('transparentNama').checked;
-        const bgNama = document.getElementById('bgColorNama').value;
-        if (!isTransNama) {
-          inner.style.backgroundColor = bgNama;
-          inner.style.padding = '6px 14px';
+        const fontSize = parseInt(document.getElementById(sizeId).value);
+        inner.style.fontSize = fontSize + 'px';
+        inner.style.color = document.getElementById(colorId).value;
+        
+        const isTrans = document.getElementById(transId).checked;
+        const bgCol = document.getElementById(bgId).value;
+
+        if (!isTrans) {
+          // Menggunakan Flexbox dengan tinggi eksplisit agar HTML2Canvas merender pas ditengah secara vertikal
+          inner.style.display = 'flex';
+          inner.style.alignItems = 'center';
+          inner.style.justifyContent = 'center';
+          inner.style.height = (fontSize + 14) + 'px'; // Tinggi otomatis proporsional dengan font-size
+          inner.style.padding = '0 14px';
+          inner.style.backgroundColor = bgCol;
           inner.style.borderRadius = '6px';
         } else {
+          inner.style.display = 'inline-block';
+          inner.style.height = 'auto';
           inner.style.backgroundColor = 'transparent';
           inner.style.padding = '0';
           inner.style.borderRadius = '0';
         }
-        elNama.style.display = 'block';
-      } else {
-        elNama.style.display = 'none';
+
+        el.style.display = 'block';
       }
+
+      // 1. Nama Karyawan
+      const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
+      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'bgColorNama', 'transparentNama', 'yNama', 'xNama');
 
       // 2. Value Sales
-      if (valSales) {
-        elSales.style.top = document.getElementById('ySales').value + 'px';
-        elSales.style.transform = `translateX(calc(-50% + ${document.getElementById('xSales').value}px))`;
-        
-        const inner = elSales.querySelector('.inner-text');
-        inner.innerText = valSales;
-        inner.style.fontSize = document.getElementById('sizeSales').value + 'px';
-        inner.style.color = document.getElementById('colorSales').value;
-        
-        const isTransSales = document.getElementById('transparentSales').checked;
-        const bgSales = document.getElementById('bgColorSales').value;
-        if (!isTransSales) {
-          inner.style.backgroundColor = bgSales;
-          inner.style.padding = '6px 14px';
-          inner.style.borderRadius = '6px';
-        } else {
-          inner.style.backgroundColor = 'transparent';
-          inner.style.padding = '0';
-          inner.style.borderRadius = '0';
-        }
-        elSales.style.display = 'block';
-      } else {
-        elSales.style.display = 'none';
-      }
+      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'bgColorSales', 'transparentSales', 'ySales', 'xSales');
 
-      // 3. Qty FP (+ Prefix "FP : ")
-      if (qtyFp) {
-        elQty.style.top = document.getElementById('yQty').value + 'px';
-        elQty.style.transform = `translateX(calc(-50% + ${document.getElementById('xQty').value}px))`;
-        
-        const inner = elQty.querySelector('.inner-text');
-        inner.innerText = 'FP : ' + qtyFp;
-        inner.style.fontSize = document.getElementById('sizeQty').value + 'px';
-        inner.style.color = document.getElementById('colorQty').value;
-        
-        const isTransQty = document.getElementById('transparentQty').checked;
-        const bgQty = document.getElementById('bgColorQty').value;
-        if (!isTransQty) {
-          inner.style.backgroundColor = bgQty;
-          inner.style.padding = '6px 14px';
-          inner.style.borderRadius = '6px';
-        } else {
-          inner.style.backgroundColor = 'transparent';
-          inner.style.padding = '0';
-          inner.style.borderRadius = '0';
-        }
-        elQty.style.display = 'block';
-      } else {
-        elQty.style.display = 'none';
-      }
+      // 3. Qty FP
+      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'bgColorQty', 'transparentQty', 'yQty', 'xQty');
 
-      // 4. Value Comser FP (+ Prefix "COMSER : ")
-      if (valComser) {
-        elComser.style.top = document.getElementById('yComser').value + 'px';
-        elComser.style.transform = `translateX(calc(-50% + ${document.getElementById('xComser').value}px))`;
-        
-        const inner = elComser.querySelector('.inner-text');
-        inner.innerText = 'COMSER : ' + valComser;
-        inner.style.fontSize = document.getElementById('sizeComser').value + 'px';
-        inner.style.color = document.getElementById('colorComser').value;
-        
-        const isTransComser = document.getElementById('transparentComser').checked;
-        const bgComser = document.getElementById('bgColorComser').value;
-        if (!isTransComser) {
-          inner.style.backgroundColor = bgComser;
-          inner.style.padding = '6px 14px';
-          inner.style.borderRadius = '6px';
-        } else {
-          inner.style.backgroundColor = 'transparent';
-          inner.style.padding = '0';
-          inner.style.borderRadius = '0';
-        }
-        elComser.style.display = 'block';
-      } else {
-        elComser.style.display = 'none';
-      }
+      // 4. Value Comser FP
+      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'bgColorComser', 'transparentComser', 'yComser', 'xComser');
     }
 
     // FUNGSI DOWNLOAD TWIBBON JPG FULL HD (CAPTURE PREVIEW LANGSUNG)
@@ -1067,7 +1016,6 @@
           console.error(e);
         }
       } else {
-        // DEFAULT BERDASARKAN JENIS TWIBBON
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
