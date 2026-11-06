@@ -115,7 +115,7 @@
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
-            <!-- MENU 10: UPDATE KARYAWAN (DIBAWAH RUNNING TEXT) -->
+            <!-- MENU 10: UPDATE KARYAWAN -->
             <a href="#" onclick="switchView('karyawan')" id="menuKaryawan" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
               <span>UPDATE KARYAWAN</span>
@@ -250,9 +250,9 @@
   </div>
 
   <script>
-    // Konfigurasi Supabase
+    // Konfigurasi Supabase (API Key asli diperbaiki)
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54dkdrZnNiZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzkzNTczODI4LCJleHAiOjIxMDkxNDk4Mjh9.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -930,7 +930,7 @@
 
       if (currentView === 'karyawan') {
         activeData = karyawanData;
-        rpcName = 'upsert_data_karyawan'; // Menggunakan upsert agar data lama tidak terhapus
+        rpcName = 'upsert_data_karyawan';
         tableName = 'data_karyawan';
       } else if (currentView === 'sales') {
         activeData = salesData;
