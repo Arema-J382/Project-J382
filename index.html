@@ -110,17 +110,17 @@
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
-            <!-- MENU BARU: TWIBBON SALES -->
+            <!-- MENU 9: MTD COMSER -> DIBAWAHNYA DITAMBAHKAN TWIBBON SALES -->
             <a href="#" onclick="switchView('twibbonSales')" id="menuTwibbonSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="image" class="w-4 h-4 text-yellow-400"></i>
               <span>TWIBBON SALES</span>
             </a>
-            <!-- MENU 9: INPUT RUNNING TEXT -->
+            <!-- MENU 10: INPUT RUNNING TEXT -->
             <a href="#" onclick="switchView('runningText')" id="menuRunningText" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
-            <!-- MENU 10: UPDATE KARYAWAN -->
+            <!-- MENU 11: UPDATE KARYAWAN -->
             <a href="#" onclick="switchView('karyawan')" id="menuKaryawan" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
               <span>UPDATE KARYAWAN</span>
@@ -209,23 +209,14 @@
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih jenis twibbon, masukkan NIP karyawan untuk auto-load nama, isi nilai pendukung, dan atur tata letak sesuai kebutuhan.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih twibbon, masukkan NIP untuk auto-load nama dari tabel <code class="bg-gray-100 text-blue-600 px-1 py-0.5 rounded">data_karyawan</code>, isi data, dan atur tata letak.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-              <!-- KOLOM KIRI: INPUT & PANEL EDIT -->
+              <!-- KOLOM KIRI: INPUT & PANEL PENGATURAN -->
               <div class="lg:col-span-6 flex flex-col gap-4">
                 <div class="border border-gray-200 rounded-2xl p-5 bg-slate-50/60 shadow-sm space-y-4 flex-1">
                   
-                  <!-- TOMBOL SAVE EDITING DI PALING ATAS PANEL -->
-                  <div>
-                    <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
-                      <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
-                    </button>
-                  </div>
-
-                  <hr class="border-gray-200">
-
                   <!-- DROPDOWN LIST TWIBBON -->
                   <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">PILIH JENIS TWIBBON</label>
@@ -250,7 +241,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 2: NAMA (OTOMATIS) -->
+                    <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">TEXTBOX 2: NAMA KARYAWAN (OTOMATIS)</label>
                       <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari tabel data_karyawan..."
@@ -279,6 +270,13 @@
                     </div>
                   </div>
 
+                  <!-- TOMBOL SAVE EDITING (DIPERINTAHKAN DIATASNYA PANEL EDIT FOTO SALES) -->
+                  <div>
+                    <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20">
+                      <i data-lucide="save" class="w-4 h-4"></i> SAVE EDITING (Simpan Settingan Twibbon Ini)
+                    </button>
+                  </div>
+
                   <!-- PANEL EDIT FOTO SALES -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
@@ -300,25 +298,112 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS & NILAI -->
-                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                  <!-- PANEL EDIT TEKS TERPISAH UNTUK MASING-MASING TEXTBOX -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Teks (Nama & Nilai)
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks (Tanpa Background)
                     </h3>
-                    <div class="grid grid-cols-3 gap-2">
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN FONT</label>
-                        <input type="range" id="textFontSize" min="10" max="30" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+
+                    <!-- 1. EDIT PANEL: NAMA -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Teks 2: Nama Karyawan</span>
+                        <div class="flex items-center gap-1.5">
+                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
+                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
                       </div>
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER X</label>
-                        <input type="range" id="textX" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                      </div>
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER Y</label>
-                        <input type="range" id="textY" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <input type="range" id="sizeNama" min="10" max="32" step="1" value="16" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <input type="range" id="xNama" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <input type="range" id="yNama" min="-150" max="150" step="1" value="40" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
                       </div>
                     </div>
+
+                    <!-- 2. EDIT PANEL: VALUE SALES -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Teks 3: Value Sales</span>
+                        <div class="flex items-center gap-1.5">
+                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
+                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <input type="range" id="sizeSales" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <input type="range" id="xSales" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <input type="range" id="ySales" min="-150" max="150" step="1" value="65" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3. EDIT PANEL: QTY FP -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Teks 4: Qty FP</span>
+                        <div class="flex items-center gap-1.5">
+                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
+                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <input type="range" id="sizeQty" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <input type="range" id="xQty" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <input type="range" id="yQty" min="-150" max="150" step="1" value="90" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 4. EDIT PANEL: VALUE COMSER FP -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Teks 5: Value Comser FP</span>
+                        <div class="flex items-center gap-1.5">
+                          <label class="text-[10px] font-bold text-gray-500">Warna:</label>
+                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-6 h-6 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN FONT</label>
+                          <input type="range" id="sizeComser" min="10" max="32" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER X</label>
+                          <input type="range" id="xComser" min="-150" max="150" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER Y</label>
+                          <input type="range" id="yComser" min="-150" max="150" step="1" value="115" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
                 </div>
@@ -346,12 +431,16 @@
                   <!-- LAPISAN 2: BINGKAI TWIBBON (DI DEPAN FOTO) -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10">
 
-                  <!-- LAPISAN 3: TEKS (NAMA & NILAI-NILAI, DI DEPAN TWIBBON) -->
-                  <div id="previewTextOverlay" class="absolute z-20 flex flex-col items-center text-center transition-all duration-75 pointer-events-none" style="transform: translate(0px, 0px);">
-                    <div id="previewNamaText" class="font-extrabold text-slate-900 drop-shadow-sm px-2 py-0.5 rounded"></div>
-                    <div id="previewValuesContainer" class="flex flex-col gap-0.5 mt-1">
-                      <!-- Nilai Textbox 3, 4, 5 dirender dinamis -->
-                    </div>
+                  <!-- LAPISAN 3: TEKS MASING-MASING TANPA BACKGROUND DI DEPAN TWIBBON -->
+                  <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
+                    <!-- Teks Nama -->
+                    <div id="previewNamaText" class="absolute font-extrabold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
+                    <!-- Teks Sales -->
+                    <div id="previewSalesText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
+                    <!-- Teks Qty -->
+                    <div id="previewQtyText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
+                    <!-- Teks Comser -->
+                    <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
                   </div>
 
                 </div>
@@ -493,7 +582,6 @@
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
 
-      // Sembunyikan semua section utama dulu
       viewTargetSection.classList.add('hidden');
       if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
       if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
@@ -576,7 +664,7 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA TWIBBON SALES ---
+    // --- LOGIKA TWIBBON SALES & TABEL data_karyawan ---
     async function handleNipInput() {
       const nip = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -587,7 +675,7 @@
         return;
       }
 
-      // Ambil nama dari tabel data_karyawan berdasarkan nip_kar
+      // Ambil nama dari tabel "data_karyawan" berdasarkan primary key "nip_kar" -> kolom "nama_kar"
       const { data, error } = await supabaseClient
         .from('data_karyawan')
         .select('nama_kar')
@@ -597,7 +685,7 @@
       if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
       } else {
-        namaInput.value = 'Nama tidak ditemukan di database';
+        namaInput.value = 'NIP tidak ditemukan di data_karyawan';
       }
 
       updateTwibbonPreview();
@@ -616,11 +704,11 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      // URL Twibbon dari storage Supabase "TWIBBON"
+      // URL Twibbon dari Storage Supabase "TWIBBON"
       const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
       document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
 
-      // URL Foto Sales dari storage Supabase "FOTO SALES"
+      // URL Foto Sales dari Storage Supabase "FOTO SALES"
       const photoImg = document.getElementById('previewPhotoImg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
@@ -634,42 +722,61 @@
         placeholderText.classList.remove('hidden');
       }
 
-      // Ambil nilai Slider Foto
+      // Atur Foto Sales (Zoom & Koordinat X/Y)
       const photoScale = document.getElementById('photoScale').value;
       const photoX = document.getElementById('photoX').value;
       const photoY = document.getElementById('photoY').value;
       photoImg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Teks di Depan Twibbon (Abaikan jika kosong)
-      const previewNamaText = document.getElementById('previewNamaText');
-      const previewValuesContainer = document.getElementById('previewValuesContainer');
-      const textFontSize = document.getElementById('textFontSize').value;
-      const textX = document.getElementById('textX').value;
-      const textY = document.getElementById('textY').value;
-      const textOverlay = document.getElementById('previewTextOverlay');
+      // Render Teks Masing-Masing (Tanpa Background, dengan Warna & Koordinat Personal)
+      const elNama = document.getElementById('previewNamaText');
+      const elSales = document.getElementById('previewSalesText');
+      const elQty = document.getElementById('previewQtyText');
+      const elComser = document.getElementById('previewComserText');
 
-      textOverlay.style.transform = `translate(${textX}px, ${textY}px)`;
-      textOverlay.style.fontSize = `${textFontSize}px`;
-
+      // 1. Nama
       if (nama && !nama.includes('tidak ditemukan')) {
-        previewNamaText.innerText = nama;
-        previewNamaText.style.display = 'block';
+        elNama.innerText = nama;
+        elNama.style.fontSize = document.getElementById('sizeNama').value + 'px';
+        elNama.style.color = document.getElementById('colorNama').value;
+        elNama.style.transform = `translate(${document.getElementById('xNama').value}px, ${document.getElementById('yNama').value}px)`;
+        elNama.style.display = 'block';
       } else {
-        previewNamaText.innerText = '';
-        previewNamaText.style.display = 'none';
+        elNama.style.display = 'none';
       }
 
-      let valuesHtml = '';
+      // 2. Value Sales
       if (valSales) {
-        valuesHtml += `<span class="bg-blue-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Sales: ${valSales}</span>`;
+        elSales.innerText = valSales;
+        elSales.style.fontSize = document.getElementById('sizeSales').value + 'px';
+        elSales.style.color = document.getElementById('colorSales').value;
+        elSales.style.transform = `translate(${document.getElementById('xSales').value}px, ${document.getElementById('ySales').value}px)`;
+        elSales.style.display = 'block';
+      } else {
+        elSales.style.display = 'none';
       }
+
+      // 3. Qty FP
       if (qtyFp) {
-        valuesHtml += `<span class="bg-emerald-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Qty FP: ${qtyFp}</span>`;
+        elQty.innerText = qtyFp;
+        elQty.style.fontSize = document.getElementById('sizeQty').value + 'px';
+        elQty.style.color = document.getElementById('colorQty').value;
+        elQty.style.transform = `translate(${document.getElementById('xQty').value}px, ${document.getElementById('yQty').value}px)`;
+        elQty.style.display = 'block';
+      } else {
+        elQty.style.display = 'none';
       }
+
+      // 4. Value Comser FP
       if (valComser) {
-        valuesHtml += `<span class="bg-purple-600/90 text-white font-bold px-2 py-0.5 rounded shadow-xs">Comser FP: ${valComser}</span>`;
+        elComser.innerText = valComser;
+        elComser.style.fontSize = document.getElementById('sizeComser').value + 'px';
+        elComser.style.color = document.getElementById('colorComser').value;
+        elComser.style.transform = `translate(${document.getElementById('xComser').value}px, ${document.getElementById('yComser').value}px)`;
+        elComser.style.display = 'block';
+      } else {
+        elComser.style.display = 'none';
       }
-      previewValuesContainer.innerHTML = valuesHtml;
     }
 
     function saveTwibbonSettings() {
@@ -678,16 +785,33 @@
         photoScale: document.getElementById('photoScale').value,
         photoX: document.getElementById('photoX').value,
         photoY: document.getElementById('photoY').value,
-        textFontSize: document.getElementById('textFontSize').value,
-        textX: document.getElementById('textX').value,
-        textY: document.getElementById('textY').value
+        // Nama
+        sizeNama: document.getElementById('sizeNama').value,
+        xNama: document.getElementById('xNama').value,
+        yNama: document.getElementById('yNama').value,
+        colorNama: document.getElementById('colorNama').value,
+        // Sales
+        sizeSales: document.getElementById('sizeSales').value,
+        xSales: document.getElementById('xSales').value,
+        ySales: document.getElementById('ySales').value,
+        colorSales: document.getElementById('colorSales').value,
+        // Qty
+        sizeQty: document.getElementById('sizeQty').value,
+        xQty: document.getElementById('xQty').value,
+        yQty: document.getElementById('yQty').value,
+        colorQty: document.getElementById('colorQty').value,
+        // Comser
+        sizeComser: document.getElementById('sizeComser').value,
+        xComser: document.getElementById('xComser').value,
+        yComser: document.getElementById('yComser').value,
+        colorComser: document.getElementById('colorComser').value
       };
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
       
       const statusMsg = document.getElementById('statusMsg');
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-      statusMsg.innerText = `Sukses! Pengaturan ukuran & koordinat untuk "${twibbonType}" berhasil disimpan.`;
+      statusMsg.innerText = `Sukses! Konfigurasi ukuran, koordinat, dan warna untuk "${twibbonType}" berhasil disimpan.`;
       statusMsg.classList.remove('hidden');
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
@@ -701,9 +825,26 @@
           document.getElementById('photoScale').value = s.photoScale || 1;
           document.getElementById('photoX').value = s.photoX || 0;
           document.getElementById('photoY').value = s.photoY || 0;
-          document.getElementById('textFontSize').value = s.textFontSize || 14;
-          document.getElementById('textX').value = s.textX || 0;
-          document.getElementById('textY').value = s.textY || 0;
+
+          document.getElementById('sizeNama').value = s.sizeNama || 16;
+          document.getElementById('xNama').value = s.xNama || 0;
+          document.getElementById('yNama').value = s.yNama || 40;
+          document.getElementById('colorNama').value = s.colorNama || '#000000';
+
+          document.getElementById('sizeSales').value = s.sizeSales || 14;
+          document.getElementById('xSales').value = s.xSales || 0;
+          document.getElementById('ySales').value = s.ySales || 65;
+          document.getElementById('colorSales').value = s.colorSales || '#000000';
+
+          document.getElementById('sizeQty').value = s.sizeQty || 14;
+          document.getElementById('xQty').value = s.xQty || 0;
+          document.getElementById('yQty').value = s.yQty || 90;
+          document.getElementById('colorQty').value = s.colorQty || '#000000';
+
+          document.getElementById('sizeComser').value = s.sizeComser || 14;
+          document.getElementById('xComser').value = s.xComser || 0;
+          document.getElementById('yComser').value = s.yComser || 115;
+          document.getElementById('colorComser').value = s.colorComser || '#000000';
         } catch (e) {
           console.error(e);
         }
@@ -712,9 +853,26 @@
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
-        document.getElementById('textFontSize').value = 14;
-        document.getElementById('textX').value = 0;
-        document.getElementById('textY').value = 50;
+
+        document.getElementById('sizeNama').value = 16;
+        document.getElementById('xNama').value = 0;
+        document.getElementById('yNama').value = 40;
+        document.getElementById('colorNama').value = '#000000';
+
+        document.getElementById('sizeSales').value = 14;
+        document.getElementById('xSales').value = 0;
+        document.getElementById('ySales').value = 65;
+        document.getElementById('colorSales').value = '#000000';
+
+        document.getElementById('sizeQty').value = 14;
+        document.getElementById('xQty').value = 0;
+        document.getElementById('yQty').value = 90;
+        document.getElementById('colorQty').value = '#000000';
+
+        document.getElementById('sizeComser').value = 14;
+        document.getElementById('xComser').value = 0;
+        document.getElementById('yComser').value = 115;
+        document.getElementById('colorComser').value = '#000000';
       }
     }
 
