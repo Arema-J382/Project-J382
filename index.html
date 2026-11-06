@@ -115,7 +115,7 @@
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
-            <!-- MENU BARU: UPDATE KARYAWAN (DIBAWAH RUNNING TEXT) -->
+            <!-- MENU 10: UPDATE KARYAWAN (DIBAWAH RUNNING TEXT) -->
             <a href="#" onclick="switchView('karyawan')" id="menuKaryawan" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
               <span>UPDATE KARYAWAN</span>
@@ -200,7 +200,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL (SALES, COMSER, FURNIPRO, KARYAWAN, ETC) -->
+          <!-- TAMPILAN VIEW TABLE EXCEL -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
@@ -252,7 +252,7 @@
   <script>
     // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54dkdrZnNiZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzkzNTczODI4LCJleHAiOjIxMDkxNDk4Mjh9.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -265,7 +265,7 @@
     let furniproData = []; 
     let mtdSalesData = []; 
     let mtdFurniproData = []; 
-    let karyawanData = []; // Data Karyawan (Baru)
+    let karyawanData = []; 
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -679,7 +679,7 @@
       }, 100);
     }
 
-    // Render Tabel Preview & Header Otomatis Sesuai Contoh Gambar
+    // Render Tabel Preview & Header Otomatis Sesuai Contoh Gambar Supabase
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -699,8 +699,8 @@
         thead.innerHTML = `
           <tr>
             <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">NIP</th>
-            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">NAMA</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nip_kar</th>
+            <th class="border border-slate-700 px-4 py-3 font-semibold text-indigo-300">nama_kar</th>
           </tr>
         `;
       } else if (currentView === 'sales' || currentView === 'mtdSales') {
@@ -922,7 +922,7 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE (SUDAH DITAMBAHKAN OPTION KARYAWAN)
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
@@ -930,7 +930,7 @@
 
       if (currentView === 'karyawan') {
         activeData = karyawanData;
-        rpcName = 'replace_data_karyawan';
+        rpcName = 'upsert_data_karyawan'; // Menggunakan upsert agar data lama tidak terhapus
         tableName = 'data_karyawan';
       } else if (currentView === 'sales') {
         activeData = salesData;
@@ -988,7 +988,11 @@
         statusMsg.classList.remove('hidden');
       } else {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
+        if (currentView === 'karyawan') {
+          statusMsg.innerText = `Sukses! Data karyawan baru diproses. NIP yang sudah terdaftar dilewati otomatis tanpa menghapus data lama pada tabel ${tableName}.`;
+        } else {
+          statusMsg.innerText = `Sukses! Data lama dibersihkan dan ${activeData.length} baris data berhasil diperbarui ke tabel ${tableName}!`;
+        }
         statusMsg.classList.remove('hidden'); 
       }
     }
