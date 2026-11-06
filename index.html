@@ -304,7 +304,7 @@
                       <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Panel Edit Masing-Masing Teks & Background
                     </h3>
 
-                    <!-- 1. EDIT PANEL: NAMA (Default Transparan / Bisa Diubah) -->
+                    <!-- 1. EDIT PANEL: NAMA -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Teks 2: Nama Karyawan</span>
@@ -356,6 +356,12 @@
                           </div>
                         </div>
                       </div>
+                      <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
+                          <input type="checkbox" id="transparentSales" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
+                          Background Transparan
+                        </label>
+                      </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
@@ -387,6 +393,12 @@
                           </div>
                         </div>
                       </div>
+                      <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
+                          <input type="checkbox" id="transparentQty" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
+                          Background Transparan
+                        </label>
+                      </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
                           <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN</label>
@@ -417,6 +429,12 @@
                             <input type="color" id="bgColorComser" value="#dc2626" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
                           </div>
                         </div>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1.5 text-[10px] font-semibold text-gray-600 cursor-pointer">
+                          <input type="checkbox" id="transparentComser" onchange="updateTwibbonPreview()" class="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5">
+                          Background Transparan
+                        </label>
                       </div>
                       <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -767,7 +785,7 @@
       const elQty = document.getElementById('previewQtyText');
       const elComser = document.getElementById('previewComserText');
 
-      // 1. Nama Karyawan (Bisa Transparan / Berwarna)
+      // 1. Nama Karyawan
       if (nama && !nama.includes('tidak ditemukan') && !nama.includes('Error')) {
         elNama.innerText = nama;
         elNama.style.fontSize = document.getElementById('sizeNama').value + 'px';
@@ -790,43 +808,70 @@
         elNama.style.display = 'none';
       }
 
-      // 2. Value Sales (Background Biru / Custom)
+      // 2. Value Sales
       if (valSales) {
         elSales.innerText = valSales;
         elSales.style.fontSize = document.getElementById('sizeSales').value + 'px';
         elSales.style.color = document.getElementById('colorSales').value;
-        elSales.style.backgroundColor = document.getElementById('bgColorSales').value;
-        elSales.style.padding = '4px 12px';
-        elSales.style.borderRadius = '6px';
         elSales.style.transform = `translate(${document.getElementById('xSales').value}px, ${document.getElementById('ySales').value}px)`;
+        
+        const isTransSales = document.getElementById('transparentSales').checked;
+        const bgSales = document.getElementById('bgColorSales').value;
+        if (!isTransSales) {
+          elSales.style.backgroundColor = bgSales;
+          elSales.style.padding = '4px 12px';
+          elSales.style.borderRadius = '6px';
+        } else {
+          elSales.style.backgroundColor = 'transparent';
+          elSales.style.padding = '0';
+          elSales.style.borderRadius = '0';
+        }
         elSales.style.display = 'block';
       } else {
         elSales.style.display = 'none';
       }
 
-      // 3. Qty FP (Background Hijau / Custom + Prefix "FP : ")
+      // 3. Qty FP (+ Prefix "FP : ")
       if (qtyFp) {
         elQty.innerText = 'FP : ' + qtyFp;
         elQty.style.fontSize = document.getElementById('sizeQty').value + 'px';
         elQty.style.color = document.getElementById('colorQty').value;
-        elQty.style.backgroundColor = document.getElementById('bgColorQty').value;
-        elQty.style.padding = '4px 12px';
-        elQty.style.borderRadius = '6px';
         elQty.style.transform = `translate(${document.getElementById('xQty').value}px, ${document.getElementById('yQty').value}px)`;
+        
+        const isTransQty = document.getElementById('transparentQty').checked;
+        const bgQty = document.getElementById('bgColorQty').value;
+        if (!isTransQty) {
+          elQty.style.backgroundColor = bgQty;
+          elQty.style.padding = '4px 12px';
+          elQty.style.borderRadius = '6px';
+        } else {
+          elQty.style.backgroundColor = 'transparent';
+          elQty.style.padding = '0';
+          elQty.style.borderRadius = '0';
+        }
         elQty.style.display = 'block';
       } else {
         elQty.style.display = 'none';
       }
 
-      // 4. Value Comser FP (Background Merah / Custom + Prefix "COMSER : ")
+      // 4. Value Comser FP (+ Prefix "COMSER : ")
       if (valComser) {
         elComser.innerText = 'COMSER : ' + valComser;
         elComser.style.fontSize = document.getElementById('sizeComser').value + 'px';
         elComser.style.color = document.getElementById('colorComser').value;
-        elComser.style.backgroundColor = document.getElementById('bgColorComser').value;
-        elComser.style.padding = '4px 12px';
-        elComser.style.borderRadius = '6px';
         elComser.style.transform = `translate(${document.getElementById('xComser').value}px, ${document.getElementById('yComser').value}px)`;
+        
+        const isTransComser = document.getElementById('transparentComser').checked;
+        const bgComser = document.getElementById('bgColorComser').value;
+        if (!isTransComser) {
+          elComser.style.backgroundColor = bgComser;
+          elComser.style.padding = '4px 12px';
+          elComser.style.borderRadius = '6px';
+        } else {
+          elComser.style.backgroundColor = 'transparent';
+          elComser.style.padding = '0';
+          elComser.style.borderRadius = '0';
+        }
         elComser.style.display = 'block';
       } else {
         elComser.style.display = 'none';
@@ -850,16 +895,19 @@
         ySales: document.getElementById('ySales').value,
         colorSales: document.getElementById('colorSales').value,
         bgColorSales: document.getElementById('bgColorSales').value,
+        transparentSales: document.getElementById('transparentSales').checked,
         sizeQty: document.getElementById('sizeQty').value,
         xQty: document.getElementById('xQty').value,
         yQty: document.getElementById('yQty').value,
         colorQty: document.getElementById('colorQty').value,
         bgColorQty: document.getElementById('bgColorQty').value,
+        transparentQty: document.getElementById('transparentQty').checked,
         sizeComser: document.getElementById('sizeComser').value,
         xComser: document.getElementById('xComser').value,
         yComser: document.getElementById('yComser').value,
         colorComser: document.getElementById('colorComser').value,
-        bgColorComser: document.getElementById('bgColorComser').value
+        bgColorComser: document.getElementById('bgColorComser').value,
+        transparentComser: document.getElementById('transparentComser').checked
       };
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
@@ -893,18 +941,21 @@
           document.getElementById('ySales').value = s.ySales || 65;
           document.getElementById('colorSales').value = s.colorSales || '#ffffff';
           document.getElementById('bgColorSales').value = s.bgColorSales || '#2563eb';
+          document.getElementById('transparentSales').checked = s.transparentSales !== undefined ? s.transparentSales : false;
 
           document.getElementById('sizeQty').value = s.sizeQty || 14;
           document.getElementById('xQty').value = s.xQty || 0;
           document.getElementById('yQty').value = s.yQty || 90;
           document.getElementById('colorQty').value = s.colorQty || '#ffffff';
           document.getElementById('bgColorQty').value = s.bgColorQty || '#059669';
+          document.getElementById('transparentQty').checked = s.transparentQty !== undefined ? s.transparentQty : false;
 
           document.getElementById('sizeComser').value = s.sizeComser || 14;
           document.getElementById('xComser').value = s.xComser || 0;
           document.getElementById('yComser').value = s.yComser || 115;
           document.getElementById('colorComser').value = s.colorComser || '#ffffff';
           document.getElementById('bgColorComser').value = s.bgColorComser || '#dc2626';
+          document.getElementById('transparentComser').checked = s.transparentComser !== undefined ? s.transparentComser : false;
         } catch (e) {
           console.error(e);
         }
@@ -912,6 +963,7 @@
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
+
         document.getElementById('sizeNama').value = 16;
         document.getElementById('xNama').value = 0;
         document.getElementById('yNama').value = 40;
@@ -924,18 +976,21 @@
         document.getElementById('ySales').value = 65;
         document.getElementById('colorSales').value = '#ffffff';
         document.getElementById('bgColorSales').value = '#2563eb';
+        document.getElementById('transparentSales').checked = false;
 
         document.getElementById('sizeQty').value = 14;
         document.getElementById('xQty').value = 0;
         document.getElementById('yQty').value = 90;
         document.getElementById('colorQty').value = '#ffffff';
         document.getElementById('bgColorQty').value = '#059669';
+        document.getElementById('transparentQty').checked = false;
 
         document.getElementById('sizeComser').value = 14;
         document.getElementById('xComser').value = 0;
         document.getElementById('yComser').value = 115;
         document.getElementById('colorComser').value = '#ffffff';
         document.getElementById('bgColorComser').value = '#dc2626';
+        document.getElementById('transparentComser').checked = false;
       }
     }
 
