@@ -11,6 +11,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- html2canvas untuk Download Gambar HD -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
@@ -458,8 +460,8 @@
               </div>
 
               <!-- KOLOM KANAN: PREVIEW TWIBBON KUNCI UKURAN & LOKASI -->
-              <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6">
-                <div class="mb-3 text-center">
+              <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6 gap-4">
+                <div class="mb-1 text-center">
                   <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
                     <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Live Preview
                   </span>
@@ -470,14 +472,14 @@
                   
                   <!-- LAPISAN 1: FOTO SALES -->
                   <div id="previewPhotoContainer" class="absolute inset-0 flex items-center justify-center overflow-hidden bg-slate-200">
-                    <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" onerror="this.classList.add('hidden')">
+                    <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" crossorigin="anonymous" onerror="this.classList.add('hidden')">
                     <div id="photoPlaceholderText" class="text-xs text-gray-400 font-medium text-center p-4">
                       Masukkan NIP untuk menampilkan FOTO...
                     </div>
                   </div>
 
                   <!-- LAPISAN 2: BINGKAI TWIBBON -->
-                  <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10">
+                  <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
                   <!-- LAPISAN 3: TEKS MASING-MASING -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
@@ -491,6 +493,13 @@
                     <div id="previewComserText" class="absolute font-bold transition-all duration-75 text-center shadow-sm" style="display: none;"></div>
                   </div>
 
+                </div>
+
+                <!-- TOMBOL DOWNLOAD JPG FULL HD DIBAWAH LIVE PREVIEW -->
+                <div class="w-full max-w-[420px] mt-2">
+                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
+                  </button>
                 </div>
               </div>
             </div>
@@ -875,6 +884,63 @@
         elComser.style.display = 'block';
       } else {
         elComser.style.display = 'none';
+      }
+    }
+
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
+    async function downloadTwibbon() {
+      const previewBox = document.getElementById('twibbonPreviewBox');
+      const btnDownload = document.getElementById('btnDownloadTwibbon');
+      const nip = document.getElementById('twibbonNip').value.trim();
+      const nama = document.getElementById('twibbonNama').value.trim();
+
+      if (!nip) {
+        alert('Silakan masukkan NIP terlebih dahulu untuk mendownload twibbon!');
+        document.getElementById('twibbonNip').focus();
+        return;
+      }
+
+      btnDownload.disabled = true;
+      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyiapkan Gambar Full HD...';
+      lucide.createIcons();
+
+      try {
+        // Render kotak Live Preview menjadi canvas beresolusi tinggi (Full HD)
+        const canvas = await html2canvas(previewBox, {
+          scale: 4, // Skala 4x untuk kualitas maksimal Full HD
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: null
+        });
+
+        // Konversi ke format JPG dengan kualitas tinggi (0.95)
+        const imageURL = canvas.toDataURL('image/jpeg', 0.95);
+        
+        const twibbonType = document.getElementById('twibbonType').value;
+        const cleanName = (nama && !nama.includes('tidak ditemukan')) ? nama.replace(/[^a-zA-Z0-9]/g, '_') : 'Sales';
+        
+        const link = document.createElement('a');
+        link.href = imageURL;
+        link.download = `Twibbon_${twibbonType}_${nip}_${cleanName}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Notifikasi Sukses
+        const statusMsg = document.getElementById('statusMsg');
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Twibbon berhasil didownload dalam format JPG Full HD.`;
+        statusMsg.classList.remove('hidden');
+        lucide.createIcons();
+        
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      } catch (err) {
+        console.error(err);
+        alert('Gagal mendownload gambar: ' + err.message);
+      } finally {
+        btnDownload.disabled = false;
+        btnDownload.innerHTML = '<i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)';
+        lucide.createIcons();
       }
     }
 
