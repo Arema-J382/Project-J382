@@ -467,13 +467,13 @@
                   </span>
                 </div>
 
-                <!-- KOTAK PREVIEW UTAMA -->
-                <div id="twibbonPreviewBox" class="relative w-[380px] h-[380px] sm:w-[420px] sm:h-[420px] bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white flex items-center justify-center">
+                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA AGAR IDENTIK DENGAN DOWNLOAD) -->
+                <div id="twibbonPreviewBox" class="relative bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white shrink-0" style="width: 420px; height: 420px;">
                   
-                  <!-- LAPISAN 1: FOTO SALES -->
-                  <div id="previewPhotoContainer" class="absolute inset-0 flex items-center justify-center overflow-hidden bg-slate-200">
-                    <img id="previewPhotoImg" src="" alt="Foto Karyawan" class="w-full h-full object-cover transition-transform duration-75 hidden" crossorigin="anonymous" onerror="this.classList.add('hidden')">
-                    <div id="photoPlaceholderText" class="text-xs text-gray-400 font-medium text-center p-4">
+                  <!-- LAPISAN 1: FOTO SALES (MENGGUNAKAN BACKGROUND CSS AGAR TIDAK GEPENG) -->
+                  <div id="previewPhotoContainer" class="absolute inset-0 overflow-hidden bg-slate-200">
+                    <div id="previewPhotoBg" class="absolute inset-0 bg-cover bg-center hidden"></div>
+                    <div id="photoPlaceholderText" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-medium text-center p-4">
                       Masukkan NIP untuk menampilkan FOTO...
                     </div>
                   </div>
@@ -482,7 +482,7 @@
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
                   <!-- LAPISAN 3: TEKS MASING-MASING -->
-                  <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
+                  <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute font-extrabold transition-all duration-75 text-center drop-shadow-[0_1.5px_1.5px_rgba(255,255,255,0.9)]" style="display: none;"></div>
                     <!-- Teks Sales -->
@@ -765,28 +765,28 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      // URL Bingkai Twibbon & Foto
+      // URL Bingkai Twibbon
       const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
       document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
 
-      const photoImg = document.getElementById('previewPhotoImg');
+      const photoBg = document.getElementById('previewPhotoBg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
       if (nip) {
         const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg`;
-        photoImg.src = photoUrl;
-        photoImg.classList.remove('hidden');
+        photoBg.style.backgroundImage = `url('${photoUrl}')`;
+        photoBg.classList.remove('hidden');
         placeholderText.classList.add('hidden');
       } else {
-        photoImg.classList.add('hidden');
+        photoBg.classList.add('hidden');
         placeholderText.classList.remove('hidden');
       }
 
-      // Foto Sales Transform
+      // Foto Sales Transform (Menggunakan Background Size Cover agar tidak gepeng)
       const photoScale = document.getElementById('photoScale').value;
       const photoX = document.getElementById('photoX').value;
       const photoY = document.getElementById('photoY').value;
-      photoImg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
+      photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
       // Render Masing-Masing Teks & Background
       const elNama = document.getElementById('previewNamaText');
@@ -887,7 +887,7 @@
       }
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD (SAMA PERSIS DENGAN PREVIEW)
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -905,12 +905,12 @@
       lucide.createIcons();
 
       try {
-        // Render kotak Live Preview menjadi canvas beresolusi tinggi (Full HD)
+        // Render kotak Live Preview persis 1:1 tanpa pergeseran tata letak
         const canvas = await html2canvas(previewBox, {
-          scale: 4, // Skala 4x untuk kualitas maksimal Full HD
+          scale: 4, // Skala 4x untuk kualitas tajam maksimal Full HD
           useCORS: true,
           allowTaint: false,
-          backgroundColor: null
+          backgroundColor: '#ffffff'
         });
 
         // Konversi ke format JPG dengan kualitas tinggi (0.95)
@@ -944,7 +944,7 @@
       }
     }
 
-    // FUNGSI SAVE EDITING UNTUK MENYIMPAN SETTINGAN TWIBBON & MENAMPILKAN NOTIFIKASI
+    // FUNGSI SAVE EDITING UNTUK MENYIMPAN SETTINGAN TWIBBON
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
@@ -979,7 +979,6 @@
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
       
-      // MENAMPILKAN NOTIFIKASI KEBERHASILAN
       const statusMsg = document.getElementById('statusMsg');
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
       statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Konfigurasi tata letak & warna untuk "${twibbonType.toUpperCase()}" berhasil disimpan.`;
