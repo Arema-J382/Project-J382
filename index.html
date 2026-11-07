@@ -962,14 +962,13 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
-    // FUNGSI HAPUS TV DARI SUPABASE DAN MERELOAD DATA TERBARU SESUAI PERMINTAAN USER
+    // FUNGSI HAPUS TV MENGGUNAKAN RPC SUPABASE DAN MERELOAD DATA TERBARU
     async function deleteTvSetting(id) {
       if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
 
-      const { error } = await supabaseClient
-        .from('data_settingan_tv')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabaseClient.rpc('delete_data_settingan_tv', {
+        target_id: String(id)
+      });
 
       const statusMsg = document.getElementById('statusMsg');
       if (error) {
