@@ -274,7 +274,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TWIBBON SALES -->
+          <!-- TAMPILAN VIEW TWIBBON SALES (KEMBALI KE MASTER KODE LENGKAP) -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
@@ -282,8 +282,11 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+              <!-- KOLOM KIRI: INPUT & PANEL PENGATURAN -->
               <div class="lg:col-span-6 flex flex-col gap-4">
                 <div class="border border-gray-200 rounded-2xl p-5 bg-slate-50/60 shadow-sm space-y-4 flex-1">
+                  
+                  <!-- DROPDOWN LIST TWIBBON -->
                   <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">PILIH JENIS TWIBBON</label>
                     <select id="twibbonType" onchange="onTwibbonTypeChange()" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white shadow-sm">
@@ -294,35 +297,41 @@
                     </select>
                   </div>
 
+                  <!-- 1 CARD UNTUK SEMUA TEXTBOX -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="form-input" class="w-4 h-4 text-blue-600"></i> Form Input Data Karyawan & Sales
                     </h3>
 
+                    <!-- TEXTBOX 1: NIP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">INPUT NIP</label>
                       <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 147683)..." oninput="handleNipInput()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
+                    <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">NAMA KARYAWAN (OTOMATIS)</label>
                       <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari database..."
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-gray-100 text-gray-700 font-semibold">
                     </div>
 
+                    <!-- TEXTBOX 3: VALUE SALES -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE SALES</label>
                       <input type="text" id="twibbonValueSales" placeholder="Contoh: 120 JT" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
+                    <!-- TEXTBOX 4: QTY FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">QTY FP</label>
                       <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 PCS" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
+                    <!-- TEXTBOX 5: VALUE COMSER FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE COMSER</label>
                       <input type="text" id="twibbonValueComser" placeholder="Contoh: 800 RIBU" oninput="updateTwibbonPreview()"
@@ -330,6 +339,7 @@
                     </div>
                   </div>
 
+                  <!-- TOMBOL SAVE EDITING & RESET DEFAULT -->
                   <div class="grid grid-cols-2 gap-2">
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-emerald-500/25">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE FORMAT EDIT
@@ -338,9 +348,140 @@
                       <i data-lucide="rotate-ccw" class="w-4 h-4"></i> RESET DEFAULT
                     </button>
                   </div>
+
+                  <!-- PANEL EDIT FOTO SALES -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Edit Foto Sales
+                    </h3>
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN FOTO</label>
+                        <input type="range" id="photoScale" min="0.5" max="2.5" step="0.05" value="1" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER KIRI-KANAN</label>
+                        <input type="range" id="photoX" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                      <div>
+                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER ATAS-BAWAH</label>
+                        <input type="range" id="photoY" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- PANEL EDIT TEKS & WARNA TEKS -->
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks & Warna
+                    </h3>
+
+                    <!-- 1. EDIT PANEL: NAMA -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeNama" min="10" max="60" step="1" value="18" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xNama" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yNama" min="0" max="420" step="1" value="240" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 2. EDIT PANEL: VALUE SALES -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeSales" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xSales" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="ySales" min="0" max="420" step="1" value="280" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 3. EDIT PANEL: QTY FP -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeQty" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xQty" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yQty" min="0" max="420" step="1" value="315" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 4. EDIT PANEL: VALUE COMSER FP -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeComser" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xComser" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yComser" min="0" max="420" step="1" value="350" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
                 </div>
               </div>
 
+              <!-- KOLOM KANAN: PREVIEW TWIBBON KUNCI UKURAN & LOKASI -->
               <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6 gap-4">
                 <div class="mb-1 text-center">
                   <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
@@ -348,14 +489,21 @@
                   </span>
                 </div>
 
+                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA 420x420) -->
                 <div id="twibbonPreviewBox" class="relative bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white shrink-0" style="width: 420px; height: 420px;">
+                  
+                  <!-- LAPISAN 1: FOTO SALES -->
                   <div id="previewPhotoContainer" class="absolute inset-0 overflow-hidden bg-slate-200">
                     <div id="previewPhotoBg" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     <div id="photoPlaceholderText" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-medium text-center p-4">
                       Masukkan NIP untuk menampilkan FOTO...
                     </div>
                   </div>
+
+                  <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
+
+                  <!-- LAPISAN 3: TEKS MASING-MASING -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-extrabold text-center" style="white-space: nowrap;"></div>
@@ -370,10 +518,12 @@
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                   </div>
+
                 </div>
 
+                <!-- TOMBOL DOWNLOAD JPG FULL HD -->
                 <div class="w-full max-w-[420px] mt-2">
-                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30">
+                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
                     <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
                   </button>
                 </div>
@@ -398,12 +548,14 @@
               </div>
             </div>
 
+            <!-- KOTAK AREA PASTE -->
             <div class="mb-4">
               <textarea id="excelPasteInput" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data Excel..." 
                 class="w-full h-24 p-3.5 border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 text-xs font-mono transition"
                 onpaste="handleExcelPaste(event)"></textarea>
             </div>
 
+            <!-- TABEL UTAMA -->
             <div class="flex-1 border border-gray-200 rounded-xl overflow-auto bg-white max-h-[460px] shadow-sm custom-scrollbar">
               <table class="w-full border-collapse text-left text-xs">
                 <thead id="previewTableHead" class="bg-slate-900 text-white sticky top-0 z-10 shadow-sm"></thead>
@@ -837,6 +989,7 @@
       }
     }
 
+    // --- LOGIKA PENCARIAN NIP & AUTO-LOAD NAMA KARYAWAN ---
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -930,6 +1083,7 @@
       applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
     }
 
+    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -982,6 +1136,7 @@
       }
     }
 
+    // FUNGSI SAVE EDITING
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
@@ -1017,6 +1172,7 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
+    // FUNGSI RESET DEFAULT SETTINGS PER TWIBBON
     function resetTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       localStorage.removeItem(`twibbon_settings_${twibbonType}`);
@@ -1032,6 +1188,7 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
+    // FUNGSI LOAD / DEFAULT SETTINGS
     function loadTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
@@ -1091,6 +1248,7 @@
       }
     }
 
+    // Fungsi Login
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
@@ -1139,6 +1297,7 @@
       arrow.classList.toggle('rotate-180');
     }
 
+    // Penanganan Paste Excel & Preview Otomatis
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -1337,6 +1496,7 @@
       }, 100);
     }
 
+    // Render Tabel Preview & Header Otomatis
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -1508,6 +1668,7 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
+    // FUNGSI KIRIM TARGET
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -1543,6 +1704,7 @@
       }
     }
 
+    // FUNGSI KIRIM RUNNING TEXT
     async function kirimRunningTextKeSupabase() {
       const textVal = document.getElementById('inputRunningTextValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
@@ -1577,6 +1739,7 @@
       }
     }
 
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
