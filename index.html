@@ -72,6 +72,11 @@
           </button>
           
           <div id="submenuTv" class="pl-3 mt-1.5 space-y-1.5 border-l border-slate-800 ml-4">
+            <!-- MENU PENGATURAN TV -->
+            <a href="#" onclick="switchView('pengaturanTv')" id="menuPengaturanTv" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+              <span>PENGATURAN TV</span>
+            </a>
             <!-- MENU 1: INPUT TARGET TODAY -->
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
@@ -157,6 +162,68 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
+          <!-- TAMPILAN VIEW PENGATURAN TV -->
+          <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
+            <div class="mb-5">
+              <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-cyan-600"></i>
+                Pengaturan Konfigurasi TV Dashboard
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Kelola data identitas dan ukuran layar TV untuk ditampilkan secara real-time pada sistem.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+              <!-- KOLOM KIRI: FORM INPUT -->
+              <div class="lg:col-span-5 flex flex-col">
+                <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/60 shadow-sm space-y-4">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i> Input Data Settingan TV Baru
+                  </h3>
+
+                  <div class="space-y-3.5">
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">ID TV / IDENTITAS TV (PRIMARY KEY)</label>
+                      <input type="text" id="inputTvId" placeholder="Contoh: 1 atau TV-01"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">PANJANG TV (CM)</label>
+                      <input type="number" id="inputTvPanjang" placeholder="Contoh: 120"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">TINGGI TV (CM)</label>
+                      <input type="number" id="inputTvTinggi" placeholder="Contoh: 70"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <button id="btnSubmitTv" onclick="submitTvSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/20">
+                      <i data-lucide="save" class="w-4 h-4"></i> Simpan Settingan TV
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- KOLOM KANAN: UKURAN TV AKTIF & LIST -->
+              <div class="lg:col-span-7 flex flex-col bg-slate-50/40 rounded-2xl border border-gray-200 p-5">
+                <div class="flex justify-between items-center mb-3">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i data-lucide="tv" class="w-4 h-4 text-emerald-600"></i> UKURAN TV AKTIF
+                  </h3>
+                  <span id="tvCountBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">0 Unit Tersedia</span>
+                </div>
+
+                <div id="tvSettingListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[420px] custom-scrollbar">
+                  <div class="text-center py-16 text-gray-400 italic text-xs">
+                    Memuat data settingan TV...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- TAMPILAN VIEW TARGET TODAY -->
           <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
@@ -215,11 +282,8 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-              <!-- KOLOM KIRI: INPUT & PANEL PENGATURAN -->
               <div class="lg:col-span-6 flex flex-col gap-4">
                 <div class="border border-gray-200 rounded-2xl p-5 bg-slate-50/60 shadow-sm space-y-4 flex-1">
-                  
-                  <!-- DROPDOWN LIST TWIBBON -->
                   <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">PILIH JENIS TWIBBON</label>
                     <select id="twibbonType" onchange="onTwibbonTypeChange()" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white shadow-sm">
@@ -230,41 +294,35 @@
                     </select>
                   </div>
 
-                  <!-- 1 CARD UNTUK SEMUA TEXTBOX -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="form-input" class="w-4 h-4 text-blue-600"></i> Form Input Data Karyawan & Sales
                     </h3>
 
-                    <!-- TEXTBOX 1: NIP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">INPUT NIP</label>
                       <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 147683)..." oninput="handleNipInput()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">NAMA KARYAWAN (OTOMATIS)</label>
                       <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari database..."
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-gray-100 text-gray-700 font-semibold">
                     </div>
 
-                    <!-- TEXTBOX 3: VALUE SALES -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE SALES</label>
                       <input type="text" id="twibbonValueSales" placeholder="Contoh: 120 JT" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 4: QTY FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">QTY FP</label>
                       <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 PCS" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 5: VALUE COMSER FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE COMSER</label>
                       <input type="text" id="twibbonValueComser" placeholder="Contoh: 800 RIBU" oninput="updateTwibbonPreview()"
@@ -272,7 +330,6 @@
                     </div>
                   </div>
 
-                  <!-- TOMBOL SAVE EDITING & RESET DEFAULT -->
                   <div class="grid grid-cols-2 gap-2">
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-emerald-500/25">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE FORMAT EDIT
@@ -281,140 +338,9 @@
                       <i data-lucide="rotate-ccw" class="w-4 h-4"></i> RESET DEFAULT
                     </button>
                   </div>
-
-                  <!-- PANEL EDIT FOTO SALES -->
-                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
-                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Edit Foto Sales
-                    </h3>
-                    <div class="grid grid-cols-3 gap-2">
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">UKURAN FOTO</label>
-                        <input type="range" id="photoScale" min="0.5" max="2.5" step="0.05" value="1" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
-                      </div>
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER KIRI-KANAN</label>
-                        <input type="range" id="photoX" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
-                      </div>
-                      <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">GESER ATAS-BAWAH</label>
-                        <input type="range" id="photoY" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-indigo-600">
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- PANEL EDIT TEKS & WARNA TEKS (DEFAULT HITAM, TANPA BACKGROUND, TANPA SHADOW) -->
-                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
-                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks (Warna Hitam Default)
-                    </h3>
-
-                    <!-- 1. EDIT PANEL: NAMA -->
-                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
-                      <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
-                        <div class="flex items-center gap-1">
-                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                        </div>
-                      </div>
-                      <div class="grid grid-cols-3 gap-2">
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
-                          <input type="range" id="sizeNama" min="10" max="60" step="1" value="18" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
-                          <input type="range" id="xNama" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
-                          <input type="range" id="yNama" min="0" max="420" step="1" value="240" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 2. EDIT PANEL: VALUE SALES -->
-                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
-                      <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
-                        <div class="flex items-center gap-1">
-                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                        </div>
-                      </div>
-                      <div class="grid grid-cols-3 gap-2">
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
-                          <input type="range" id="sizeSales" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
-                          <input type="range" id="xSales" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
-                          <input type="range" id="ySales" min="0" max="420" step="1" value="280" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 3. EDIT PANEL: QTY FP -->
-                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
-                      <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
-                        <div class="flex items-center gap-1">
-                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                        </div>
-                      </div>
-                      <div class="grid grid-cols-3 gap-2">
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
-                          <input type="range" id="sizeQty" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
-                          <input type="range" id="xQty" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
-                          <input type="range" id="yQty" min="0" max="420" step="1" value="315" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 4. EDIT PANEL: VALUE COMSER FP -->
-                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
-                      <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
-                        <div class="flex items-center gap-1">
-                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
-                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
-                        </div>
-                      </div>
-                      <div class="grid grid-cols-3 gap-2">
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
-                          <input type="range" id="sizeComser" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
-                          <input type="range" id="xComser" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                        <div>
-                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
-                          <input type="range" id="yComser" min="0" max="420" step="1" value="350" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-
                 </div>
               </div>
 
-              <!-- KOLOM KANAN: PREVIEW TWIBBON KUNCI UKURAN & LOKASI -->
               <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6 gap-4">
                 <div class="mb-1 text-center">
                   <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
@@ -422,45 +348,32 @@
                   </span>
                 </div>
 
-                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA 420x420) -->
                 <div id="twibbonPreviewBox" class="relative bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white shrink-0" style="width: 420px; height: 420px;">
-                  
-                  <!-- LAPISAN 1: FOTO SALES -->
                   <div id="previewPhotoContainer" class="absolute inset-0 overflow-hidden bg-slate-200">
                     <div id="previewPhotoBg" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     <div id="photoPlaceholderText" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-medium text-center p-4">
                       Masukkan NIP untuk menampilkan FOTO...
                     </div>
                   </div>
-
-                  <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
-
-                  <!-- LAPISAN 3: TEKS MASING-MASING (TANPA BACKGROUND, TANPA SHADOW) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
-                    <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-extrabold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- TOMBOL DOWNLOAD JPG FULL HD DIBAWAH LIVE PREVIEW -->
                 <div class="w-full max-w-[420px] mt-2">
-                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
+                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30">
                     <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
                   </button>
                 </div>
@@ -485,19 +398,15 @@
               </div>
             </div>
 
-            <!-- KOTAK AREA PASTE -->
             <div class="mb-4">
               <textarea id="excelPasteInput" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data Excel..." 
                 class="w-full h-24 p-3.5 border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 text-xs font-mono transition"
                 onpaste="handleExcelPaste(event)"></textarea>
             </div>
 
-            <!-- TABEL UTAMA -->
             <div class="flex-1 border border-gray-200 rounded-xl overflow-auto bg-white max-h-[460px] shadow-sm custom-scrollbar">
               <table class="w-full border-collapse text-left text-xs">
-                <thead id="previewTableHead" class="bg-slate-900 text-white sticky top-0 z-10 shadow-sm">
-                  <!-- Header dinamis diatur lewat JavaScript -->
-                </thead>
+                <thead id="previewTableHead" class="bg-slate-900 text-white sticky top-0 z-10 shadow-sm"></thead>
                 <tbody id="previewTableBody" class="divide-y divide-gray-200">
                   <tr>
                     <td colspan="7" class="text-center py-16 text-gray-400 italic">
@@ -534,17 +443,42 @@
     let mtdSalesData = []; 
     let mtdFurniproData = []; 
     let karyawanData = []; 
+    let dataSettinganTvList = [];
+    let activeConnectedTvId = null;
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
       switchView('sales');
+      
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         showAdminPanel();
       }
+
+      setupRealtimeSubscriptions();
     });
 
-    // Fungsi Format Rupiah Otomatis saat Mengetik di Menu Target
+    // --- REALTIME SUBSCRIPTIONS ---
+    function setupRealtimeSubscriptions() {
+      supabaseClient
+        .channel('public:data_settingan_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'data_settingan_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadDataSettinganTv();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
+        .channel('public:setting_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'setting_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadConnectedTvStatus();
+          }
+        })
+        .subscribe();
+    }
+
     function formatRupiah(element) {
       let angka = element.value.replace(/[^,\d]/g, '').toString();
       let split = angka.split(',');
@@ -561,9 +495,9 @@
       element.value = rupiah;
     }
 
-    // Fungsi Pindah Menu (Switch View)
     function switchView(view) {
       currentView = view;
+      const menuPengaturanTv = document.getElementById('menuPengaturanTv');
       const menuTarget = document.getElementById('menuTarget');
       const menuSales = document.getElementById('menuSales');
       const menuComser = document.getElementById('menuComser');
@@ -579,6 +513,7 @@
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
 
+      const viewPengaturanTvSection = document.getElementById('viewPengaturanTvSection');
       const viewTargetSection = document.getElementById('viewTargetSection');
       const viewRunningTextSection = document.getElementById('viewRunningTextSection');
       const viewTwibbonSalesSection = document.getElementById('viewTwibbonSalesSection');
@@ -590,6 +525,7 @@
       const activeClass = "block p-2.5 rounded-lg bg-slate-800 text-xs text-blue-300 font-semibold flex items-center gap-2.5 transition shadow-sm border-l-2 border-blue-500";
       const inactiveClass = "block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white flex items-center gap-2.5 transition";
 
+      if (menuPengaturanTv) menuPengaturanTv.className = inactiveClass;
       menuTarget.className = inactiveClass;
       menuSales.className = inactiveClass;
       if (menuComser) menuComser.className = inactiveClass;
@@ -602,12 +538,19 @@
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
 
+      if (viewPengaturanTvSection) viewPengaturanTvSection.classList.add('hidden');
       viewTargetSection.classList.add('hidden');
       if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
       if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
       viewExcelSection.classList.add('hidden');
 
-      if (view === 'target') {
+      if (view === 'pengaturanTv') {
+        if (menuPengaturanTv) menuPengaturanTv.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-600"></i> Pengaturan TV Sync';
+        viewPengaturanTvSection.classList.remove('hidden');
+        loadDataSettinganTv();
+      } else if (view === 'target') {
         menuTarget.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="target" class="w-3.5 h-3.5 text-blue-600"></i> Target Sync';
@@ -684,7 +627,216 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA PENCARIAN NIP & AUTO-LOAD NAMA KARYAWAN ---
+    // --- LOGIKA MENU PENGATURAN TV ---
+    async function loadConnectedTvStatus() {
+      const { data, error } = await supabaseClient
+        .from('setting_tv')
+        .select('*');
+      
+      if (!error && data && data.length > 0) {
+        activeConnectedTvId = data[0].id_tv || data[0].id || null;
+      } else {
+        activeConnectedTvId = null;
+      }
+      renderTvSettingList();
+    }
+
+    async function loadDataSettinganTv() {
+      await loadConnectedTvStatus();
+      const { data, error } = await supabaseClient
+        .from('data_settingan_tv')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Gagal memuat data_settingan_tv:', error);
+        return;
+      }
+
+      dataSettinganTvList = data || [];
+      renderTvSettingList();
+    }
+
+    function renderTvSettingList() {
+      const container = document.getElementById('tvSettingListContainer');
+      const badge = document.getElementById('tvCountBadge');
+      if (!container) return;
+
+      badge.innerText = `${dataSettinganTvList.length} Unit Tersedia`;
+
+      if (dataSettinganTvList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 text-gray-400 italic text-xs">
+            Belum ada data settingan TV. Silakan input melalui form di sebelah kiri.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      dataSettinganTvList.forEach((tv, idx) => {
+        const isConnected = String(tv.id) === String(activeConnectedTvId);
+        const connectBtnClass = isConnected
+          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25"
+          : "bg-slate-200 hover:bg-emerald-600 hover:text-white text-gray-700";
+        const connectBtnText = isConnected ? "Connected" : "Connect";
+
+        html += `
+          <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3 transition hover:shadow-md">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs shadow-inner">
+                ${idx + 1}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="tv" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
+                  <span class="text-xs font-bold text-gray-800 truncate">ID TV: ${tv.id}</span>
+                </div>
+                <div class="text-[11px] text-gray-500 mt-0.5 font-medium">
+                  Panjang: <span class="font-semibold text-gray-700">${tv.panjang || tv.panjang_tv || 0} cm</span> | 
+                  Tinggi: <span class="font-semibold text-gray-700">${tv.lebar || tv.tinggi || tv.tinggi_tv || 0} cm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="toggleConnectTv('${tv.id}')" class="${connectBtnClass} font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-xs">
+                <i data-lucide="${isConnected ? 'check-circle-2' : 'power'}" class="w-3.5 h-3.5"></i>
+                <span>${connectBtnText}</span>
+              </button>
+              <button onclick="deleteTvSetting('${tv.id}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-semibold p-1.5 rounded-lg text-xs transition shadow-xs" title="Hapus TV">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    async function submitTvSettings() {
+      const idVal = document.getElementById('inputTvId').value.trim();
+      const panjangVal = document.getElementById('inputTvPanjang').value.trim();
+      const tinggiVal = document.getElementById('inputTvTinggi').value.trim();
+      const statusMsg = document.getElementById('statusMsg');
+      const btnSubmit = document.getElementById('btnSubmitTv');
+
+      if (!idVal || !panjangVal || !tinggiVal) {
+        alert('Semua kolom (ID, Panjang, Tinggi) wajib diisi!');
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...';
+      lucide.createIcons();
+
+      const { error } = await supabaseClient.rpc('upsert_data_settingan_tv', {
+        new_data: [{
+          id: idVal,
+          panjang: Number(panjangVal),
+          lebar: Number(tinggiVal)
+        }]
+      });
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Simpan Settingan TV';
+      lucide.createIcons();
+
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menyimpan data TV: ${error.message}`;
+        statusMsg.classList.remove('hidden');
+        setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+      } else {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data settingan TV dengan ID "${idVal}" berhasil disimpan.`;
+        statusMsg.classList.remove('hidden');
+        
+        document.getElementById('inputTvId').value = '';
+        document.getElementById('inputTvPanjang').value = '';
+        document.getElementById('inputTvTinggi').value = '';
+        
+        loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    async function toggleConnectTv(id) {
+      const tv = dataSettinganTvList.find(t => String(t.id) === String(id));
+      if (!tv) return;
+
+      const isCurrentlyConnected = String(tv.id) === String(activeConnectedTvId);
+      const statusMsg = document.getElementById('statusMsg');
+
+      if (isCurrentlyConnected) {
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .delete()
+          .eq('id_tv', id);
+
+        if (error) {
+          await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        }
+        activeConnectedTvId = null;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-blue-600"></i> TV ID "${id}" berhasil di-disconnect.`;
+      } else {
+        await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .insert([{
+            id_tv: tv.id,
+            panjang_tv: tv.panjang || tv.panjang_tv || 0,
+            tinggi_tv: tv.lebar || tv.tinggi || tv.tinggi_tv || 0
+          }]);
+
+        if (error) {
+          statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
+          statusMsg.innerText = 'Gagal connect TV: ' + error.message;
+          statusMsg.classList.remove('hidden');
+          return;
+        }
+
+        activeConnectedTvId = tv.id;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! TV ID "${id}" terhubung (Connected) dan mereplace data di tabel setting_tv.`;
+      }
+
+      statusMsg.classList.remove('hidden');
+      renderTvSettingList();
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
+    async function deleteTvSetting(id) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
+
+      const { error } = await supabaseClient
+        .from('data_settingan_tv')
+        .delete()
+        .eq('id', id);
+
+      const statusMsg = document.getElementById('statusMsg');
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
+        statusMsg.innerText = 'Gagal menghapus data TV: ' + error.message;
+        statusMsg.classList.remove('hidden');
+      } else {
+        if (String(id) === String(activeConnectedTvId)) {
+          await supabaseClient.from('setting_tv').delete().eq('id_tv', id);
+          activeConnectedTvId = null;
+        }
+
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus.`;
+        statusMsg.classList.remove('hidden');
+        loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -728,7 +880,6 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      // URL Bingkai Twibbon
       const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
       document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
 
@@ -745,13 +896,11 @@
         placeholderText.classList.remove('hidden');
       }
 
-      // Foto Sales Transform
       const photoScale = document.getElementById('photoScale').value;
       const photoX = document.getElementById('photoX').value;
       const photoY = document.getElementById('photoY').value;
       photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      // Render Teks Masing-Masing (Tanpa Background, Warna Default Hitam, Tanpa Shadow)
       const elNama = document.getElementById('previewNamaText');
       const elSales = document.getElementById('previewSalesText');
       const elQty = document.getElementById('previewQtyText');
@@ -774,21 +923,13 @@
         el.style.display = 'block';
       }
 
-      // 1. Nama Karyawan
       const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
       applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
-
-      // 2. Value Sales
       applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
-
-      // 3. Qty FP
       applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
-
-      // 4. Value Comser FP
       applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -814,7 +955,6 @@
         });
 
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
-        
         const twibbonType = document.getElementById('twibbonType').value;
         const cleanName = (nama && !nama.includes('tidak ditemukan')) ? nama.replace(/[^a-zA-Z0-9]/g, '_') : 'Sales';
         
@@ -842,7 +982,6 @@
       }
     }
 
-    // FUNGSI SAVE EDITING (BEBAS INP ISSUE / TANPA ALERT BLOKIR)
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
@@ -869,7 +1008,6 @@
 
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
       
-      // Menggunakan statusMsg non-blokir agar performa UI tetap mulus dan bebas INP issue
       const statusMsg = document.getElementById('statusMsg');
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
       statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Konfigurasi tata letak & warna untuk "${twibbonType.toUpperCase()}" berhasil disimpan.`;
@@ -879,7 +1017,6 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
-    // FUNGSI RESET DEFAULT SETTINGS PER TWIBBON
     function resetTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       localStorage.removeItem(`twibbon_settings_${twibbonType}`);
@@ -895,7 +1032,6 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
-    // FUNGSI LOAD / DEFAULT SETTINGS
     function loadTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
@@ -955,7 +1091,6 @@
       }
     }
 
-    // Fungsi Login
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
@@ -1004,7 +1139,6 @@
       arrow.classList.toggle('rotate-180');
     }
 
-    // Penanganan Paste Excel & Preview Otomatis
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
@@ -1203,7 +1337,6 @@
       }, 100);
     }
 
-    // Render Tabel Preview & Header Otomatis
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
@@ -1375,7 +1508,6 @@
       document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET
     async function kirimTargetKeSupabase() {
       const targetRaw = document.getElementById('inputTargetSales').value;
       const cleanTarget = targetRaw.replace(/\./g, '');
@@ -1411,7 +1543,6 @@
       }
     }
 
-    // FUNGSI KIRIM RUNNING TEXT
     async function kirimRunningTextKeSupabase() {
       const textVal = document.getElementById('inputRunningTextValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
@@ -1446,7 +1577,6 @@
       }
     }
 
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
       let activeData = [];
       let rpcName = '';
