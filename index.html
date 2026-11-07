@@ -212,7 +212,7 @@
                   <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                     <i data-lucide="tv" class="w-4 h-4 text-emerald-600"></i> UKURAN TV AKTIF
                   </h3>
-                  <span id="tvCountBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">0 Unit Tersedia</span>
+                  <span id="tvCountBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs">0 Unit Tersedia</span>
                 </div>
 
                 <div id="tvSettingListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[420px] custom-scrollbar">
@@ -274,7 +274,7 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TWIBBON SALES (KEMBALI KE MASTER KODE LENGKAP) -->
+          <!-- TAMPILAN VIEW TWIBBON SALES -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
@@ -310,7 +310,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
+                    <!-- TEXTBOX 2: NAMA -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">NAMA KARYAWAN (OTOMATIS)</label>
                       <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari database..."
@@ -779,7 +779,7 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA MENU PENGATURAN TV ---
+    // --- LOGIKA MENU PENGATURAN TV & UKURAN TV AKTIF ---
     async function loadConnectedTvStatus() {
       const { data, error } = await supabaseClient
         .from('setting_tv')
@@ -834,30 +834,30 @@
         const connectBtnText = isConnected ? "Connected" : "Connect";
 
         html += `
-          <div class="bg-white p-3.5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3 transition hover:shadow-md">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs shadow-inner">
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3 transition-all hover:shadow-md hover:border-blue-200">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs shadow-inner border border-blue-100">
                 ${idx + 1}
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                  <i data-lucide="tv" class="w-3.5 h-3.5 text-blue-500 shrink-0"></i>
-                  <span class="text-xs font-bold text-gray-800 truncate">ID TV: ${tv.id}</span>
+                  <i data-lucide="tv" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                  <span class="text-xs font-bold text-gray-900 tracking-wide truncate">ID TV: ${tv.id}</span>
                 </div>
-                <div class="text-[11px] text-gray-500 mt-0.5 font-medium">
-                  Panjang: <span class="font-semibold text-gray-700">${tv.panjang || tv.panjang_tv || 0} cm</span> | 
-                  Tinggi: <span class="font-semibold text-gray-700">${tv.lebar || tv.tinggi || tv.tinggi_tv || 0} cm</span>
+                <div class="text-[11px] text-gray-500 mt-1 font-medium flex items-center gap-2">
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Panjang: <strong class="text-gray-900">${tv.panjang || tv.panjang_tv || 0} cm</strong></span>
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Lebar: <strong class="text-gray-900">${tv.lebar || tv.tinggi || tv.tinggi_tv || 0} cm</strong></span>
                 </div>
               </div>
             </div>
 
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button onclick="toggleConnectTv('${tv.id}')" class="${connectBtnClass} font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1 shadow-xs">
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="toggleConnectTv('${tv.id}')" class="${connectBtnClass} font-semibold px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs">
                 <i data-lucide="${isConnected ? 'check-circle-2' : 'power'}" class="w-3.5 h-3.5"></i>
                 <span>${connectBtnText}</span>
               </button>
-              <button onclick="deleteTvSetting('${tv.id}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-semibold p-1.5 rounded-lg text-xs transition shadow-xs" title="Hapus TV">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <button onclick="deleteTvSetting('${tv.id}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-semibold p-2 rounded-xl text-xs transition shadow-xs flex items-center justify-center" title="Hapus TV">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
           </div>
@@ -962,6 +962,7 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
+    // FUNGSI HAPUS TV DARI SUPABASE DAN MERELOAD DATA TERBARU SESUAI PERMINTAAN USER
     async function deleteTvSetting(id) {
       if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
 
@@ -972,8 +973,8 @@
 
       const statusMsg = document.getElementById('statusMsg');
       if (error) {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
-        statusMsg.innerText = 'Gagal menghapus data TV: ' + error.message;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menghapus data TV: ${error.message}`;
         statusMsg.classList.remove('hidden');
       } else {
         if (String(id) === String(activeConnectedTvId)) {
@@ -982,9 +983,11 @@
         }
 
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus dari database.`;
         statusMsg.classList.remove('hidden');
-        loadDataSettinganTv();
+        
+        // Reload data terbaru secara instan
+        await loadDataSettinganTv();
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       }
     }
