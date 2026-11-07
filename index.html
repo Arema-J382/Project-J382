@@ -825,31 +825,40 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
-    // FUNGSI HAPUS TV SESUAI PERMINTAAN USER & RELOAD DATA TERBARU
+    // FUNGSI HAPUS TV DENGAN SANITASI & VERIFIKASI DELETE SUPABASE
     async function deleteTvSetting(id) {
       if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
 
-      const { error } = await supabaseClient
+      const cleanId = String(id).trim();
+      
+      // Hapus data dari tabel data_settingan_tv berdasarkan id dengan select() untuk memastikan eksekusi berhasil
+      const { data: deletedRows, error } = await supabaseClient
         .from('data_settingan_tv')
         .delete()
-        .eq('id', id);
+        .eq('id', cleanId)
+        .select();
 
       const statusMsg = document.getElementById('statusMsg');
+      
       if (error) {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
         statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menghapus data TV: ${error.message}`;
         statusMsg.classList.remove('hidden');
+      } else if (!deletedRows || deletedRows.length === 0) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i> Perhatian: Data TV ID "${cleanId}" tidak terhapus. Periksa RLS Policy Delete pada tabel data_settingan_tv di Supabase Dashboard Anda.`;
+        statusMsg.classList.remove('hidden');
       } else {
-        if (String(id) === String(activeConnectedTvId)) {
-          await supabaseClient.from('setting_tv').delete().eq('id_tv', id);
+        if (String(cleanId) === String(activeConnectedTvId)) {
+          await supabaseClient.from('setting_tv').delete().eq('id_tv', cleanId);
           activeConnectedTvId = null;
         }
 
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus dari database.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${cleanId}" berhasil dihapus dari database.`;
         statusMsg.classList.remove('hidden');
         
-        // Reload data terbaru pada tampilan Ukuran TV Aktif
+        // Reload data terbaru secara otomatis
         await loadDataSettinganTv();
         
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
