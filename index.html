@@ -835,8 +835,9 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA PENGATURAN SOUNDS MENGGUNAKAN status_backsound ---
+    // --- LOGIKA PENGATURAN SOUNDS DISINKRONKAN DENGAN status_backsound ---
     async function loadSongsData() {
+      // Ambil data lagu yang aktif dari tabel status_backsound
       const { data: activeSounds } = await supabaseClient
         .from('status_backsound')
         .select('*');
@@ -844,9 +845,7 @@
       let activeMap = {};
       if (activeSounds) {
         activeSounds.forEach(s => {
-          if (s.status_lagu === 'AKTIF') {
-            activeMap[s.bucket_name] = s.nama_lagu;
-          }
+          activeMap[s.bucket_name] = s.nama_lagu;
         });
       }
 
@@ -955,20 +954,21 @@
       }
     }
 
+    // Mengaktifkan lagu: Masukkan ke tabel status_backsound
     async function setActiveSong(bucketName, fileName) {
-      // Hapus data lama pada bucket yang sama di tabel status_backsound
+      // Hapus dulu data lama pada bucket yang sama agar bersih
       await supabaseClient
         .from('status_backsound')
         .delete()
         .eq('bucket_name', bucketName);
 
-      // Masukkan data baru tanda aktif
+      // Masukkan baris data baru tanda aktif
       const { error } = await supabaseClient
         .from('status_backsound')
-        .insert([{
-          bucket_name: bucketName,
-          nama_lagu: fileName,
-          status_lagu: 'AKTIF'
+        .insert([{ 
+          bucket_name: bucketName, 
+          nama_lagu: fileName, 
+          status_lagu: 'AKTIF' 
         }]);
       
       if (error) {
@@ -978,8 +978,8 @@
       }
     }
 
+    // Menonaktifkan lagu: Hapus baris dari tabel status_backsound
     async function setInactiveSong(bucketName) {
-      // Hapus data dari tabel status_backsound agar tabel kosong (non-aktif)
       const { error } = await supabaseClient
         .from('status_backsound')
         .delete()
@@ -1005,6 +1005,7 @@
         statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menghapus lagu: ${error.message}`;
         statusMsg.classList.remove('hidden');
       } else {
+        // Cek jika lagu yang dihapus sedang aktif, hapus juga dari status_backsound
         const { data: activeData } = await supabaseClient
           .from('status_backsound')
           .select('nama_lagu')
