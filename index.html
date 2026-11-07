@@ -668,8 +668,8 @@
         .subscribe();
 
       supabaseClient
-        .channel('public:setting_sounds')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'setting_sounds' }, payload => {
+        .channel('public:status_backsound')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, payload => {
           if (currentView === 'pengaturanSounds') {
             loadSongsData();
           }
@@ -835,16 +835,18 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA PENGATURAN SOUNDS ---
+    // --- LOGIKA PENGATURAN SOUNDS MENGGUNAKAN status_backsound ---
     async function loadSongsData() {
       const { data: activeSounds } = await supabaseClient
-        .from('setting_sounds')
+        .from('status_backsound')
         .select('*');
 
       let activeMap = {};
       if (activeSounds) {
         activeSounds.forEach(s => {
-          activeMap[s.bucket_name] = s.file_name;
+          if (s.status_lagu === 'AKTIF') {
+            activeMap[s.bucket_name] = s.nama_lagu;
+          }
         });
       }
 
@@ -912,7 +914,6 @@
       lucide.createIcons();
     }
 
-    // FUNGSI UPLOAD DENGAN UPSERT UNTUK MENCEGAH ERROR OVERWRITE
     async function uploadSong(bucketName) {
       const inputId = bucketName === 'BACKSOUND' ? 'inputUploadBacksound' : 'inputUploadSoundSales';
       const fileInput = document.getElementById(inputId);
@@ -955,9 +956,20 @@
     }
 
     async function setActiveSong(bucketName, fileName) {
+      // Hapus data lama pada bucket yang sama di tabel status_backsound
+      await supabaseClient
+        .from('status_backsound')
+        .delete()
+        .eq('bucket_name', bucketName);
+
+      // Masukkan data baru tanda aktif
       const { error } = await supabaseClient
-        .from('setting_sounds')
-        .upsert({ bucket_name: bucketName, file_name: fileName }, { onConflict: 'bucket_name' });
+        .from('status_backsound')
+        .insert([{
+          bucket_name: bucketName,
+          nama_lagu: fileName,
+          status_lagu: 'AKTIF'
+        }]);
       
       if (error) {
         alert('Gagal mengaktifkan lagu: ' + error.message);
@@ -967,11 +979,15 @@
     }
 
     async function setInactiveSong(bucketName) {
+      // Hapus data dari tabel status_backsound agar tabel kosong (non-aktif)
       const { error } = await supabaseClient
-        .from('setting_sounds')
-        .upsert({ bucket_name: bucketName, file_name: null }, { onConflict: 'bucket_name' });
+        .from('status_backsound')
+        .delete()
+        .eq('bucket_name', bucketName);
       
-      if (!error) {
+      if (error) {
+        alert('Gagal menonaktifkan lagu: ' + error.message);
+      } else {
         loadSongsData();
       }
     }
@@ -990,12 +1006,12 @@
         statusMsg.classList.remove('hidden');
       } else {
         const { data: activeData } = await supabaseClient
-          .from('setting_sounds')
-          .select('file_name')
+          .from('status_backsound')
+          .select('nama_lagu')
           .eq('bucket_name', bucketName)
           .maybeSingle();
 
-        if (activeData && activeData.file_name === fileName) {
+        if (activeData && activeData.nama_lagu === fileName) {
           await setInactiveSong(bucketName);
         }
 
@@ -1056,7 +1072,7 @@
       dataSettinganTvList.forEach((tv, idx) => {
         const isConnected = String(tv.id) === String(activeConnectedTvId);
         const connectBtnClass = isConnected
-          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25"
+          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25 ring-2 ring-emerald-300"
           : "bg-slate-200 hover:bg-emerald-600 hover:text-white text-gray-700";
         const connectBtnText = isConnected ? "Connected" : "Connect";
 
