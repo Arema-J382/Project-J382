@@ -168,7 +168,7 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
-          <!-- PENGATURAN TV SECTION -->
+          <!-- PENGATURAN TV SECTION (SAMA PERSIS DENGAN WEB 1 ADMIN) -->
           <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -220,13 +220,15 @@
                 </div>
 
                 <div id="tvSettingListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[420px] custom-scrollbar">
-                  <div class="text-center py-16 text-gray-400 italic text-xs">Memuat data settingan TV...</div>
+                  <div class="text-center py-16 text-gray-400 italic text-xs">
+                    Memuat data settingan TV...
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- PENGATURAN SOUNDS SECTION (CARD 1 & CARD 2) -->
+          <!-- PENGATURAN SOUNDS SECTION -->
           <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -255,7 +257,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket Backsound.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -286,7 +288,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Merujuk pada tabel <b>status_soundtwibbon</b>.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -351,11 +353,11 @@
             </div>
           </div>
 
-          <!-- TWIBBON SALES SECTION (SAMA PERSIS DENGAN WEB 1 ADMIN) -->
+          <!-- TWIBBON SALES SECTION -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b>.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -661,6 +663,24 @@
 
     function setupRealtimeSubscriptions() {
       supabaseClient
+        .channel('public:data_settingan_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'data_settingan_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadDataSettinganTv();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
+        .channel('public:setting_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'setting_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadConnectedTvStatus();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
         .channel('public:status_backsound')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, payload => {
           if (currentView === 'pengaturanSounds') {
@@ -837,7 +857,217 @@
       lucide.createIcons();
     }
 
-    // --- PENGATURAN SOUNDS (CARD 1 & CARD 2 FIXED) ---
+    // --- PENGATURAN TV LOGIC (SAMA PERSIS DENGAN WEB 1 ADMIN) ---
+    async function loadConnectedTvStatus() {
+      const { data, error } = await supabaseClient
+        .from('setting_tv')
+        .select('*');
+      
+      if (!error && data && data.length > 0) {
+        activeConnectedTvId = data[0].id_tv || data[0].id || null;
+      } else {
+        activeConnectedTvId = null;
+      }
+      renderTvSettingList();
+    }
+
+    async function loadDataSettinganTv() {
+      await loadConnectedTvStatus();
+      const { data, error } = await supabaseClient
+        .from('data_settingan_tv')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Gagal memuat data_settingan_tv:', error);
+        return;
+      }
+
+      dataSettinganTvList = data || [];
+      renderTvSettingList();
+    }
+
+    function renderTvSettingList() {
+      const container = document.getElementById('tvSettingListContainer');
+      const badge = document.getElementById('tvCountBadge');
+      if (!container) return;
+
+      badge.innerText = `${dataSettinganTvList.length} Unit Tersedia`;
+
+      if (dataSettinganTvList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 text-gray-400 italic text-xs">
+            Belum ada data settingan TV. Silakan input melalui form di sebelah kiri.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      dataSettinganTvList.forEach((tv, idx) => {
+        const isConnected = String(tv.id) === String(activeConnectedTvId);
+        const connectBtnClass = isConnected
+          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25 ring-2 ring-emerald-300"
+          : "bg-slate-200 hover:bg-emerald-600 hover:text-white text-gray-700";
+        const connectBtnText = isConnected ? "Connected" : "Connect";
+
+        html += `
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3 transition-all hover:shadow-md hover:border-blue-200">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs shadow-inner border border-blue-100">
+                ${idx + 1}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="tv" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                  <span class="text-xs font-bold text-gray-900 tracking-wide truncate">ID TV: ${tv.id}</span>
+                </div>
+                <div class="text-[11px] text-gray-500 mt-1 font-medium flex items-center gap-2">
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Panjang: <strong class="text-gray-900">${tv.panjang || tv.panjang_tv || 0} cm</strong></span>
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Lebar: <strong class="text-gray-900">${tv.lebar || tv.tinggi || tv.tinggi_tv || 0} cm</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="toggleConnectTv('${tv.id}')" class="${connectBtnClass} font-semibold px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs">
+                <i data-lucide="${isConnected ? 'check-circle-2' : 'power'}" class="w-3.5 h-3.5"></i>
+                <span>${connectBtnText}</span>
+              </button>
+              <button onclick="deleteTvSetting('${tv.id}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-semibold p-2 rounded-xl text-xs transition shadow-xs flex items-center justify-center" title="Hapus TV">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    async function submitTvSettings() {
+      const idVal = document.getElementById('inputTvId').value.trim();
+      const panjangVal = document.getElementById('inputTvPanjang').value.trim();
+      const tinggiVal = document.getElementById('inputTvTinggi').value.trim();
+      const statusMsg = document.getElementById('statusMsg');
+      const btnSubmit = document.getElementById('btnSubmitTv');
+
+      if (!idVal || !panjangVal || !tinggiVal) {
+        alert('Semua kolom (ID, Panjang, Tinggi) wajib diisi!');
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...';
+      lucide.createIcons();
+
+      const { error } = await supabaseClient.rpc('upsert_data_settingan_tv', {
+        new_data: [{
+          id: idVal,
+          panjang: Number(panjangVal),
+          lebar: Number(tinggiVal)
+        }]
+      });
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Simpan Settingan TV';
+      lucide.createIcons();
+
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menyimpan data TV: ${error.message}`;
+        statusMsg.classList.remove('hidden');
+        setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+      } else {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data settingan TV dengan ID "${idVal}" berhasil disimpan.`;
+        statusMsg.classList.remove('hidden');
+        
+        document.getElementById('inputTvId').value = '';
+        document.getElementById('inputTvPanjang').value = '';
+        document.getElementById('inputTvTinggi').value = '';
+        
+        loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    async function toggleConnectTv(id) {
+      const tv = dataSettinganTvList.find(t => String(t.id) === String(id));
+      if (!tv) return;
+
+      const isCurrentlyConnected = String(tv.id) === String(activeConnectedTvId);
+      const statusMsg = document.getElementById('statusMsg');
+
+      if (isCurrentlyConnected) {
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .delete()
+          .eq('id_tv', id);
+
+        if (error) {
+          await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        }
+        activeConnectedTvId = null;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-blue-600"></i> TV ID "${id}" berhasil di-disconnect.`;
+      } else {
+        await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .insert([{
+            id_tv: tv.id,
+            panjang_tv: tv.panjang || tv.panjang_tv || 0,
+            tinggi_tv: tv.lebar || tv.tinggi || tv.tinggi_tv || 0
+          }]);
+
+        if (error) {
+          statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
+          statusMsg.innerText = 'Gagal connect TV: ' + error.message;
+          statusMsg.classList.remove('hidden');
+          return;
+        }
+
+        activeConnectedTvId = tv.id;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! TV ID "${id}" terhubung (Connected) dan mereplace data di tabel setting_tv.`;
+      }
+
+      statusMsg.classList.remove('hidden');
+      renderTvSettingList();
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
+    async function deleteTvSetting(id) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
+
+      const { error } = await supabaseClient.rpc('delete_data_settingan_tv', {
+        target_id: String(id)
+      });
+
+      const statusMsg = document.getElementById('statusMsg');
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menghapus data TV: ${error.message}`;
+        statusMsg.classList.remove('hidden');
+      } else {
+        if (String(id) === String(activeConnectedTvId)) {
+          await supabaseClient.from('setting_tv').delete().eq('id_tv', id);
+          activeConnectedTvId = null;
+        }
+
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus dari database.`;
+        statusMsg.classList.remove('hidden');
+        
+        await loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    // --- PENGATURAN SOUNDS ---
     async function loadSongsData() {
       try {
         const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
@@ -1249,7 +1479,16 @@
     }
 
     function toggleMenu(id) {
-      document.getElementById(id).classList.toggle('hidden');
+      const menu = document.getElementById(id);
+      menu.classList.toggle('hidden');
+      
+      if (id === 'submenuTv') {
+        const arrow = document.getElementById('arrowTv');
+        if (arrow) arrow.classList.toggle('rotate-180');
+      } else if (id === 'submenuPengaturan') {
+        const arrow = document.getElementById('arrowPengaturan');
+        if (arrow) arrow.classList.toggle('rotate-180');
+      }
     }
 
     function handleExcelPaste(e) {
