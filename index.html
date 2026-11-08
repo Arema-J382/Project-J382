@@ -226,7 +226,7 @@
             </div>
           </div>
 
-          <!-- PENGATURAN SOUNDS SECTION -->
+          <!-- PENGATURAN SOUNDS SECTION (CARD 1 & CARD 2) -->
           <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -255,7 +255,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket Backsound.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -286,7 +286,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
+                  <p class="text-[10px] text-gray-400">*Merujuk pada tabel <b>status_soundtwibbon</b>.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -355,7 +355,7 @@
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b>.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -661,6 +661,15 @@
 
     function setupRealtimeSubscriptions() {
       supabaseClient
+        .channel('public:status_backsound')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, payload => {
+          if (currentView === 'pengaturanSounds') {
+            loadSongsData();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
         .channel('public:status_soundtwibbon')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'status_soundtwibbon' }, payload => {
           if (currentView === 'pengaturanSounds') {
@@ -828,18 +837,28 @@
       lucide.createIcons();
     }
 
-    // --- PENGATURAN SOUNDS ---
+    // --- PENGATURAN SOUNDS (CARD 1 & CARD 2 FIXED) ---
     async function loadSongsData() {
-      const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
-      let backsoundActiveMap = {};
-      if (activeBacksound) { activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; }); }
-      const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
-      renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
+      try {
+        const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
+        let backsoundActiveMap = {};
+        if (activeBacksound) { 
+          activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; }); 
+        }
+        const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
+        renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
 
-      const { data: activeSoundSales } = await supabaseClient.from('status_soundtwibbon').select('*').eq('bucket_nametw', 'SOUND SALES');
-      let soundSalesActiveSong = activeSoundSales && activeSoundSales.length > 0 ? activeSoundSales[0].nama_lagutw : null;
-      const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
-      renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
+        const { data: activeSoundSales } = await supabaseClient
+          .from('status_soundtwibbon')
+          .select('*')
+          .eq('bucket_nametw', 'SOUND SALES');
+        
+        let soundSalesActiveSong = (activeSoundSales && activeSoundSales.length > 0) ? activeSoundSales[0].nama_lagutw : null;
+        const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
+        renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
+      } catch (err) {
+        console.error("Gagal memuat data songs:", err);
+      }
     }
 
     function renderSongList(bucketName, files, activeFileName) {
@@ -923,26 +942,68 @@
     }
 
     async function handleToggleSong(bucketName, fileName, makeActive) {
+      const statusMsg = document.getElementById('statusMsg');
+
       if (bucketName === 'SOUND SALES') {
-        await supabaseClient.from('status_soundtwibbon').delete().eq('bucket_nametw', 'SOUND SALES');
+        const { error: delError } = await supabaseClient
+          .from('status_soundtwibbon')
+          .delete()
+          .eq('bucket_nametw', 'SOUND SALES');
+
+        if (delError) {
+          alert('Gagal mereset status Sound Sales: ' + delError.message);
+          return;
+        }
+
         if (makeActive) {
-          await supabaseClient.from('status_soundtwibbon').insert([{
-            bucket_nametw: 'SOUND SALES',
-            nama_lagutw: fileName,
-            status_lagutw: 'AKTIF'
-          }]);
+          const { error: insError } = await supabaseClient
+            .from('status_soundtwibbon')
+            .insert([{
+              bucket_nametw: 'SOUND SALES',
+              nama_lagutw: fileName,
+              status_lagutw: 'AKTIF'
+            }]);
+
+          if (insError) {
+            alert('Gagal mengaktifkan lagu Sound Sales: ' + insError.message);
+            return;
+          }
         }
         loadSongsData();
       } else {
-        await supabaseClient.from('status_backsound').delete().eq('bucket_name', bucketName);
+        const { error: delError } = await supabaseClient
+          .from('status_backsound')
+          .delete()
+          .eq('bucket_name', bucketName);
+
+        if (delError) {
+          alert('Gagal mereset status Backsound: ' + delError.message);
+          return;
+        }
+
         if (makeActive) {
-          await supabaseClient.from('status_backsound').insert([{
-            bucket_name: bucketName,
-            nama_lagu: fileName,
-            status_lagu: 'AKTIF'
-          }]);
+          const { error: insError } = await supabaseClient
+            .from('status_backsound')
+            .insert([{
+              bucket_name: bucketName,
+              nama_lagu: fileName,
+              status_lagu: 'AKTIF'
+            }]);
+
+          if (insError) {
+            alert('Gagal mengaktifkan lagu Backsound: ' + insError.message);
+            return;
+          }
         }
         loadSongsData();
+      }
+
+      if (statusMsg) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Status lagu "${fileName}" pada ${bucketName} berhasil diperbarui.`;
+        statusMsg.classList.remove('hidden');
+        lucide.createIcons();
+        setTimeout(() => statusMsg.classList.add('hidden'), 3500);
       }
     }
 
@@ -969,7 +1030,7 @@
       }
     }
 
-    // --- TWIBBON SALES & POPUP INTEGRATION (DISINKRONKAN DENGAN WEB 1 ADMIN) ---
+    // --- TWIBBON SALES & POPUP INTEGRATION ---
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -994,9 +1055,8 @@
       } else if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
       } else {
-        namaInput.value = 'NIP tidak ditemukan di data_karyawan';
+        namaInput.value = 'NIP tidak ditemukan';
       }
-
       updateTwibbonPreview();
     }
 
@@ -1013,15 +1073,13 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
-      document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
+      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
 
       const photoBg = document.getElementById('previewPhotoBg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
       if (nip) {
-        const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg`;
-        photoBg.style.backgroundImage = `url('${photoUrl}')`;
+        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
         photoBg.classList.remove('hidden');
         placeholderText.classList.add('hidden');
       } else {
@@ -1029,38 +1087,24 @@
         placeholderText.classList.remove('hidden');
       }
 
-      const photoScale = document.getElementById('photoScale').value;
-      const photoX = document.getElementById('photoX').value;
-      const photoY = document.getElementById('photoY').value;
-      photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
+      photoBg.style.transform = `translate(${document.getElementById('photoX').value}px, ${document.getElementById('photoY').value}px) scale(${document.getElementById('photoScale').value})`;
 
-      const elNama = document.getElementById('previewNamaText');
-      const elSales = document.getElementById('previewSalesText');
-      const elQty = document.getElementById('previewQtyText');
-      const elComser = document.getElementById('previewComserText');
+      applyTextStyling('previewNamaText', (nama && !nama.includes('tidak ditemukan')) ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
+      applyTextStyling('previewSalesText', valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
+      applyTextStyling('previewQtyText', qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
+      applyTextStyling('previewComserText', valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
+    }
 
-      function applyTextStyling(el, textContent, sizeId, colorId, yId, xId) {
-        if (!textContent) {
-          el.style.display = 'none';
-          return;
-        }
-
-        el.style.top = document.getElementById(yId).value + 'px';
-        el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
-        
-        const inner = el.querySelector('.inner-text');
-        inner.innerText = textContent;
-        inner.style.fontSize = document.getElementById(sizeId).value + 'px';
-        inner.style.color = document.getElementById(colorId).value;
-        
-        el.style.display = 'block';
-      }
-
-      const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
-      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
-      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
-      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
-      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
+    function applyTextStyling(elementId, textContent, sizeId, colorId, yId, xId) {
+      const el = document.getElementById(elementId);
+      if (!textContent) { el.style.display = 'none'; return; }
+      el.style.top = document.getElementById(yId).value + 'px';
+      el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
+      const inner = el.querySelector('.inner-text');
+      inner.innerText = textContent;
+      inner.style.fontSize = document.getElementById(sizeId).value + 'px';
+      inner.style.color = document.getElementById(colorId).value;
+      el.style.display = 'block';
     }
 
     async function downloadTwibbon() {
