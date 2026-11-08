@@ -117,7 +117,7 @@
               <span>UPDATE KARYAWAN</span>
             </a>
 
-            <!-- MENU PENGATURAN -->
+            <!-- PENGATURAN -->
             <div class="pt-1">
               <button onclick="toggleMenu('submenuPengaturan')" class="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-800/80 transition text-left font-semibold text-slate-200 group">
                 <div class="flex items-center gap-2.5">
@@ -168,7 +168,7 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
-          <!-- PENGATURAN TV SECTION -->
+          <!-- PENGATURAN TV -->
           <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -226,7 +226,7 @@
             </div>
           </div>
 
-          <!-- PENGATURAN SOUNDS SECTION -->
+          <!-- PENGATURAN SOUNDS (CARD 1 & CARD 2 SOUND SALES) -->
           <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -255,6 +255,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
+                  <p class="text-[10px] text-gray-400">*Menambahkan lagu ke bucket Backsound.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -268,13 +269,13 @@
                 </div>
               </div>
 
-              <!-- CARD 2: SOUND SALES -->
+              <!-- CARD 2: SOUND SALES (Merujuk pada tabel status_soundtwibbon) -->
               <div class="bg-slate-50/60 border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col space-y-4">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-3">
                   <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
                     <i data-lucide="volume-2" class="w-4 h-4 text-blue-600"></i> Card 2: Bucket "SOUND SALES"
                   </h3>
-                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Audio Sales Web 2</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Audio Sales Popup Web 2</span>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
@@ -285,6 +286,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
+                  <p class="text-[10px] text-gray-400">*Merujuk pada tabel <b>status_soundtwibbon</b>.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -301,7 +303,7 @@
             </div>
           </div>
 
-          <!-- TARGET TODAY SECTION -->
+          <!-- TARGET TODAY -->
           <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
@@ -325,7 +327,7 @@
             </div>
           </div>
 
-          <!-- RUNNING TEXT SECTION -->
+          <!-- RUNNING TEXT -->
           <div id="viewRunningTextSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
@@ -338,7 +340,7 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">KATA-KATA RUNNING TEXT</label>
-                  <textarea id="inputRunningTextValue" rows="4" placeholder="Contoh: Selamat Datang di Informa MOG Malang - Promo Spesial Diskon 50%!"
+                  <textarea id="inputRunningTextValue" rows="4" placeholder="Contoh: Selamat Datang di Informa MOG Malang..."
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition resize-none"></textarea>
                 </div>
 
@@ -349,11 +351,11 @@
             </div>
           </div>
 
-          <!-- TWIBBON SALES SECTION -->
+          <!-- TWIBBON SALES -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b> dan memicu Sound Sales.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -414,7 +416,6 @@
                     </button>
                   </div>
 
-                  <!-- Edit Foto & Teks Styling... (dijaga lengkap) -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Edit Foto Sales
@@ -472,7 +473,7 @@
                 </div>
 
                 <div class="w-full max-w-[420px] mt-2">
-                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
+                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5">
                     <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
                   </button>
                 </div>
@@ -480,12 +481,12 @@
             </div>
           </div>
 
-          <!-- EXCEL SECTION -->
+          <!-- TABLE EXCEL -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
                 <h2 id="sectionTitle" class="text-base font-bold text-gray-800">Data Daily Sales SMT</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Klik kotak di bawah, lalu tekan <b class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-mono">Ctrl + V</b> untuk menempelkan data dari Excel secara otomatis.</p>
+                <p class="text-xs text-gray-500 mt-0.5">Klik kotak di bawah, lalu tekan <b class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-mono">Ctrl + V</b> untuk menempelkan data.</p>
               </div>
               <div class="flex gap-2.5">
                 <button onclick="resetData()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
@@ -511,7 +512,7 @@
                     <td colspan="7" class="text-center py-16 text-gray-400 italic">
                       <div class="flex flex-col items-center justify-center gap-2">
                         <i data-lucide="clipboard-paste" class="w-8 h-8 text-gray-300 animate-bounce"></i>
-                        <span>Belum ada data. Silakan paste data dari Excel ke kotak di atas.</span>
+                        <span>Belum ada data. Silakan paste data dari Excel.</span>
                       </div>
                     </td>
                   </tr>
@@ -532,7 +533,15 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentView = 'sales'; 
-    let salesData = [], comserData = [], mtdComserData = [], departemenData = [], furniproData = [], mtdSalesData = [], mtdFurniproData = [], karyawanData = [], dataSettinganTvList = [];
+    let salesData = [];
+    let comserData = []; 
+    let mtdComserData = []; 
+    let departemenData = [];
+    let furniproData = []; 
+    let mtdSalesData = []; 
+    let mtdFurniproData = []; 
+    let karyawanData = []; 
+    let dataSettinganTvList = [];
     let activeConnectedTvId = null;
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -540,27 +549,22 @@
       switchView('sales');
       
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) showAdminPanel();
+      if (session) {
+        showAdminPanel();
+      }
 
       setupRealtimeSubscriptions();
     });
 
     function setupRealtimeSubscriptions() {
-      supabaseClient.channel('public:data_settingan_tv').on('postgres_changes', { event: '*', schema: 'public', table: 'data_settingan_tv' }, () => {
-        if (currentView === 'pengaturanTv') loadDataSettinganTv();
-      }).subscribe();
-
-      supabaseClient.channel('public:setting_tv').on('postgres_changes', { event: '*', schema: 'public', table: 'setting_tv' }, () => {
-        if (currentView === 'pengaturanTv') loadConnectedTvStatus();
-      }).subscribe();
-
-      supabaseClient.channel('public:status_backsound').on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, () => {
-        if (currentView === 'pengaturanSounds') loadSongsData();
-      }).subscribe();
-
-      supabaseClient.channel('public:status_soundtwibbon').on('postgres_changes', { event: '*', schema: 'public', table: 'status_soundtwibbon' }, () => {
-        if (currentView === 'pengaturanSounds') loadSongsData();
-      }).subscribe();
+      supabaseClient
+        .channel('public:status_soundtwibbon')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_soundtwibbon' }, payload => {
+          if (currentView === 'pengaturanSounds') {
+            loadSongsData();
+          }
+        })
+        .subscribe();
     }
 
     function formatRupiah(element) {
@@ -569,86 +573,189 @@
       let sisa = split[0].length % 3;
       let rupiah = split[0].substr(0, sisa);
       let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
       if (ribuan) {
         let separator = sisa ? '.' : '';
         rupiah += separator + ribuan.join('.');
       }
+
       rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
       element.value = rupiah;
     }
 
     function switchView(view) {
       currentView = view;
-      ['menuPengaturanTv', 'menuTarget', 'menuSales', 'menuComser', 'menuMtdComser', 'menuTwibbonSales', 'menuRunningText', 'menuKaryawan', 'menuPengaturanSounds', 'menuDepartemen', 'menuFurnipro', 'menuMtdSales', 'menuMtdFurnipro'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.className = "block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white flex items-center gap-2.5 transition";
-      });
+      const menuPengaturanTv = document.getElementById('menuPengaturanTv');
+      const menuTarget = document.getElementById('menuTarget');
+      const menuSales = document.getElementById('menuSales');
+      const menuComser = document.getElementById('menuComser');
+      const menuMtdComser = document.getElementById('menuMtdComser');
+      const menuTwibbonSales = document.getElementById('menuTwibbonSales');
+      const menuRunningText = document.getElementById('menuRunningText');
+      const menuKaryawan = document.getElementById('menuKaryawan');
+      const menuPengaturanSounds = document.getElementById('menuPengaturanSounds');
+      const menuDepartemen = document.getElementById('menuDepartemen');
+      const menuFurnipro = document.getElementById('menuFurnipro');
+      const menuMtdSales = document.getElementById('menuMtdSales');
+      const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); 
+      const pageTitle = document.getElementById('pageTitle');
+      const pageBadge = document.getElementById('pageBadge');
+      const sectionTitle = document.getElementById('sectionTitle');
 
-      ['viewPengaturanTvSection', 'viewPengaturanSoundsSection', 'viewTargetSection', 'viewRunningTextSection', 'viewTwibbonSalesSection', 'viewExcelSection'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-      });
+      const viewPengaturanTvSection = document.getElementById('viewPengaturanTvSection');
+      const viewPengaturanSoundsSection = document.getElementById('viewPengaturanSoundsSection');
+      const viewTargetSection = document.getElementById('viewTargetSection');
+      const viewRunningTextSection = document.getElementById('viewRunningTextSection');
+      const viewTwibbonSalesSection = document.getElementById('viewTwibbonSalesSection');
+      const viewExcelSection = document.getElementById('viewExcelSection');
 
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
 
       const activeClass = "block p-2.5 rounded-lg bg-slate-800 text-xs text-blue-300 font-semibold flex items-center gap-2.5 transition shadow-sm border-l-2 border-blue-500";
-      const pageTitle = document.getElementById('pageTitle');
-      const pageBadge = document.getElementById('pageBadge');
-      const sectionTitle = document.getElementById('sectionTitle');
+      const inactiveClass = "block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white flex items-center gap-2.5 transition";
+
+      if (menuPengaturanTv) menuPengaturanTv.className = inactiveClass;
+      if (menuPengaturanSounds) menuPengaturanSounds.className = inactiveClass;
+      menuTarget.className = inactiveClass;
+      menuSales.className = inactiveClass;
+      if (menuComser) menuComser.className = inactiveClass;
+      if (menuMtdComser) menuMtdComser.className = inactiveClass;
+      if (menuTwibbonSales) menuTwibbonSales.className = inactiveClass;
+      if (menuRunningText) menuRunningText.className = inactiveClass;
+      if (menuKaryawan) menuKaryawan.className = inactiveClass;
+      menuDepartemen.className = inactiveClass;
+      if (menuFurnipro) menuFurnipro.className = inactiveClass;
+      if (menuMtdSales) menuMtdSales.className = inactiveClass;
+      if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
+
+      if (viewPengaturanTvSection) viewPengaturanTvSection.classList.add('hidden');
+      if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.add('hidden');
+      viewTargetSection.classList.add('hidden');
+      if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
+      if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
+      viewExcelSection.classList.add('hidden');
 
       if (view === 'pengaturanTv') {
-        document.getElementById('menuPengaturanTv').className = activeClass;
+        if (menuPengaturanTv) menuPengaturanTv.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-600"></i> Pengaturan TV Sync';
-        document.getElementById('viewPengaturanTvSection').classList.remove('hidden');
+        viewPengaturanTvSection.classList.remove('hidden');
         loadDataSettinganTv();
       } else if (view === 'pengaturanSounds') {
-        document.getElementById('menuPengaturanSounds').className = activeClass;
+        if (menuPengaturanSounds) menuPengaturanSounds.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="music" class="w-3.5 h-3.5 text-emerald-600"></i> Sounds Sync';
-        document.getElementById('viewPengaturanSoundsSection').classList.remove('hidden');
+        if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.remove('hidden');
         loadSongsData();
       } else if (view === 'target') {
-        document.getElementById('menuTarget').className = activeClass;
+        menuTarget.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="target" class="w-3.5 h-3.5 text-blue-600"></i> Target Sync';
-        document.getElementById('viewTargetSection').classList.remove('hidden');
+        viewTargetSection.classList.remove('hidden');
       } else if (view === 'runningText') {
-        document.getElementById('menuRunningText').className = activeClass;
+        menuRunningText.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="megaphone" class="w-3.5 h-3.5 text-pink-600"></i> Running Text Sync';
-        document.getElementById('viewRunningTextSection').classList.remove('hidden');
+        viewRunningTextSection.classList.remove('hidden');
       } else if (view === 'twibbonSales') {
-        document.getElementById('menuTwibbonSales').className = activeClass;
+        menuTwibbonSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="image" class="w-3.5 h-3.5 text-yellow-600"></i> Twibbon Sales';
-        document.getElementById('viewTwibbonSalesSection').classList.remove('hidden');
+        viewTwibbonSalesSection.classList.remove('hidden');
         loadTwibbonSettings();
         updateTwibbonPreview();
-      } else {
-        const menuEl = document.getElementById('menu' + view.charAt(0).toUpperCase() + view.slice(1));
-        if (menuEl) menuEl.className = activeClass;
-        pageBadge.innerHTML = `<i data-lucide="database" class="w-3.5 h-3.5 text-blue-600"></i> ${view.toUpperCase()} Sync`;
-        sectionTitle.innerText = `Data ${view.toUpperCase()}`;
-        document.getElementById('viewExcelSection').classList.remove('hidden');
+      } else if (view === 'karyawan') {
+        menuKaryawan.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i> Karyawan Sync';
+        sectionTitle.innerText = "Data Master Karyawan";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'sales') {
+        menuSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-blue-600"></i> Sales Sync';
+        sectionTitle.innerText = "Data Daily Sales SMT";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'comser') {
+        menuComser.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="headphones" class="w-3.5 h-3.5 text-blue-600"></i> Comser Sync';
+        sectionTitle.innerText = "Data Daily Comser (Summed by NIP)";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdComser') {
+        menuMtdComser.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="pie-chart" class="w-3.5 h-3.5 text-blue-600"></i> MTD Comser Sync';
+        sectionTitle.innerText = "Data MTD Comser (Summed by NIP)";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'departemen') {
+        menuDepartemen.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="grid" class="w-3.5 h-3.5 text-blue-600"></i> Departemen Sync';
+        sectionTitle.innerText = "Data Daily Sales Departemen";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'furnipro') {
+        menuFurnipro.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i> Furnipro Sync';
+        sectionTitle.innerText = "Data Daily Furnipro (Summed by NIP)";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdSales') {
+        menuMtdSales.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-blue-600"></i> MTD Sales Sync';
+        sectionTitle.innerText = "Data MTD Sales SMT";
+        viewExcelSection.classList.remove('hidden');
+        renderTableRows();
+      } else if (view === 'mtdFurnipro') {
+        menuMtdFurnipro.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="briefcase" class="w-3.5 h-3.5 text-blue-600"></i> MTD Furnipro Sync';
+        sectionTitle.innerText = "Data MTD Furnipro (Summed by NIP)";
+        viewExcelSection.classList.remove('hidden');
         renderTableRows();
       }
       lucide.createIcons();
     }
 
-    // --- MANAJEMEN SOUNDS & STATUS SOUNDSTWIBBON ---
+    // --- PENGATURAN SOUNDS & STATUS SOUNDTWIBBON ---
     async function loadSongsData() {
-      // Card 1: BACKSOUND (status_backsound)
-      const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*').maybeSingle();
-      const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
-      renderSongList('BACKSOUND', filesBacksound || [], activeBacksound?.nama_lagu || null);
+      // Load Backsound dari status_backsound
+      const { data: activeBacksound } = await supabaseClient
+        .from('status_backsound')
+        .select('*');
 
-      // Card 2: SOUND SALES (status_soundtwibbon)
-      const { data: activeSoundSales } = await supabaseClient.from('status_soundtwibbon').select('*').maybeSingle();
+      let backsoundActiveMap = {};
+      if (activeBacksound) {
+        activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; });
+      }
+
+      const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
+      renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
+
+      // Load Sound Sales dari status_soundtwibbon
+      const { data: activeSoundSales } = await supabaseClient
+        .from('status_soundtwibbon')
+        .select('*')
+        .eq('bucket_nametw', 'SOUND SALES');
+
+      let soundSalesActiveSong = activeSoundSales && activeSoundSales.length > 0 ? activeSoundSales[0].nama_lagutw : null;
+
       const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
-      renderSongList('SOUND SALES', filesSoundSales || [], activeSoundSales?.nama_lagutw || null);
+      renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
     }
 
     function renderSongList(bucketName, files, activeFileName) {
-      const isBacksound = bucketName === 'BACKSOUND';
-      const containerId = isBacksound ? 'listBacksoundContainer' : 'listSoundSalesContainer';
-      const countId = isBacksound ? 'countBacksound' : 'countSoundSales';
+      const isSoundSales = bucketName === 'SOUND SALES';
+      const containerId = isSoundSales ? 'listSoundSalesContainer' : 'listBacksoundContainer';
+      const countId = isSoundSales ? 'countSoundSales' : 'countBacksound';
       const container = document.getElementById(containerId);
       const countBadge = document.getElementById(countId);
 
@@ -710,7 +817,9 @@
       const file = fileInput.files[0];
       const fileName = file.name;
 
-      const { error } = await supabaseClient.storage.from(bucketName).upload(fileName, file, { cacheControl: '3600', upsert: true });
+      const { data, error } = await supabaseClient.storage
+        .from(bucketName)
+        .upload(fileName, file, { cacheControl: '3600', upsert: true });
 
       if (error) {
         alert('Gagal upload lagu: ' + error.message);
@@ -726,22 +835,29 @@
     }
 
     async function handleToggleSong(bucketName, fileName, makeActive) {
-      if (bucketName === 'BACKSOUND') {
+      if (bucketName === 'SOUND SALES') {
+        // Menggunakan tabel status_soundtwibbon
+        await supabaseClient.from('status_soundtwibbon').delete().eq('bucket_nametw', 'SOUND SALES');
         if (makeActive) {
-          await supabaseClient.from('status_backsound').delete().neq('id', 0);
-          await supabaseClient.from('status_backsound').insert([{ nama_lagu: fileName, status_lagu: 'AKTIF' }]);
-        } else {
-          await supabaseClient.from('status_backsound').delete().neq('id', 0);
+          await supabaseClient.from('status_soundtwibbon').insert([{
+            bucket_nametw: 'SOUND SALES',
+            nama_lagutw: fileName,
+            status_lagutw: 'AKTIF'
+          }]);
         }
-      } else if (bucketName === 'SOUND SALES') {
+        loadSongsData();
+      } else {
+        // Backsound
+        await supabaseClient.from('status_backsound').delete().eq('bucket_name', bucketName);
         if (makeActive) {
-          await supabaseClient.from('status_soundtwibbon').delete().neq('id_tw', 0);
-          await supabaseClient.from('status_soundtwibbon').insert([{ bucket_nametw: bucketName, nama_lagutw: fileName, status_lagutw: 'AKTIF' }]);
-        } else {
-          await supabaseClient.from('status_soundtwibbon').delete().neq('id_tw', 0);
+          await supabaseClient.from('status_backsound').insert([{
+            bucket_name: bucketName,
+            nama_lagu: fileName,
+            status_lagu: 'AKTIF'
+          }]);
         }
+        loadSongsData();
       }
-      loadSongsData();
     }
 
     async function deleteSong(bucketName, fileName) {
@@ -753,11 +869,12 @@
       if (error) {
         alert('Gagal menghapus lagu: ' + error.message);
       } else {
-        if (bucketName === 'BACKSOUND') {
-          await supabaseClient.from('status_backsound').delete().eq('nama_lagu', fileName);
-        } else {
+        if (bucketName === 'SOUND SALES') {
           await supabaseClient.from('status_soundtwibbon').delete().eq('nama_lagutw', fileName);
+        } else {
+          await supabaseClient.from('status_backsound').delete().eq('nama_lagu', fileName);
         }
+
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
         statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Lagu "${fileName}" berhasil dihapus.`;
         statusMsg.classList.remove('hidden');
@@ -766,7 +883,78 @@
       }
     }
 
-    // --- TWIBBON & DOWNLOAD INTEGRATION DENGAN status_soundtwibbon ---
+    // --- TWIBBON SALES & POPUP INTEGRATION ---
+    async function handleNipInput() {
+      const nipVal = document.getElementById('twibbonNip').value.trim();
+      const namaInput = document.getElementById('twibbonNama');
+
+      if (!nipVal) {
+        namaInput.value = '';
+        updateTwibbonPreview();
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from('data_karyawan')
+        .select('nama_kar')
+        .eq('nip_kar', Number(nipVal) || nipVal)
+        .maybeSingle();
+
+      if (data && data.nama_kar) {
+        namaInput.value = data.nama_kar;
+      } else {
+        namaInput.value = 'NIP tidak ditemukan';
+      }
+      updateTwibbonPreview();
+    }
+
+    function onTwibbonTypeChange() {
+      loadTwibbonSettings();
+      updateTwibbonPreview();
+    }
+
+    function updateTwibbonPreview() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      const nip = document.getElementById('twibbonNip').value.trim();
+      const nama = document.getElementById('twibbonNama').value;
+      const valSales = document.getElementById('twibbonValueSales').value;
+      const qtyFp = document.getElementById('twibbonQtyFp').value;
+      const valComser = document.getElementById('twibbonValueComser').value;
+
+      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
+
+      const photoBg = document.getElementById('previewPhotoBg');
+      const placeholderText = document.getElementById('photoPlaceholderText');
+
+      if (nip) {
+        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
+        photoBg.classList.remove('hidden');
+        placeholderText.classList.add('hidden');
+      } else {
+        photoBg.classList.add('hidden');
+        placeholderText.classList.remove('hidden');
+      }
+
+      photoBg.style.transform = `translate(${document.getElementById('photoX').value}px, ${document.getElementById('photoY').value}px) scale(${document.getElementById('photoScale').value})`;
+
+      applyTextStyling('previewNamaText', (nama && !nama.includes('tidak ditemukan')) ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
+      applyTextStyling('previewSalesText', valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
+      applyTextStyling('previewQtyText', qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
+      applyTextStyling('previewComserText', valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
+    }
+
+    function applyTextStyling(elementId, textContent, sizeId, colorId, yId, xId) {
+      const el = document.getElementById(elementId);
+      if (!textContent) { el.style.display = 'none'; return; }
+      el.style.top = document.getElementById(yId).value + 'px';
+      el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
+      const inner = el.querySelector('.inner-text');
+      inner.innerText = textContent;
+      inner.style.fontSize = document.getElementById(sizeId).value + 'px';
+      inner.style.color = document.getElementById(colorId).value;
+      el.style.display = 'block';
+    }
+
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
@@ -783,31 +971,24 @@
       }
 
       btnDownload.disabled = true;
-      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyiapkan Pop-Up & Gambar Full HD...';
+      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data & Menyiapkan Gambar...';
       lucide.createIcons();
 
       try {
-        // Cek apakah ada lagu yang aktif di Card 2: SOUND SALES (`status_soundtwibbon`)
-        const { data: activeSoundData } = await supabaseClient
-          .from('status_soundtwibbon')
-          .select('*')
-          .maybeSingle();
+        // Kirim data ke tabel popup_twibbon di Supabase (Upsert / Replace data baru)
+        const { error: popupError } = await supabaseClient
+          .from('popup_twibbon')
+          .upsert({
+            nip: Number(nip) || 0,
+            nama: nama || '-',
+            value: valSales || '',
+            qtyfp: qtyFp || '',
+            valuecnc: valComser || ''
+          }, { onConflict: 'nip' });
 
-        let activeSongName = activeSoundData ? activeSoundData.nama_lagutw : null;
-
-        // Kirim data pop-up beserta lagu aktif ke tabel `status_soundtwibbon` untuk Web 2
-        await supabaseClient.from('status_soundtwibbon').delete().neq('id_tw', 0);
-        await supabaseClient.from('status_soundtwibbon').insert([{
-          bucket_nametw: 'SOUND SALES',
-          nama_lagutw: activeSongName || '',
-          status_lagutw: 'AKTIF_POPUP',
-          // Data karyawan dan sales disimpan sebagai JSON di kolom atau dapat dibaca Web 2
-          // (Kita simpan lengkap agar Web 2 dapat menampilkan pop-up dengan sempurna)
-        }]);
-
-        // Simpan data pop-up ke localStorage atau kirim via payload realtime / tabel jika diperlukan
-        const popupPayload = { nip, nama, valSales, qtyFp, valComser, timestamp: Date.now() };
-        localStorage.setItem('web2_active_popup', JSON.stringify(popupPayload));
+        if (popupError) {
+          console.error('Gagal mengirim popup data:', popupError.message);
+        }
 
         const canvas = await html2canvas(previewBox, { scale: 4, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
@@ -823,15 +1004,8 @@
 
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Twibbon didownload & Pop-up dipicu di Web 2 selama 5 detik.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data terkirim ke Web 2 & Twibbon berhasil didownload.`;
         statusMsg.classList.remove('hidden');
-        lucide.createIcons();
-
-        // Setelah 5 detik, hapus otomatis data di status_soundtwibbon (sesuai aturan)
-        setTimeout(async () => {
-          await supabaseClient.from('status_soundtwibbon').delete().neq('id_tw', 0);
-        }, 5000);
-        
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       } catch (err) {
         console.error(err);
@@ -843,121 +1017,173 @@
       }
     }
 
-    // --- SISA FUNGSI PENDUKUNG (LOGIN, TV SETTINGS, EXCEL PASTE, DLL) ---
-    async function loadConnectedTvStatus() {
-      const { data } = await supabaseClient.from('setting_tv').select('*');
-      activeConnectedTvId = (data && data.length > 0) ? (data[0].id_tv || data[0].id) : null;
-      renderTvSettingList();
-    }
-
-    async function loadDataSettinganTv() {
-      await loadConnectedTvStatus();
-      const { data } = await supabaseClient.from('data_settingan_tv').select('*').order('id', { ascending: true });
-      dataSettinganTvList = data || [];
-      renderTvSettingList();
-    }
-
-    function renderTvSettingList() {
-      const container = document.getElementById('tvSettingListContainer');
-      const badge = document.getElementById('tvCountBadge');
-      if (!container) return;
-      badge.innerText = `${dataSettinganTvList.length} Unit Tersedia`;
-      if (dataSettinganTvList.length === 0) {
-        container.innerHTML = `<div class="text-center py-16 text-gray-400 italic text-xs">Belum ada data settingan TV.</div>`;
-        return;
-      }
-      let html = '';
-      dataSettinganTvList.forEach((tv, idx) => {
-        const isConnected = String(tv.id) === String(activeConnectedTvId);
-        html += `
-          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3.5">
-              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${idx + 1}</div>
-              <div>
-                <div class="text-xs font-bold text-gray-900">ID TV: ${tv.id}</div>
-                <div class="text-[11px] text-gray-500 mt-1">Panjang: ${tv.panjang || 0} cm | Lebar: ${tv.lebar || tv.tinggi || 0} cm</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="toggleConnectTv('${tv.id}')" class="${isConnected ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-gray-700'} font-semibold px-3 py-2 rounded-xl text-xs transition">
-                ${isConnected ? 'Connected' : 'Connect'}
-              </button>
-            </div>
-          </div>
-        `;
-      });
-      container.innerHTML = html;
-      lucide.createIcons();
-    }
-
-    async function submitTvSettings() {
-      const idVal = document.getElementById('inputTvId').value.trim();
-      const panjangVal = document.getElementById('inputTvPanjang').value.trim();
-      const tinggiVal = document.getElementById('inputTvTinggi').value.trim();
-      if (!idVal || !panjangVal || !tinggiVal) { alert('Semua kolom wajib diisi!'); return; }
-      await supabaseClient.rpc('upsert_data_settingan_tv', { new_data: [{ id: idVal, panjang: Number(panjangVal), lebar: Number(tinggiVal) }] });
-      loadDataSettinganTv();
-    }
-
-    async function toggleConnectTv(id) {
-      const tv = dataSettinganTvList.find(t => String(t.id) === String(id));
-      if (!tv) return;
-      await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
-      await supabaseClient.from('setting_tv').insert([{ id_tv: tv.id, panjang_tv: tv.panjang || 0, tinggi_tv: tv.lebar || tv.tinggi || 0 }]);
-      loadConnectedTvStatus();
-    }
-
-    async function handleNipInput() {
-      const nipVal = document.getElementById('twibbonNip').value.trim();
-      const namaInput = document.getElementById('twibbonNama');
-      if (!nipVal) { namaInput.value = ''; updateTwibbonPreview(); return; }
-      const { data } = await supabaseClient.from('data_karyawan').select('nama_kar').eq('nip_kar', nipVal).maybeSingle();
-      namaInput.value = data ? data.nama_kar : 'NIP tidak ditemukan';
-      updateTwibbonPreview();
-    }
-
-    function onTwibbonTypeChange() { loadTwibbonSettings(); updateTwibbonPreview(); }
-    
-    function updateTwibbonPreview() {
-      const twibbonType = document.getElementById('twibbonType').value;
-      const nip = document.getElementById('twibbonNip').value.trim();
-      const nama = document.getElementById('twibbonNama').value;
-      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
-      const photoBg = document.getElementById('previewPhotoBg');
-      const placeholderText = document.getElementById('photoPlaceholderText');
-      if (nip) {
-        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
-        photoBg.classList.remove('hidden');
-        placeholderText.classList.add('hidden');
-      } else {
-        photoBg.classList.add('hidden');
-        placeholderText.classList.remove('hidden');
-      }
-    }
-
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
-      localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify({}));
-      alert('Pengaturan twibbon disimpan.');
+      const settings = {
+        photoScale: document.getElementById('photoScale').value,
+        photoX: document.getElementById('photoX').value,
+        photoY: document.getElementById('photoY').value,
+        sizeNama: document.getElementById('sizeNama').value, xNama: document.getElementById('xNama').value, yNama: document.getElementById('yNama').value, colorNama: document.getElementById('colorNama').value,
+        sizeSales: document.getElementById('sizeSales').value, xSales: document.getElementById('xSales').value, ySales: document.getElementById('ySales').value, colorSales: document.getElementById('colorSales').value,
+        sizeQty: document.getElementById('sizeQty').value, xQty: document.getElementById('xQty').value, yQty: document.getElementById('yQty').value, colorQty: document.getElementById('colorQty').value,
+        sizeComser: document.getElementById('sizeComser').value, xComser: document.getElementById('xComser').value, yComser: document.getElementById('yComser').value, colorComser: document.getElementById('colorComser').value
+      };
+      localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
+      alert('Konfigurasi tata letak berhasil disimpan!');
     }
-    function resetTwibbonSettings() { loadTwibbonSettings(); }
-    function loadTwibbonSettings() {}
+
+    function resetTwibbonSettings() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      localStorage.removeItem(`twibbon_settings_${twibbonType}`);
+      loadTwibbonSettings();
+      updateTwibbonPreview();
+      alert('Format edit berhasil direset ke default.');
+    }
+
+    function loadTwibbonSettings() {
+      const twibbonType = document.getElementById('twibbonType').value;
+      const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
+      if (saved) {
+        try {
+          const s = JSON.parse(saved);
+          document.getElementById('photoScale').value = s.photoScale || 1;
+          document.getElementById('photoX').value = s.photoX || 0;
+          document.getElementById('photoY').value = s.photoY || 0;
+          document.getElementById('sizeNama').value = s.sizeNama || 18; document.getElementById('xNama').value = s.xNama || 0; document.getElementById('yNama').value = s.yNama || 240; document.getElementById('colorNama').value = s.colorNama || '#000000';
+          document.getElementById('sizeSales').value = s.sizeSales || 14; document.getElementById('xSales').value = s.xSales || 0; document.getElementById('ySales').value = s.ySales || 280; document.getElementById('colorSales').value = s.colorSales || '#000000';
+          document.getElementById('sizeQty').value = s.sizeQty || 14; document.getElementById('xQty').value = s.xQty || 0; document.getElementById('yQty').value = s.yQty || 315; document.getElementById('colorQty').value = s.colorQty || '#000000';
+          document.getElementById('sizeComser').value = s.sizeComser || 14; document.getElementById('xComser').value = s.xComser || 0; document.getElementById('yComser').value = s.yComser || 350; document.getElementById('colorComser').value = s.colorComser || '#000000';
+        } catch (e) {}
+      }
+    }
 
     async function handleLogin(e) {
       e.preventDefault();
-      const { error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value });
-      if (error) document.getElementById('loginError').innerText = error.message, document.getElementById('loginError').classList.remove('hidden');
-      else showAdminPanel();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const btnLogin = document.getElementById('btnLogin');
+      const loginError = document.getElementById('loginError');
+
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin';
+      lucide.createIcons();
+
+      if (error) {
+        loginError.innerText = 'Login gagal: ' + error.message;
+        loginError.classList.remove('hidden');
+      } else {
+        showAdminPanel();
+      }
     }
-    async function handleLogout() { await supabaseClient.auth.signOut(); document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('loginSection').classList.remove('hidden'); }
-    function showAdminPanel() { document.getElementById('loginSection').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); lucide.createIcons(); }
-    function toggleMenu(id) { document.getElementById(id).classList.toggle('hidden'); }
-    function handleExcelPaste(e) {}
-    function renderTableRows() {}
-    function resetData() {}
-    async function kirimTargetKeSupabase() { alert('Target disimpan.'); }
-    async function kirimRunningTextKeSupabase() { alert('Running text disimpan.'); }
-    async function kirimKeSupabase() { alert('Data dikirim.'); }
+
+    async function handleLogout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById('adminPanel').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('loginPassword').value = '';
+    }
+
+    function showAdminPanel() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function toggleMenu(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    // Fungsi Excel Paste Handler (Dipertahankan dari Master Code)
+    function handleExcelPaste(e) {
+      setTimeout(() => {
+        const pastedText = document.getElementById('excelPasteInput').value;
+        if (!pastedText.trim()) return;
+        const rows = pastedText.split('\n');
+        let parsed = [];
+        rows.forEach((row, index) => {
+          if (!row.trim()) return;
+          const cols = row.split('\t');
+          if (currentView === 'karyawan') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            if (nip && nip !== '0') parsed.push({ nip_kar: Number(nip) || 0, nama_kar: nama || '-' });
+          } else if (currentView === 'sales' || currentView === 'mtdSales') {
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let dept = cols[2] ? cols[2].trim() : '';
+            let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            if (nip && nip !== '0') parsed.push({ nip: String(nip), nama: nama || 'NONAME', dept: dept || '-', total: Number(totalStr) || 0 });
+          }
+        });
+        if (currentView === 'karyawan') karyawanData = parsed;
+        else if (currentView === 'sales') salesData = parsed;
+        renderTableRows();
+      }, 100);
+    }
+
+    function renderTableRows() {
+      const thead = document.getElementById('previewTableHead');
+      const tbody = document.getElementById('previewTableBody');
+      const totalBarisSpan = document.getElementById('totalBaris');
+      let activeData = currentView === 'karyawan' ? karyawanData : salesData;
+
+      if (currentView === 'karyawan') {
+        thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th></tr>`;
+      } else {
+        thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th><th class="border border-slate-700 px-4 py-3 w-32">ALL DEPT</th><th class="border border-slate-700 px-4 py-3 text-right">TOTAL</th></tr>`;
+      }
+
+      if (activeData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-16 text-gray-400 italic">Belum ada data. Silakan paste dari Excel.</td></tr>`;
+        totalBarisSpan.innerText = '0';
+        return;
+      }
+
+      let html = '';
+      activeData.forEach((item, idx) => {
+        if (currentView === 'karyawan') {
+          html += `<tr class="hover:bg-indigo-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono text-indigo-600 font-semibold">${item.nip_kar}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama_kar}</td></tr>`;
+        } else {
+          html += `<tr class="hover:bg-blue-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama}</td><td class="border border-gray-200 px-4 py-2.5 text-center font-bold text-blue-600">${item.dept}</td><td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold">${item.total.toLocaleString('id-ID')}</td></tr>`;
+        }
+      });
+      tbody.innerHTML = html;
+      totalBarisSpan.innerText = activeData.length;
+    }
+
+    function resetData() {
+      salesData = []; karyawanData = [];
+      document.getElementById('excelPasteInput').value = '';
+      renderTableRows();
+    }
+
+    async function kirimTargetKeSupabase() {
+      const cleanTarget = document.getElementById('inputTargetSales').value.replace(/\./g, '');
+      if (!cleanTarget) return;
+      await supabaseClient.rpc('replace_target_today', { new_target: Number(cleanTarget) });
+      alert('Target berhasil disimpan!');
+    }
+
+    async function kirimRunningTextKeSupabase() {
+      const textVal = document.getElementById('inputRunningTextValue').value.trim();
+      if (!textVal) return;
+      await supabaseClient.rpc('replace_running_text', { new_data: [{ run_text: textVal }] });
+      alert('Running text berhasil dikirim!');
+    }
+
+    async function kirimKeSupabase() {
+      const activeData = currentView === 'karyawan' ? karyawanData : salesData;
+      const rpcName = currentView === 'karyawan' ? 'upsert_data_karyawan' : 'replace_laporan_sales';
+      if (activeData.length === 0) { alert('Data kosong!'); return; }
+      const { error } = await supabaseClient.rpc(rpcName, { new_data: activeData });
+      if (error) alert('Gagal: ' + error.message);
+      else alert('Sukses memperbarui data ke database!');
+    }
   </script>
 </body>
 </html>
