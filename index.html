@@ -226,7 +226,7 @@
             </div>
           </div>
 
-          <!-- PENGATURAN SOUNDS SECTION (CARD 1 & CARD 2) -->
+          <!-- PENGATURAN SOUNDS SECTION -->
           <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -255,7 +255,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket Backsound.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -269,7 +269,7 @@
                 </div>
               </div>
 
-              <!-- CARD 2: SOUND SALES (Merujuk pada tabel status_soundtwibbon) -->
+              <!-- CARD 2: SOUND SALES -->
               <div class="bg-slate-50/60 border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col space-y-4">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-3">
                   <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
@@ -286,7 +286,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Merujuk pada tabel <b>status_soundtwibbon</b>.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -351,11 +351,11 @@
             </div>
           </div>
 
-          <!-- TWIBBON SALES SECTION -->
+          <!-- TWIBBON SALES SECTION (SAMA PERSIS DENGAN WEB 1 ADMIN) -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b>.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -436,6 +436,109 @@
                     </div>
                   </div>
 
+                  <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks & Warna
+                    </h3>
+
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorNama" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeNama" min="10" max="60" step="1" value="18" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xNama" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yNama" min="0" max="420" step="1" value="240" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorSales" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeSales" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xSales" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="ySales" min="0" max="420" step="1" value="280" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorQty" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeQty" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xQty" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yQty" min="0" max="420" step="1" value="315" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
+                        <div class="flex items-center gap-1">
+                          <label class="text-[9px] font-bold text-gray-500">Warna Text:</label>
+                          <input type="color" id="colorComser" value="#000000" onchange="updateTwibbonPreview()" class="w-5 h-5 rounded cursor-pointer border border-gray-300 p-0">
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">UKURAN TEXT</label>
+                          <input type="range" id="sizeComser" min="10" max="60" step="1" value="14" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER KIRI-KANAN</label>
+                          <input type="range" id="xComser" min="-200" max="200" step="1" value="0" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                        <div>
+                          <label class="block text-[9px] font-bold text-gray-500 mb-0.5">GESER ATAS-BAWAH</label>
+                          <input type="range" id="yComser" min="0" max="420" step="1" value="350" oninput="updateTwibbonPreview()" class="w-full accent-purple-600">
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
                 </div>
               </div>
 
@@ -473,7 +576,7 @@
                 </div>
 
                 <div class="w-full max-w-[420px] mt-2">
-                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5">
+                  <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
                     <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
                   </button>
                 </div>
@@ -725,7 +828,7 @@
       lucide.createIcons();
     }
 
-    // --- PENGATURAN SOUNDS & STATUS SOUNDTWIBBON ---
+    // --- PENGATURAN SOUNDS ---
     async function loadSongsData() {
       const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
       let backsoundActiveMap = {};
@@ -866,7 +969,7 @@
       }
     }
 
-    // --- TWIBBON SALES & POPUP INTEGRATION ---
+    // --- TWIBBON SALES & POPUP INTEGRATION (DISINKRONKAN DENGAN WEB 1 ADMIN) ---
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -877,17 +980,23 @@
         return;
       }
 
-      const { data } = await supabaseClient
+      const nipNum = Number(nipVal);
+      const queryVal = isNaN(nipNum) ? nipVal : nipNum;
+
+      const { data, error } = await supabaseClient
         .from('data_karyawan')
         .select('nama_kar')
-        .eq('nip_kar', Number(nipVal) || nipVal)
+        .eq('nip_kar', queryVal)
         .maybeSingle();
 
-      if (data && data.nama_kar) {
+      if (error) {
+        namaInput.value = 'Error koneksi database';
+      } else if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
       } else {
-        namaInput.value = 'NIP tidak ditemukan';
+        namaInput.value = 'NIP tidak ditemukan di data_karyawan';
       }
+
       updateTwibbonPreview();
     }
 
@@ -904,13 +1013,15 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
+      const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
+      document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
 
       const photoBg = document.getElementById('previewPhotoBg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
       if (nip) {
-        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
+        const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg`;
+        photoBg.style.backgroundImage = `url('${photoUrl}')`;
         photoBg.classList.remove('hidden');
         placeholderText.classList.add('hidden');
       } else {
@@ -918,24 +1029,38 @@
         placeholderText.classList.remove('hidden');
       }
 
-      photoBg.style.transform = `translate(${document.getElementById('photoX').value}px, ${document.getElementById('photoY').value}px) scale(${document.getElementById('photoScale').value})`;
+      const photoScale = document.getElementById('photoScale').value;
+      const photoX = document.getElementById('photoX').value;
+      const photoY = document.getElementById('photoY').value;
+      photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
 
-      applyTextStyling('previewNamaText', (nama && !nama.includes('tidak ditemukan')) ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
-      applyTextStyling('previewSalesText', valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
-      applyTextStyling('previewQtyText', qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
-      applyTextStyling('previewComserText', valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
-    }
+      const elNama = document.getElementById('previewNamaText');
+      const elSales = document.getElementById('previewSalesText');
+      const elQty = document.getElementById('previewQtyText');
+      const elComser = document.getElementById('previewComserText');
 
-    function applyTextStyling(elementId, textContent, sizeId, colorId, yId, xId) {
-      const el = document.getElementById(elementId);
-      if (!textContent) { el.style.display = 'none'; return; }
-      el.style.top = document.getElementById(yId).value + 'px';
-      el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
-      const inner = el.querySelector('.inner-text');
-      inner.innerText = textContent;
-      inner.style.fontSize = document.getElementById(sizeId).value + 'px';
-      inner.style.color = document.getElementById(colorId).value;
-      el.style.display = 'block';
+      function applyTextStyling(el, textContent, sizeId, colorId, yId, xId) {
+        if (!textContent) {
+          el.style.display = 'none';
+          return;
+        }
+
+        el.style.top = document.getElementById(yId).value + 'px';
+        el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
+        
+        const inner = el.querySelector('.inner-text');
+        inner.innerText = textContent;
+        inner.style.fontSize = document.getElementById(sizeId).value + 'px';
+        inner.style.color = document.getElementById(colorId).value;
+        
+        el.style.display = 'block';
+      }
+
+      const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
+      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
+      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
+      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
+      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
     }
 
     async function downloadTwibbon() {
@@ -958,7 +1083,6 @@
       lucide.createIcons();
 
       try {
-        // Kirim data ke tabel popup_twibbon di Supabase (Upsert / Replace data baru)
         await supabaseClient
           .from('popup_twibbon')
           .upsert({
@@ -1027,11 +1151,19 @@
           document.getElementById('photoScale').value = s.photoScale || 1;
           document.getElementById('photoX').value = s.photoX || 0;
           document.getElementById('photoY').value = s.photoY || 0;
-          document.getElementById('sizeNama').value = s.sizeNama || 18; document.getElementById('xNama').value = s.xNama || 0; document.getElementById('yNama').value = s.yNama || 240; document.getElementById('colorNama').value = s.colorNama || '#000000';
-          document.getElementById('sizeSales').value = s.sizeSales || 14; document.getElementById('xSales').value = s.xSales || 0; document.getElementById('ySales').value = s.ySales || 280; document.getElementById('colorSales').value = s.colorSales || '#000000';
-          document.getElementById('sizeQty').value = s.sizeQty || 14; document.getElementById('xQty').value = s.xQty || 0; document.getElementById('yQty').value = s.yQty || 315; document.getElementById('colorQty').value = s.colorQty || '#000000';
-          document.getElementById('sizeComser').value = s.sizeComser || 14; document.getElementById('xComser').value = s.xComser || 0; document.getElementById('yComser').value = s.yComser || 350; document.getElementById('colorComser').value = s.colorComser || '#000000';
+          document.getElementById('sizeNama').value = s.sizeNama || 18; document.getElementById('xNama').value = s.xNama || 0; document.getElementById('yNama').value = s.yNama !== undefined ? s.yNama : 240; document.getElementById('colorNama').value = s.colorNama || '#000000';
+          document.getElementById('sizeSales').value = s.sizeSales || 14; document.getElementById('xSales').value = s.xSales || 0; document.getElementById('ySales').value = s.ySales !== undefined ? s.ySales : 280; document.getElementById('colorSales').value = s.colorSales || '#000000';
+          document.getElementById('sizeQty').value = s.sizeQty || 14; document.getElementById('xQty').value = s.xQty || 0; document.getElementById('yQty').value = s.yQty !== undefined ? s.yQty : 315; document.getElementById('colorQty').value = s.colorQty || '#000000';
+          document.getElementById('sizeComser').value = s.sizeComser || 14; document.getElementById('xComser').value = s.xComser || 0; document.getElementById('yComser').value = s.yComser !== undefined ? s.yComser : 350; document.getElementById('colorComser').value = s.colorComser || '#000000';
         } catch (e) {}
+      } else {
+        document.getElementById('photoScale').value = 1;
+        document.getElementById('photoX').value = 0;
+        document.getElementById('photoY').value = 0;
+        document.getElementById('sizeNama').value = 18; document.getElementById('xNama').value = 0; document.getElementById('yNama').value = 240; document.getElementById('colorNama').value = '#000000';
+        document.getElementById('sizeSales').value = 14; document.getElementById('xSales').value = 0; document.getElementById('ySales').value = 280; document.getElementById('colorSales').value = '#000000';
+        document.getElementById('sizeQty').value = 14; document.getElementById('xQty').value = 0; document.getElementById('yQty').value = 315; document.getElementById('colorQty').value = '#000000';
+        document.getElementById('sizeComser').value = 14; document.getElementById('xComser').value = 0; document.getElementById('yComser').value = 350; document.getElementById('colorComser').value = '#000000';
       }
     }
 
