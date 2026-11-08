@@ -168,7 +168,7 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
-          <!-- PENGATURAN TV SECTION (SAMA PERSIS DENGAN WEB 1 ADMIN) -->
+          <!-- PENGATURAN TV SECTION -->
           <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -356,8 +356,10 @@
           <!-- TWIBBON SALES SECTION -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
-              <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
+              <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="award" class="w-5 h-5 text-yellow-600"></i> Generator & Preview Twibbon Sales
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon, masukkan NIP Karyawan, dan unduh hasil untuk langsung menyinkronkan data ke TV Dashboard secara otomatis.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -857,7 +859,7 @@
       lucide.createIcons();
     }
 
-    // --- PENGATURAN TV LOGIC (SAMA PERSIS DENGAN WEB 1 ADMIN) ---
+    // --- PENGATURAN TV LOGIC ---
     async function loadConnectedTvStatus() {
       const { data, error } = await supabaseClient
         .from('setting_tv')
@@ -1353,19 +1355,26 @@
       }
 
       btnDownload.disabled = true;
-      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data & Download...';
+      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data (Replace) & Download...';
       lucide.createIcons();
 
       try {
-        await supabaseClient
+        // Melakukan REPLACE pada tabel popup_twibbon: Hapus data sebelumnya lalu insert data baru
+        await supabaseClient.from('popup_twibbon').delete().neq('nip', 0);
+        
+        const { error: insertError } = await supabaseClient
           .from('popup_twibbon')
-          .upsert({
+          .insert({
             nip: Number(nip) || 0,
             nama: nama || '-',
             value: valSales || '',
             qtyfp: qtyFp || '',
             valuecnc: valComser || ''
-          }, { onConflict: 'nip' });
+          });
+
+        if (insertError) {
+          console.error('Gagal mengirim data ke popup_twibbon:', insertError);
+        }
 
         const canvas = await html2canvas(previewBox, { scale: 4, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
@@ -1381,7 +1390,7 @@
 
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data terkirim ke Web 2 & Twibbon didownload.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data berhasil dikirim (Replace) ke tabel "popup_twibbon" dan Twibbon didownload.`;
         statusMsg.classList.remove('hidden');
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       } catch (err) {
