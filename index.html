@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Pro J382 - Management System</title>
+  <title>Admin Pro J382</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -117,7 +117,7 @@
               <span>UPDATE KARYAWAN</span>
             </a>
 
-            <!-- PENGATURAN -->
+            <!-- MENU PENGATURAN -->
             <div class="pt-1">
               <button onclick="toggleMenu('submenuPengaturan')" class="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-800/80 transition text-left font-semibold text-slate-200 group">
                 <div class="flex items-center gap-2.5">
@@ -168,7 +168,7 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
-          <!-- PENGATURAN TV -->
+          <!-- PENGATURAN TV SECTION -->
           <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -226,7 +226,7 @@
             </div>
           </div>
 
-          <!-- PENGATURAN SOUNDS (CARD 1 & CARD 2 SOUND SALES) -->
+          <!-- PENGATURAN SOUNDS SECTION (CARD 1 & CARD 2) -->
           <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
             <div class="mb-5">
               <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -255,7 +255,7 @@
                       <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
                     </button>
                   </div>
-                  <p class="text-[10px] text-gray-400">*Menambahkan lagu ke bucket Backsound.</p>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket Backsound.</p>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
@@ -275,7 +275,7 @@
                   <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
                     <i data-lucide="volume-2" class="w-4 h-4 text-blue-600"></i> Card 2: Bucket "SOUND SALES"
                   </h3>
-                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Audio Sales Popup Web 2</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Audio Sales Web 2</span>
                 </div>
 
                 <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
@@ -303,7 +303,7 @@
             </div>
           </div>
 
-          <!-- TARGET TODAY -->
+          <!-- TARGET TODAY SECTION -->
           <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
@@ -327,7 +327,7 @@
             </div>
           </div>
 
-          <!-- RUNNING TEXT -->
+          <!-- RUNNING TEXT SECTION -->
           <div id="viewRunningTextSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
@@ -351,11 +351,11 @@
             </div>
           </div>
 
-          <!-- TWIBBON SALES -->
+          <!-- TWIBBON SALES SECTION -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
               <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b> dan memicu Sound Sales.</p>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan. Klik Download akan mengirim data ke <b>popup_twibbon</b>.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
@@ -481,7 +481,7 @@
             </div>
           </div>
 
-          <!-- TABLE EXCEL -->
+          <!-- TABLE EXCEL SECTION -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
@@ -512,7 +512,7 @@
                     <td colspan="7" class="text-center py-16 text-gray-400 italic">
                       <div class="flex flex-col items-center justify-center gap-2">
                         <i data-lucide="clipboard-paste" class="w-8 h-8 text-gray-300 animate-bounce"></i>
-                        <span>Belum ada data. Silakan paste data dari Excel.</span>
+                        <span>Belum ada data. Silakan paste dari Excel.</span>
                       </div>
                     </td>
                   </tr>
@@ -727,27 +727,14 @@
 
     // --- PENGATURAN SOUNDS & STATUS SOUNDTWIBBON ---
     async function loadSongsData() {
-      // Load Backsound dari status_backsound
-      const { data: activeBacksound } = await supabaseClient
-        .from('status_backsound')
-        .select('*');
-
+      const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
       let backsoundActiveMap = {};
-      if (activeBacksound) {
-        activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; });
-      }
-
+      if (activeBacksound) { activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; }); }
       const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
       renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
 
-      // Load Sound Sales dari status_soundtwibbon
-      const { data: activeSoundSales } = await supabaseClient
-        .from('status_soundtwibbon')
-        .select('*')
-        .eq('bucket_nametw', 'SOUND SALES');
-
+      const { data: activeSoundSales } = await supabaseClient.from('status_soundtwibbon').select('*').eq('bucket_nametw', 'SOUND SALES');
       let soundSalesActiveSong = activeSoundSales && activeSoundSales.length > 0 ? activeSoundSales[0].nama_lagutw : null;
-
       const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
       renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
     }
@@ -817,9 +804,7 @@
       const file = fileInput.files[0];
       const fileName = file.name;
 
-      const { data, error } = await supabaseClient.storage
-        .from(bucketName)
-        .upload(fileName, file, { cacheControl: '3600', upsert: true });
+      const { error } = await supabaseClient.storage.from(bucketName).upload(fileName, file, { cacheControl: '3600', upsert: true });
 
       if (error) {
         alert('Gagal upload lagu: ' + error.message);
@@ -827,7 +812,7 @@
       }
 
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan ke bucket "${bucketName}".`;
+      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan.`;
       statusMsg.classList.remove('hidden');
       fileInput.value = '';
       loadSongsData();
@@ -836,7 +821,6 @@
 
     async function handleToggleSong(bucketName, fileName, makeActive) {
       if (bucketName === 'SOUND SALES') {
-        // Menggunakan tabel status_soundtwibbon
         await supabaseClient.from('status_soundtwibbon').delete().eq('bucket_nametw', 'SOUND SALES');
         if (makeActive) {
           await supabaseClient.from('status_soundtwibbon').insert([{
@@ -847,7 +831,6 @@
         }
         loadSongsData();
       } else {
-        // Backsound
         await supabaseClient.from('status_backsound').delete().eq('bucket_name', bucketName);
         if (makeActive) {
           await supabaseClient.from('status_backsound').insert([{
@@ -861,7 +844,7 @@
     }
 
     async function deleteSong(bucketName, fileName) {
-      if (!confirm(`Apakah Anda yakin ingin menghapus lagu "${fileName}" dari bucket "${bucketName}"?`)) return;
+      if (!confirm(`Apakah Anda yakin ingin menghapus lagu "${fileName}"?`)) return;
 
       const { error } = await supabaseClient.storage.from(bucketName).remove([fileName]);
       const statusMsg = document.getElementById('statusMsg');
@@ -894,7 +877,7 @@
         return;
       }
 
-      const { data, error } = await supabaseClient
+      const { data } = await supabaseClient
         .from('data_karyawan')
         .select('nama_kar')
         .eq('nip_kar', Number(nipVal) || nipVal)
@@ -965,18 +948,18 @@
       const valComser = document.getElementById('twibbonValueComser').value.trim();
 
       if (!nip) {
-        alert('Silakan masukkan NIP terlebih dahulu untuk mendownload twibbon!');
+        alert('Silakan masukkan NIP terlebih dahulu!');
         document.getElementById('twibbonNip').focus();
         return;
       }
 
       btnDownload.disabled = true;
-      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data & Menyiapkan Gambar...';
+      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data & Download...';
       lucide.createIcons();
 
       try {
         // Kirim data ke tabel popup_twibbon di Supabase (Upsert / Replace data baru)
-        const { error: popupError } = await supabaseClient
+        await supabaseClient
           .from('popup_twibbon')
           .upsert({
             nip: Number(nip) || 0,
@@ -985,10 +968,6 @@
             qtyfp: qtyFp || '',
             valuecnc: valComser || ''
           }, { onConflict: 'nip' });
-
-        if (popupError) {
-          console.error('Gagal mengirim popup data:', popupError.message);
-        }
 
         const canvas = await html2canvas(previewBox, { scale: 4, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
@@ -1004,11 +983,10 @@
 
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data terkirim ke Web 2 & Twibbon berhasil didownload.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data terkirim ke Web 2 & Twibbon didownload.`;
         statusMsg.classList.remove('hidden');
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       } catch (err) {
-        console.error(err);
         alert('Gagal mendownload gambar: ' + err.message);
       } finally {
         btnDownload.disabled = false;
@@ -1098,7 +1076,6 @@
       document.getElementById(id).classList.toggle('hidden');
     }
 
-    // Fungsi Excel Paste Handler (Dipertahankan dari Master Code)
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
