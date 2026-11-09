@@ -1080,12 +1080,15 @@
         const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
         renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
 
+        // Memuat status aktif untuk bucket "SOUND SALES" (dengan spasi)
         const { data: activeSoundSales } = await supabaseClient
           .from('status_soundtwibbon')
           .select('*')
           .eq('bucket_nametw', 'SOUND SALES');
         
         let soundSalesActiveSong = (activeSoundSales && activeSoundSales.length > 0) ? activeSoundSales[0].nama_lagutw : null;
+        
+        // Memanggil storage bucket dengan nama yang tepat: "SOUND SALES"
         const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
         renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
       } catch (err) {
@@ -1172,7 +1175,7 @@
       }
 
       statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan.`;
+      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan ke bucket "${bucketName}".`;
       statusMsg.classList.remove('hidden');
       fileInput.value = '';
       loadSongsData();
