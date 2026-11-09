@@ -1069,9 +1069,10 @@
       }
     }
 
-    // --- PENGATURAN SOUNDS ---
+    // --- PENGATURAN SOUNDS (DISESUAIKAN DENGAN NAMA KOLOM TABEL DI FOTO) ---
     async function loadSongsData() {
       try {
+        // --- CARD 1: BACKSOUND ---
         const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
         let backsoundActiveMap = {};
         if (activeBacksound) { 
@@ -1080,15 +1081,13 @@
         const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
         renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
 
-        // Memuat status aktif untuk bucket "SOUND SALES" (dengan spasi)
+        // --- CARD 2: SOUND SALES (Sesuai kolom tabel: bucket_nametw & nama_lagutw) ---
         const { data: activeSoundSales } = await supabaseClient
           .from('status_soundtwibbon')
           .select('*')
           .eq('bucket_nametw', 'SOUND SALES');
         
         let soundSalesActiveSong = (activeSoundSales && activeSoundSales.length > 0) ? activeSoundSales[0].nama_lagutw : null;
-        
-        // Memanggil storage bucket dengan nama yang tepat: "SOUND SALES"
         const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
         renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
       } catch (err) {
