@@ -1173,62 +1173,35 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
+    // --- PERBAIKAN UTAMA: Menggunakan RPC Function untuk menghindari RLS Error pada Sound Sales ---
     async function handleToggleSong(bucketName, fileName, makeActive) {
       const statusMsg = document.getElementById('statusMsg');
+      const targetNama = makeActive ? fileName : '';
+      const targetStatus = makeActive ? 'AKTIF' : 'NON AKTIF';
 
+      let error = null;
       if (bucketName === 'SOUND SALES') {
-        const { error: delError } = await supabaseClient
-          .from('status_soundtwibbon')
-          .delete()
-          .eq('bucket_nametw', 'SOUND SALES');
-
-        if (delError) {
-          alert('Gagal mereset status Sound Sales: ' + delError.message);
-          return;
-        }
-
-        if (makeActive) {
-          const { error: insError } = await supabaseClient
-            .from('status_soundtwibbon')
-            .insert([{
-              bucket_nametw: 'SOUND SALES',
-              nama_lagutw: fileName,
-              status_lagutw: 'AKTIF'
-            }]);
-
-          if (insError) {
-            alert('Gagal mengaktifkan lagu Sound Sales: ' + insError.message);
-            return;
-          }
-        }
-        loadSongsData();
+        const res = await supabaseClient.rpc('update_status_soundtwibbon', {
+          p_bucket: 'SOUND SALES',
+          p_nama: targetNama,
+          p_status: targetStatus
+        });
+        error = res.error;
       } else {
-        const { error: delError } = await supabaseClient
-          .from('status_backsound')
-          .delete()
-          .eq('bucket_name', bucketName);
-
-        if (delError) {
-          alert('Gagal mereset status Backsound: ' + delError.message);
-          return;
-        }
-
-        if (makeActive) {
-          const { error: insError } = await supabaseClient
-            .from('status_backsound')
-            .insert([{
-              bucket_name: bucketName,
-              nama_lagu: fileName,
-              status_lagu: 'AKTIF'
-            }]);
-
-          if (insError) {
-            alert('Gagal mengaktifkan lagu Backsound: ' + insError.message);
-            return;
-          }
-        }
-        loadSongsData();
+        const res = await supabaseClient.rpc('update_status_backsound', {
+          p_bucket: bucketName,
+          p_nama: targetNama,
+          p_status: targetStatus
+        });
+        error = res.error;
       }
+
+      if (error) {
+        alert('Gagal memperbarui status lagu: ' + error.message);
+        return;
+      }
+
+      loadSongsData();
 
       if (statusMsg) {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
@@ -1249,9 +1222,9 @@
         alert('Gagal menghapus lagu: ' + error.message);
       } else {
         if (bucketName === 'SOUND SALES') {
-          await supabaseClient.from('status_soundtwibbon').delete().eq('nama_lagutw', fileName);
+          await supabaseClient.rpc('update_status_soundtwibbon', { p_bucket: 'SOUND SALES', p_nama: '', p_status: 'NON AKTIF' });
         } else {
-          await supabaseClient.from('status_backsound').delete().eq('nama_lagu', fileName);
+          await supabaseClient.rpc('update_status_backsound', { p_bucket: bucketName, p_nama: '', p_status: 'NON AKTIF' });
         }
 
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
@@ -1359,7 +1332,6 @@
       lucide.createIcons();
 
       try {
-        // Melakukan REPLACE pada tabel popup_twibbon: Hapus data sebelumnya lalu insert data baru
         await supabaseClient.from('popup_twibbon').delete().neq('nip', 0);
         
         const { error: insertError } = await supabaseClient
