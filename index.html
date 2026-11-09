@@ -1115,6 +1115,13 @@
         const fileName = file.name;
         const isActive = fileName === activeFileName;
 
+        // Perbaikan Tombol Toggle: Menampilkan warna hijau (AKTIF) atau merah (NON AKTIF) secara tepat
+        const btnClass = isActive 
+          ? 'bg-emerald-600 text-white shadow-emerald-500/25 ring-2 ring-emerald-300' 
+          : 'bg-rose-600 text-white shadow-rose-500/25 ring-2 ring-rose-300';
+        const btnIcon = isActive ? 'volume-2' : 'volume-x';
+        const btnText = isActive ? 'AKTIF' : 'NON AKTIF';
+
         html += `
           <div class="bg-slate-50 p-3 rounded-xl border border-gray-200 flex items-center justify-between gap-3 shadow-xs hover:border-blue-200 transition">
             <div class="flex items-center gap-2.5 min-w-0">
@@ -1128,9 +1135,9 @@
             </div>
 
             <div class="flex items-center gap-1.5 shrink-0">
-              <button onclick="handleToggleSong('${bucketName}', '${fileName}', ${!isActive})" class="${isActive ? 'bg-emerald-600 text-white shadow-emerald-500/25 ring-2 ring-emerald-300' : 'bg-rose-600 text-white shadow-rose-500/25 ring-2 ring-rose-300'} text-[11px] font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1">
-                <i data-lucide="${isActive ? 'volume-2' : 'volume-x'}" class="w-3.5 h-3.5"></i>
-                <span>${isActive ? 'AKTIF' : 'NON AKTIF'}</span>
+              <button onclick="handleToggleSong('${bucketName}', '${fileName}', ${!isActive})" class="${btnClass} text-[11px] font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1">
+                <i data-lucide="${btnIcon}" class="w-3.5 h-3.5"></i>
+                <span>${btnText}</span>
               </button>
 
               <button onclick="deleteSong('${bucketName}', '${fileName}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-1.5 rounded-lg transition shadow-xs flex items-center justify-center" title="Hapus Lagu">
@@ -1204,7 +1211,7 @@
 
       if (statusMsg) {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Status lagu "${fileName}" pada ${bucketName} berhasil diperbarui.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Status lagu "${fileName}" pada ${bucketName} berhasil diperbarui menjadi ${targetStatus}.`;
         statusMsg.classList.remove('hidden');
         lucide.createIcons();
         setTimeout(() => statusMsg.classList.add('hidden'), 3500);
