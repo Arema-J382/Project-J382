@@ -112,7 +112,7 @@
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
-            <!-- MENU BARU: PESAN SIARAN -->
+            <!-- MENU PESAN SIARAN -->
             <a href="#" onclick="switchView('pesanSiaran')" id="menuPesanSiaran" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="mic" class="w-4 h-4 text-violet-400"></i>
               <span>PESAN SIARAN</span>
@@ -383,7 +383,7 @@
                 <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
                   <i data-lucide="mic" class="w-5 h-5 text-violet-600"></i> Pesan Siaran (TTS ElevenLabs)
                 </h2>
-                <p class="text-xs text-gray-500 mt-1">Ketik pesan siaran suara perempuan bahasa Indonesia. Sistem otomatis memproses via ElevenLabs TTS API dan menyimpannya ke tabel <code class="bg-gray-100 px-1 py-0.5 rounded text-gray-800 font-mono">tts_pesan</code> kolom <code class="bg-gray-100 px-1 py-0.5 rounded text-gray-800 font-mono">text_url</code>.</p>
+                <p class="text-xs text-gray-500 mt-1">Ketik pesan siaran suara perempuan bahasa Indonesia. Sistem otomatis memproses via ElevenLabs TTS API dan menyimpannya ke tabel <code class="bg-gray-100 px-1 py-0.5 rounded text-gray-800 font-mono">tts_pesan</code>.</p>
               </div>
 
               <div class="space-y-4">
@@ -394,10 +394,13 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">VOICE ID (PEREMPUAN / INDONESIA)</label>
-                  <input type="text" id="inputElevenVoiceId" value="EXAVITQu4vr4xnSDxMaL" placeholder="Contoh: EXAVITQu4vr4xnSDxMaL"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition shadow-xs">
-                  <p class="text-[10px] text-gray-400 mt-1">*Default menggunakan suara perempuan multilingual / Indonesia.</p>
+                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider flex items-center justify-between">
+                    <span>VOICE ID (PEREMPUAN / INDONESIA - LOCKED)</span>
+                    <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Locked System</span>
+                  </label>
+                  <input type="text" id="inputElevenVoiceId" value="EXAVITQu4vr4xnSDxMaL" readonly disabled
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold bg-gray-100 text-gray-600 cursor-not-allowed transition shadow-xs">
+                  <p class="text-[10px] text-gray-400 mt-1">*Voice ID dikunci permanen menggunakan suara perempuan berstandar tinggi.</p>
                 </div>
 
                 <div>
@@ -727,14 +730,10 @@
 
       setupRealtimeSubscriptions();
 
-      // Load saved ElevenLabs API Key & Voice ID if any
+      // Load saved ElevenLabs API Key if any
       if (localStorage.getItem('eleven_api_key')) {
         const apiKeyEl = document.getElementById('inputElevenApiKey');
         if (apiKeyEl) apiKeyEl.value = localStorage.getItem('eleven_api_key');
-      }
-      if (localStorage.getItem('eleven_voice_id')) {
-        const voiceIdEl = document.getElementById('inputElevenVoiceId');
-        if (voiceIdEl) voiceIdEl.value = localStorage.getItem('eleven_voice_id');
       }
     });
 
@@ -1511,10 +1510,10 @@
       }
     }
 
-    // --- PESAN SIARAN (TTS ELEVENLABS) LOGIC ---
+    // --- PESAN SIARAN (TTS ELEVENLABS) LOGIC (WITH CREDIT CHECK & ERROR FALLBACK) ---
     async function prosesDanKirimPesanSiaran() {
       const apiKey = document.getElementById('inputElevenApiKey').value.trim();
-      const voiceId = document.getElementById('inputElevenVoiceId').value.trim() || 'EXAVITQu4vr4xnSDxMaL';
+      const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Voice ID LOCKED (Permanen Suara Perempuan Indonesia)
       const textVal = document.getElementById('inputPesanSiaranValue').value.trim();
       const statusMsg = document.getElementById('statusMsg');
       const btnKirim = document.getElementById('btnKirimPesanSiaran');
@@ -1531,13 +1530,16 @@
       }
 
       localStorage.setItem('eleven_api_key', apiKey);
-      localStorage.setItem('eleven_voice_id', voiceId);
 
       btnKirim.disabled = true;
-      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses TTS ElevenLabs...';
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Pesan Siaran...';
       lucide.createIcons();
 
+      let audioUrl = null;
+      let ttsSuccess = false;
+
       try {
+        // Coba request TTS ke ElevenLabs API
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
           method: 'POST',
           headers: {
@@ -1555,57 +1557,70 @@
           })
         });
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.detail?.message || `HTTP error! status: ${response.status}`);
+        if (response.ok) {
+          const audioBlob = await response.blob();
+          const fileName = `pesan_siaran_${Date.now()}.mp3`;
+
+          // Upload audio file ke Supabase Storage (bucket BACKSOUND)
+          const { error: uploadError } = await supabaseClient.storage
+            .from('BACKSOUND')
+            .upload(fileName, audioBlob, { cacheControl: '3600', upsert: true });
+
+          if (!uploadError) {
+            const { data: publicUrlData } = supabaseClient.storage
+              .from('BACKSOUND')
+              .getPublicUrl(fileName);
+
+            audioUrl = publicUrlData.publicUrl;
+            ttsSuccess = true;
+
+            // Preview audio hasil TTS
+            const audioPlayer = document.getElementById('audioPlayerPesanSiaran');
+            audioPlayer.src = audioUrl;
+            document.getElementById('pesanSiaranAudioPreview').classList.remove('hidden');
+          }
+        } else {
+          console.warn("ElevenLabs API Gagal atau Kredit Habis (Status:", response.status, ")");
         }
+      } catch (err) {
+        console.warn("Terjadi kendala saat koneksi TTS ElevenLabs:", err.message);
+      }
 
-        const audioBlob = await response.blob();
-        const fileName = `pesan_siaran_${Date.now()}.mp3`;
-
-        // Upload audio file ke Supabase Storage (bucket BACKSOUND)
-        const { error: uploadError } = await supabaseClient.storage
-          .from('BACKSOUND')
-          .upload(fileName, audioBlob, { cacheControl: '3600', upsert: true });
-
-        if (uploadError) {
-          throw new Error('Gagal upload audio ke Supabase Storage: ' + uploadError.message);
-        }
-
-        const { data: publicUrlData } = supabaseClient.storage
-          .from('BACKSOUND')
-          .getPublicUrl(fileName);
-
-        const audioUrl = publicUrlData.publicUrl;
-
-        // Preview audio hasil TTS
-        const audioPlayer = document.getElementById('audioPlayerPesanSiaran');
-        audioPlayer.src = audioUrl;
-        document.getElementById('pesanSiaranAudioPreview').classList.remove('hidden');
-
-        // Konsep: Replace data terbaru pada tabel "tts_pesan" di kolom "text_url"
+      try {
+        // Konsep: Replace data terbaru pada tabel "tts_pesan" di kolom "text_url" & "text_pesan"
+        // Jika kredit habis/gagal TTS, text_url dikosongkan/diabaikan, dan hanya mengirim text_pesan saja.
         await supabaseClient.from('tts_pesan').delete().neq('id', 0);
         
+        const payloadData = {
+          text_pesan: textVal,
+          text_url: ttsSuccess ? audioUrl : null 
+        };
+
         const { error: insertError } = await supabaseClient
           .from('tts_pesan')
-          .insert({ text_url: audioUrl });
+          .insert(payloadData);
 
         if (insertError) {
+          // Fallback jika terjadi error kolom
           await supabaseClient.from('tts_pesan').delete();
-          const { error: insertError2 } = await supabaseClient
-            .from('tts_pesan')
-            .insert({ text_url: audioUrl });
-          if (insertError2) throw new Error('Gagal menyimpan ke tabel tts_pesan: ' + insertError2.message);
+          await supabaseClient.from('tts_pesan').insert({ text_pesan: textVal, text_url: ttsSuccess ? audioUrl : null });
         }
 
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Pesan siaran berhasil digenerate via ElevenLabs TTS (Suara Perempuan), diupload, dan disimpan (Replace) ke tabel <code class="font-mono">tts_pesan</code> kolom <code class="font-mono">text_url</code>.`;
+        if (ttsSuccess) {
+          statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+          statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Pesan siaran & Audio TTS berhasil digenerate dan dikirim (Replace) ke tabel <code class="font-mono">tts_pesan</code>.`;
+        } else {
+          // Peringatan ketika kredit habis / gagal TTS
+          statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 shadow-sm flex items-center gap-2';
+          statusMsg.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i> Kredit ElevenLabs habis atau gagal. URL audio diabaikan, namun <b>isi teks pesan</b> berhasil dikirim (Replace) ke kolom <code class="font-mono">text_pesan</code> pada tabel <code class="font-mono">tts_pesan</code>.`;
+          document.getElementById('pesanSiaranAudioPreview').classList.add('hidden');
+        }
         statusMsg.classList.remove('hidden');
-        setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+        setTimeout(() => statusMsg.classList.add('hidden'), 6000);
 
-      } catch (err) {
+      } catch (dbErr) {
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal TTS / Supabase: ${err.message}`;
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menyimpan ke Supabase: ${dbErr.message}`;
         statusMsg.classList.remove('hidden');
       } finally {
         btnKirim.disabled = false;
