@@ -555,7 +555,7 @@
                       <i data-lucide="shield-check" class="w-4 h-4 text-slate-400"></i>
                     </div>
                     <!-- type="text" + masking CSS agar password manager browser TIDAK mengisi otomatis (penyebab muncul "informamogj382") -->
-                    <input type="text" id="inputElevenApiKey" name="eleven_tts_token_field" oninput="debounceCekKredit()"
+                    <input type="text" id="inputElevenApiKey" name="eleven_tts_token_field" oninput="onApiKeyInput()" onchange="onApiKeyChange()"
                       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
                       data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other"
                       readonly onfocus="this.removeAttribute('readonly');"
@@ -567,7 +567,7 @@
                       <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                   </div>
-                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5"><i data-lucide="info" class="w-3 h-3"></i> API Key tersimpan otomatis ke database setelah Anda menekan tombol simpan.</p>
+                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5"><i data-lucide="info" class="w-3 h-3"></i> API Key tersimpan otomatis ke database setelah Anda menekan tombol simpan. Mengganti API Key wajib verifikasi password login.</p>
                 </div>
 
                 <!-- VOICE ID -->
@@ -933,6 +933,30 @@
     </div>
   </div>
 
+  <!-- ================= MODAL VERIFIKASI PASSWORD (GANTI API KEY) ================= -->
+  <div id="modalVerifApiKey" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div class="p-5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
+        <div>
+          <h3 class="text-sm font-bold">Verifikasi Password</h3>
+          <p class="text-[11px] text-violet-100">Perubahan API Key memerlukan password login Anda.</p>
+        </div>
+      </div>
+      <form onsubmit="submitVerifApiKey(event)" class="p-5 space-y-3" autocomplete="off">
+        <div id="verifApiKeyError" class="hidden p-2.5 rounded-lg text-xs font-medium bg-red-50 text-red-700 border border-red-200"></div>
+        <label for="inputVerifApiKeyPassword" class="block text-xs font-bold text-slate-700 tracking-wider">PASSWORD LOGIN</label>
+        <input type="password" id="inputVerifApiKeyPassword" autocomplete="new-password" placeholder="Masukkan password login"
+          class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-violet-600 focus:ring-4 focus:ring-violet-100 bg-white transition">
+        <p class="text-[11px] text-slate-400">Jika dibatalkan atau password salah, API Key akan dikembalikan seperti semula.</p>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="batalVerifApiKey()" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 flex items-center justify-center gap-1.5"><i data-lucide="x" class="w-4 h-4"></i> Batal</button>
+          <button type="submit" id="btnSubmitVerifApiKey" class="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/25 flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:cursor-not-allowed"><i data-lucide="check" class="w-4 h-4"></i> Verifikasi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
@@ -1005,6 +1029,10 @@
     let dataSettinganTvList = [];
     let activeConnectedTvId = null;
     let debounceTimer = null;
+    // --- State verifikasi penggantian API Key (Pesan Siaran) ---
+    let apiKeyTersimpan = '';        // nilai API Key terakhir yang sah (sebelum diganti)
+    let verifApiKeyPromise = null;   // promise verifikasi yang sedang berjalan (mencegah modal ganda)
+    let verifApiKeyResolve = null;
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
@@ -1821,6 +1849,7 @@
 
         if (!error && data && data.length > 0) {
           const row = data[0];
+          apiKeyTersimpan = (row.api_key || '').trim();
           if (row.api_key) {
             document.getElementById('inputElevenApiKey').value = row.api_key;
             cekSisaKreditElevenLabs(row.api_key);
@@ -1846,6 +1875,121 @@
         }
       }, 600);
     }
+
+    // ===== VERIFIKASI PASSWORD SAAT API KEY DIGANTI =====
+    // Saat mengetik: jangan cek kredit dulu jika nilai berbeda dari API Key tersimpan (belum diverifikasi).
+    function onApiKeyInput() {
+      const val = document.getElementById('inputElevenApiKey').value.trim();
+      if (val === apiKeyTersimpan) {
+        debounceCekKredit();
+      } else {
+        clearTimeout(debounceTimer);
+      }
+    }
+
+    // Saat textbox selesai diubah (blur / Enter / paste lalu pindah fokus): minta password jika nilai berbeda.
+    async function onApiKeyChange() {
+      const input = document.getElementById('inputElevenApiKey');
+      if (!input) return;
+      if (input.value.trim() === apiKeyTersimpan) return;
+      await verifikasiPerubahanApiKey();
+    }
+
+    // Menampilkan modal password. Resolve true jika password benar (API Key baru dipakai),
+    // resolve false jika salah/dibatalkan (API Key dikembalikan ke nilai semula).
+    function verifikasiPerubahanApiKey() {
+      if (verifApiKeyPromise) return verifApiKeyPromise;
+      verifApiKeyPromise = new Promise(resolve => {
+        verifApiKeyResolve = resolve;
+        const modal = document.getElementById('modalVerifApiKey');
+        const pwd = document.getElementById('inputVerifApiKeyPassword');
+        const err = document.getElementById('verifApiKeyError');
+        pwd.value = '';
+        err.classList.add('hidden');
+        err.innerText = '';
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+        setTimeout(() => pwd.focus(), 50);
+      });
+      return verifApiKeyPromise;
+    }
+
+    function selesaiVerifApiKey(berhasil, pesan) {
+      const input = document.getElementById('inputElevenApiKey');
+      const modal = document.getElementById('modalVerifApiKey');
+      const pwd = document.getElementById('inputVerifApiKeyPassword');
+      const btn = document.getElementById('btnSubmitVerifApiKey');
+
+      modal.classList.add('hidden');
+      pwd.value = '';
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Verifikasi';
+
+      if (berhasil) {
+        const keyBaru = input.value.trim();
+        apiKeyTersimpan = keyBaru;
+        if (keyBaru) {
+          cekSisaKreditElevenLabs(keyBaru);
+        } else {
+          updateCreditBadge(null);
+        }
+        showToast('Password benar. API Key berhasil diganti.', 'success');
+      } else {
+        // Kembalikan API Key seperti semula (data sebelum diganti)
+        input.value = apiKeyTersimpan;
+        if (apiKeyTersimpan) {
+          cekSisaKreditElevenLabs(apiKeyTersimpan);
+        } else {
+          updateCreditBadge(null);
+        }
+        showToast(pesan || 'Verifikasi dibatalkan. API Key dikembalikan seperti semula.', 'error');
+      }
+
+      lucide.createIcons();
+      const resolve = verifApiKeyResolve;
+      verifApiKeyResolve = null;
+      verifApiKeyPromise = null;
+      if (resolve) resolve(berhasil);
+    }
+
+    function batalVerifApiKey() {
+      selesaiVerifApiKey(false, 'Password tidak dimasukkan. API Key dikembalikan seperti semula.');
+    }
+
+    async function submitVerifApiKey(e) {
+      e.preventDefault();
+      const pwd = document.getElementById('inputVerifApiKeyPassword').value;
+      const btn = document.getElementById('btnSubmitVerifApiKey');
+      const err = document.getElementById('verifApiKeyError');
+
+      if (!pwd) {
+        selesaiVerifApiKey(false, 'Password tidak dimasukkan. API Key dikembalikan seperti semula.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memeriksa...';
+      lucide.createIcons();
+
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const email = session && session.user ? session.user.email : null;
+        if (!email) throw new Error('Sesi login tidak ditemukan.');
+
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
+        if (error) {
+          selesaiVerifApiKey(false, 'Password salah. API Key dikembalikan seperti semula.');
+        } else {
+          selesaiVerifApiKey(true);
+        }
+      } catch (ex) {
+        selesaiVerifApiKey(false, 'Verifikasi gagal: ' + ex.message + ' API Key dikembalikan seperti semula.');
+      }
+    }
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && verifApiKeyPromise) batalVerifApiKey();
+    });
 
     async function cekSisaKreditElevenLabs(apiKey) {
       const badge = document.getElementById('creditBadge');
@@ -1945,6 +2089,11 @@
     }
 
     async function prosesDanKirimPesanSiaran() {
+      // Pastikan perubahan API Key sudah terverifikasi password sebelum dipakai/dikirim
+      if (document.getElementById('inputElevenApiKey').value.trim() !== apiKeyTersimpan || verifApiKeyPromise) {
+        await verifikasiPerubahanApiKey();
+        if (document.getElementById('inputElevenApiKey').value.trim() !== apiKeyTersimpan) return;
+      }
       const apiKey = document.getElementById('inputElevenApiKey').value.trim();
       const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Voice ID LOCKED (Permanen Suara Perempuan Indonesia)
       const textVal = document.getElementById('inputPesanSiaranValue').value.trim();
