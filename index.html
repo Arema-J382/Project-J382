@@ -72,66 +72,77 @@
           </button>
           
           <div id="submenuTv" class="pl-3 mt-1.5 space-y-1.5 border-l border-slate-800 ml-4">
-            <!-- MENU 1: INPUT TARGET TODAY -->
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
               <span>INPUT TARGET TODAY</span>
             </a>
-            <!-- MENU 2: DAILY SALES -->
             <a href="#" onclick="switchView('sales')" id="menuSales" class="block p-2.5 rounded-lg bg-slate-800 text-xs text-blue-300 font-medium flex items-center gap-2.5 transition shadow-sm">
               <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-400"></i>
               <span>DAILY SALES</span>
             </a>
-            <!-- MENU 3: DAILY DEPARTEMEN -->
             <a href="#" onclick="switchView('departemen')" id="menuDepartemen" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="grid" class="w-4 h-4 text-purple-400"></i>
               <span>DAILY DEPARTEMEN</span>
             </a>
-            <!-- MENU 4: DAILY FURNIPRO -->
             <a href="#" onclick="switchView('furnipro')" id="menuFurnipro" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
               <span>DAILY FURNIPRO</span>
             </a>
-            <!-- MENU 5: DAILY COMSER -->
             <a href="#" onclick="switchView('comser')" id="menuComser" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="headphones" class="w-4 h-4 text-rose-400"></i>
               <span>DAILY COMSER</span>
             </a>
-            <!-- MENU 6: MTD SALES -->
             <a href="#" onclick="switchView('mtdSales')" id="menuMtdSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
               <span>MTD SALES</span>
             </a>
-            <!-- MENU 7: MTD FURNIPRO -->
             <a href="#" onclick="switchView('mtdFurnipro')" id="menuMtdFurnipro" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="briefcase" class="w-4 h-4 text-orange-400"></i>
               <span>MTD FURNIPRO</span>
             </a>
-            <!-- MENU 8: MTD COMSER -->
             <a href="#" onclick="switchView('mtdComser')" id="menuMtdComser" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="pie-chart" class="w-4 h-4 text-teal-400"></i>
               <span>MTD COMSER</span>
             </a>
-            <!-- MENU 9: TWIBBON SALES -->
             <a href="#" onclick="switchView('twibbonSales')" id="menuTwibbonSales" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="image" class="w-4 h-4 text-yellow-400"></i>
               <span>TWIBBON SALES</span>
             </a>
-            <!-- MENU 10: INPUT RUNNING TEXT -->
             <a href="#" onclick="switchView('runningText')" id="menuRunningText" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
               <span>INPUT RUNNING TEXT</span>
             </a>
-            <!-- MENU 11: UPDATE KARYAWAN -->
             <a href="#" onclick="switchView('karyawan')" id="menuKaryawan" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="users" class="w-4 h-4 text-indigo-400"></i>
               <span>UPDATE KARYAWAN</span>
             </a>
+
+            <!-- MENU PENGATURAN -->
+            <div class="pt-1">
+              <button onclick="toggleMenu('submenuPengaturan')" class="w-full flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-800/80 transition text-left font-semibold text-slate-200 group">
+                <div class="flex items-center gap-2.5">
+                  <i data-lucide="settings" class="w-4 h-4 text-cyan-400 group-hover:rotate-90 transition-transform duration-300"></i>
+                  <span class="text-xs tracking-wider font-bold">PENGATURAN</span>
+                </div>
+                <i data-lucide="chevron-down" id="arrowPengaturan" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200"></i>
+              </button>
+              
+              <div id="submenuPengaturan" class="pl-3 mt-1 space-y-1 border-l border-slate-800 ml-3">
+                <a href="#" onclick="switchView('pengaturanTv')" id="menuPengaturanTv" class="block p-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2 transition">
+                  <i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-400"></i>
+                  <span>PENGATURAN TV</span>
+                </a>
+                <a href="#" onclick="switchView('pengaturanSounds')" id="menuPengaturanSounds" class="block p-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2 transition">
+                  <i data-lucide="music" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>PENGATURAN SOUNDS</span>
+                </a>
+              </div>
+            </div>
+
           </div>
         </div>
       </nav>
 
-      <!-- TOMBOL LOGOUT -->
       <div class="p-4 border-t border-slate-800 bg-slate-950/20">
         <button onclick="handleLogout()" class="w-full flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition">
           <i data-lucide="log-out" class="w-4 h-4"></i> Logout Panel
@@ -157,22 +168,176 @@
           <!-- NOTIFIKASI GLOBAL -->
           <div id="statusMsg" class="hidden mb-4 p-4 rounded-xl text-xs font-semibold shadow-sm transition-all"></div>
 
-          <!-- TAMPILAN VIEW TARGET TODAY -->
+          <!-- PENGATURAN TV SECTION -->
+          <div id="viewPengaturanTvSection" class="hidden flex-1 flex flex-col">
+            <div class="mb-5">
+              <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-cyan-600"></i>
+                Pengaturan Konfigurasi TV Dashboard
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Kelola data identitas dan ukuran layar TV untuk ditampilkan secara real-time pada sistem.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+              <div class="lg:col-span-5 flex flex-col">
+                <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/60 shadow-sm space-y-4">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i> Input Data Settingan TV Baru
+                  </h3>
+
+                  <div class="space-y-3.5">
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">ID TV / IDENTITAS TV (PRIMARY KEY)</label>
+                      <input type="text" id="inputTvId" placeholder="Contoh: 1 atau TV-01"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">PANJANG TV (CM)</label>
+                      <input type="number" id="inputTvPanjang" placeholder="Contoh: 120"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-gray-600 mb-1 tracking-wider">TINGGI TV (CM)</label>
+                      <input type="number" id="inputTvTinggi" placeholder="Contoh: 70"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    </div>
+
+                    <button id="btnSubmitTv" onclick="submitTvSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/20">
+                      <i data-lucide="save" class="w-4 h-4"></i> Simpan Settingan TV
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lg:col-span-7 flex flex-col bg-slate-50/40 rounded-2xl border border-gray-200 p-5">
+                <div class="flex justify-between items-center mb-3">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                    <i data-lucide="tv" class="w-4 h-4 text-emerald-600"></i> UKURAN TV AKTIF
+                  </h3>
+                  <span id="tvCountBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs">0 Unit Tersedia</span>
+                </div>
+
+                <div id="tvSettingListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[420px] custom-scrollbar">
+                  <div class="text-center py-16 text-gray-400 italic text-xs">
+                    Memuat data settingan TV...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PENGATURAN SOUNDS SECTION -->
+          <div id="viewPengaturanSoundsSection" class="hidden flex-1 flex flex-col">
+            <div class="mb-5">
+              <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="music" class="w-5 h-5 text-emerald-600"></i>
+                Pengaturan Sounds & Backsound TV Dashboard
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Kelola upload lagu, atur status aktif/non-aktif, dan hapus lagu untuk bucket BACKSOUND dan SOUND SALES secara real-time.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 overflow-y-auto pb-4 custom-scrollbar">
+              
+              <!-- CARD 1: BACKSOUND -->
+              <div class="bg-slate-50/60 border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+                    <i data-lucide="disc" class="w-4 h-4 text-emerald-600"></i> Card 1: Bucket "BACKSOUND"
+                  </h3>
+                  <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Auto-Play Web 2</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
+                  <label class="block text-xs font-bold text-gray-700">UPLOAD LAGU BARU KE BACKSOUND</label>
+                  <div class="flex gap-2">
+                    <input type="file" id="inputUploadBacksound" accept="audio/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer border border-gray-300 rounded-xl bg-gray-50 p-1">
+                    <button onclick="uploadSong('BACKSOUND')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shrink-0 shadow-md shadow-emerald-500/20">
+                      <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
+                    </button>
+                  </div>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-800 uppercase">Daftar Lagu BACKSOUND</span>
+                    <span id="countBacksound" class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">0 Lagu</span>
+                  </div>
+                  <div id="listBacksoundContainer" class="flex-1 overflow-y-auto space-y-2.5 max-h-[260px] pr-1 custom-scrollbar">
+                    <div class="text-center py-8 text-gray-400 italic text-xs">Memuat daftar lagu...</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CARD 2: SOUND SALES -->
+              <div class="bg-slate-50/60 border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+                  <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+                    <i data-lucide="volume-2" class="w-4 h-4 text-blue-600"></i> Card 2: Bucket "SOUND SALES"
+                  </h3>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full">Audio Sales Web 2</span>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
+                  <label class="block text-xs font-bold text-gray-700">UPLOAD LAGU BARU KE SOUND SALES</label>
+                  <div class="flex gap-2">
+                    <input type="file" id="inputUploadSoundSales" accept="audio/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-xl bg-gray-50 p-1">
+                    <button onclick="uploadSong('SOUND SALES')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shrink-0 shadow-md shadow-blue-500/20">
+                      <i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim
+                    </button>
+                  </div>
+                  <p class="text-[10px] text-gray-400">*Konsep: Menambahkan lagu ke bucket, tidak menghapus lagu yang sudah ada.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex-1 flex flex-col space-y-3 shadow-sm">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-800 uppercase">Daftar Lagu SOUND SALES</span>
+                    <span id="countSoundSales" class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-semibold">0 Lagu</span>
+                  </div>
+                  <div id="listSoundSalesContainer" class="flex-1 overflow-y-auto space-y-2.5 max-h-[260px] pr-1 custom-scrollbar">
+                    <div class="text-center py-8 text-gray-400 italic text-xs">Memuat daftar lagu...</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TARGET TODAY SECTION -->
           <div id="viewTargetSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
                 <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                  <i data-lucide="target" class="w-5 h-5 text-emerald-600"></i>
-                  Input Target Today
+                  <i data-lucide="target" class="w-5 h-5 text-emerald-600"></i> Input Target Today
                 </h2>
-                <p class="text-xs text-gray-500 mt-1">Masukkan nominal target penjualan untuk hari ini ke dalam sistem.</p>
+                <p class="text-xs text-gray-500 mt-1">Masukkan nominal target penjualan, target FP, dan target comser untuk hari ini ke dalam sistem.</p>
               </div>
 
               <div class="space-y-4">
                 <div>
-                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">TARGET SALES (RP)</label>
+                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-blue-600"></i> TARGET SALES (RP)
+                  </label>
                   <input type="text" id="inputTargetSales" placeholder="Contoh: 50.000.000" onkeyup="formatRupiah(this)"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition shadow-xs">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="award" class="w-3.5 h-3.5 text-amber-600"></i> TARGET FP
+                  </label>
+                  <input type="text" id="inputTargetFp" placeholder="Contoh: 15"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition shadow-xs">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="headphones" class="w-3.5 h-3.5 text-rose-600"></i> TARGET COMSER
+                  </label>
+                  <input type="text" id="inputTargetComser" placeholder="Contoh: 1.000.000" onkeyup="formatRupiah(this)"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition shadow-xs">
                 </div>
 
                 <button id="btnKirimTarget" onclick="kirimTargetKeSupabase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/20">
@@ -182,13 +347,12 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW INPUT RUNNING TEXT -->
+          <!-- RUNNING TEXT SECTION -->
           <div id="viewRunningTextSection" class="hidden max-w-xl mx-auto w-full py-6">
             <div class="border border-gray-200 rounded-2xl p-6 bg-slate-50/50 shadow-sm space-y-5">
               <div>
                 <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-                  <i data-lucide="megaphone" class="w-5 h-5 text-pink-600"></i>
-                  Input Running Text
+                  <i data-lucide="megaphone" class="w-5 h-5 text-pink-600"></i> Input Running Text
                 </h2>
                 <p class="text-xs text-gray-500 mt-1">Masukkan kata-kata untuk running text pada TV Dashboard.</p>
               </div>
@@ -196,7 +360,7 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-bold text-gray-600 mb-1.5 tracking-wider">KATA-KATA RUNNING TEXT</label>
-                  <textarea id="inputRunningTextValue" rows="4" placeholder="Contoh: Selamat Datang di Informa MOG Malang - Promo Spesial Diskon 50%!"
+                  <textarea id="inputRunningTextValue" rows="4" placeholder="Contoh: Selamat Datang di Informa MOG Malang..."
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm font-medium focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 bg-white transition resize-none"></textarea>
                 </div>
 
@@ -207,19 +371,18 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TWIBBON SALES -->
+          <!-- TWIBBON SALES SECTION -->
           <div id="viewTwibbonSalesSection" class="hidden flex-1 flex flex-col">
             <div class="mb-4">
-              <h2 class="text-base font-bold text-gray-800">Generator & Preview Twibbon Sales</h2>
-              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon dan masukkan NIP Karyawan.</p>
+              <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
+                <i data-lucide="award" class="w-5 h-5 text-yellow-600"></i> Generator & Preview Twibbon Sales
+              </h2>
+              <p class="text-xs text-gray-500 mt-0.5">Pilih Twibbon, masukkan NIP Karyawan, dan unduh hasil untuk langsung menyinkronkan data ke TV Dashboard secara otomatis.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-              <!-- KOLOM KIRI: INPUT & PANEL PENGATURAN -->
               <div class="lg:col-span-6 flex flex-col gap-4">
                 <div class="border border-gray-200 rounded-2xl p-5 bg-slate-50/60 shadow-sm space-y-4 flex-1">
-                  
-                  <!-- DROPDOWN LIST TWIBBON -->
                   <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">PILIH JENIS TWIBBON</label>
                     <select id="twibbonType" onchange="onTwibbonTypeChange()" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white shadow-sm">
@@ -230,41 +393,35 @@
                     </select>
                   </div>
 
-                  <!-- 1 CARD UNTUK SEMUA TEXTBOX -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-inner">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="form-input" class="w-4 h-4 text-blue-600"></i> Form Input Data Karyawan & Sales
                     </h3>
 
-                    <!-- TEXTBOX 1: NIP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">INPUT NIP</label>
                       <input type="text" id="twibbonNip" placeholder="Masukkan NIP (Cth: 147683)..." oninput="handleNipInput()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 2: NAMA (OTOMATIS DARI data_karyawan.nama_kar) -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">NAMA KARYAWAN (OTOMATIS)</label>
                       <input type="text" id="twibbonNama" readonly placeholder="Otomatis dari database..."
                         class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs bg-gray-100 text-gray-700 font-semibold">
                     </div>
 
-                    <!-- TEXTBOX 3: VALUE SALES -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE SALES</label>
                       <input type="text" id="twibbonValueSales" placeholder="Contoh: 120 JT" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 4: QTY FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">QTY FP</label>
                       <input type="text" id="twibbonQtyFp" placeholder="Contoh: 15 PCS" oninput="updateTwibbonPreview()"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-600 bg-white">
                     </div>
 
-                    <!-- TEXTBOX 5: VALUE COMSER FP -->
                     <div>
                       <label class="block text-[11px] font-bold text-gray-600 mb-1">VALUE COMSER</label>
                       <input type="text" id="twibbonValueComser" placeholder="Contoh: 800 RIBU" oninput="updateTwibbonPreview()"
@@ -272,7 +429,6 @@
                     </div>
                   </div>
 
-                  <!-- TOMBOL SAVE EDITING & RESET DEFAULT -->
                   <div class="grid grid-cols-2 gap-2">
                     <button onclick="saveTwibbonSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-emerald-500/25">
                       <i data-lucide="save" class="w-4 h-4"></i> SAVE FORMAT EDIT
@@ -282,7 +438,6 @@
                     </button>
                   </div>
 
-                  <!-- PANEL EDIT FOTO SALES -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
                       <i data-lucide="user-cog" class="w-4 h-4 text-indigo-600"></i> Edit Foto Sales
@@ -303,13 +458,11 @@
                     </div>
                   </div>
 
-                  <!-- PANEL EDIT TEKS & WARNA TEKS (DEFAULT HITAM, TANPA BACKGROUND, TANPA SHADOW) -->
                   <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
-                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks (Warna Hitam Default)
+                      <i data-lucide="sliders" class="w-4 h-4 text-purple-600"></i> Edit Masing-Masing Teks & Warna
                     </h3>
 
-                    <!-- 1. EDIT PANEL: NAMA -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Nama Karyawan</span>
@@ -334,7 +487,6 @@
                       </div>
                     </div>
 
-                    <!-- 2. EDIT PANEL: VALUE SALES -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Value Sales</span>
@@ -359,7 +511,6 @@
                       </div>
                     </div>
 
-                    <!-- 3. EDIT PANEL: QTY FP -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Qty FP</span>
@@ -384,7 +535,6 @@
                       </div>
                     </div>
 
-                    <!-- 4. EDIT PANEL: VALUE COMSER FP -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-gray-100 space-y-2">
                       <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-gray-700">Edit Comser FP</span>
@@ -414,7 +564,6 @@
                 </div>
               </div>
 
-              <!-- KOLOM KANAN: PREVIEW TWIBBON KUNCI UKURAN & LOKASI -->
               <div class="lg:col-span-6 flex flex-col items-center justify-center bg-slate-900/5 rounded-2xl border border-dashed border-gray-300 p-6 gap-4">
                 <div class="mb-1 text-center">
                   <span class="text-xs font-bold text-gray-600 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-xs inline-flex items-center gap-1.5">
@@ -422,10 +571,7 @@
                   </span>
                 </div>
 
-                <!-- KOTAK PREVIEW UTAMA (DIKUNCI UKURAN PASTINYA 420x420) -->
                 <div id="twibbonPreviewBox" class="relative bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white shrink-0" style="width: 420px; height: 420px;">
-                  
-                  <!-- LAPISAN 1: FOTO SALES -->
                   <div id="previewPhotoContainer" class="absolute inset-0 overflow-hidden bg-slate-200">
                     <div id="previewPhotoBg" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     <div id="photoPlaceholderText" class="absolute inset-0 flex items-center justify-center text-xs text-gray-400 font-medium text-center p-4">
@@ -433,32 +579,24 @@
                     </div>
                   </div>
 
-                  <!-- LAPISAN 2: BINGKAI TWIBBON -->
                   <img id="previewTwibbonImage" src="" alt="Twibbon Frame" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" crossorigin="anonymous">
 
-                  <!-- LAPISAN 3: TEKS MASING-MASING (TANPA BACKGROUND, TANPA SHADOW) -->
                   <div id="previewTextLayer" class="absolute inset-0 pointer-events-none z-20">
-                    <!-- Teks Nama -->
                     <div id="previewNamaText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-extrabold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Sales -->
                     <div id="previewSalesText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Qty -->
                     <div id="previewQtyText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
-                    <!-- Teks Comser -->
                     <div id="previewComserText" class="absolute transition-all duration-75" style="display: none; left: 50%;">
                       <div class="inner-text font-bold text-center" style="white-space: nowrap;"></div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- TOMBOL DOWNLOAD JPG FULL HD DIBAWAH LIVE PREVIEW -->
                 <div class="w-full max-w-[420px] mt-2">
                   <button id="btnDownloadTwibbon" onclick="downloadTwibbon()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2.5 transition shadow-lg shadow-blue-500/30 transform hover:-translate-y-0.5 active:translate-y-0">
                     <i data-lucide="download" class="w-4 h-4"></i> Download Twibbon JPG (Full HD)
@@ -468,12 +606,12 @@
             </div>
           </div>
 
-          <!-- TAMPILAN VIEW TABLE EXCEL -->
+          <!-- TABLE EXCEL SECTION -->
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div>
                 <h2 id="sectionTitle" class="text-base font-bold text-gray-800">Data Daily Sales SMT</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Klik kotak di bawah, lalu tekan <b class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-mono">Ctrl + V</b> untuk menempelkan data dari Excel secara otomatis.</p>
+                <p class="text-xs text-gray-500 mt-0.5">Klik kotak di bawah, lalu tekan <b class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-mono">Ctrl + V</b> untuk menempelkan data.</p>
               </div>
               <div class="flex gap-2.5">
                 <button onclick="resetData()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
@@ -485,25 +623,21 @@
               </div>
             </div>
 
-            <!-- KOTAK AREA PASTE -->
             <div class="mb-4">
               <textarea id="excelPasteInput" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data Excel..." 
                 class="w-full h-24 p-3.5 border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 text-xs font-mono transition"
                 onpaste="handleExcelPaste(event)"></textarea>
             </div>
 
-            <!-- TABEL UTAMA -->
             <div class="flex-1 border border-gray-200 rounded-xl overflow-auto bg-white max-h-[460px] shadow-sm custom-scrollbar">
               <table class="w-full border-collapse text-left text-xs">
-                <thead id="previewTableHead" class="bg-slate-900 text-white sticky top-0 z-10 shadow-sm">
-                  <!-- Header dinamis diatur lewat JavaScript -->
-                </thead>
+                <thead id="previewTableHead" class="bg-slate-900 text-white sticky top-0 z-10 shadow-sm"></thead>
                 <tbody id="previewTableBody" class="divide-y divide-gray-200">
                   <tr>
                     <td colspan="7" class="text-center py-16 text-gray-400 italic">
                       <div class="flex flex-col items-center justify-center gap-2">
                         <i data-lucide="clipboard-paste" class="w-8 h-8 text-gray-300 animate-bounce"></i>
-                        <span>Belum ada data. Silakan paste data dari Excel ke kotak di atas.</span>
+                        <span>Belum ada data. Silakan paste dari Excel.</span>
                       </div>
                     </td>
                   </tr>
@@ -518,13 +652,11 @@
   </div>
 
   <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://vxsopsnopeurnxdkfsbe.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4c29wc25vcGV1cm54ZGtmc2JlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NzM4MjgsImV4cCI6MjEwOTE0OTgyOH0.53GRhBd5Pvjjcqbh4M9ok7HKfqJs7klyxPqomXMEzus'; 
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // State Aplikasi
     let currentView = 'sales'; 
     let salesData = [];
     let comserData = []; 
@@ -534,17 +666,59 @@
     let mtdSalesData = []; 
     let mtdFurniproData = []; 
     let karyawanData = []; 
+    let dataSettinganTvList = [];
+    let activeConnectedTvId = null;
 
     document.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
       switchView('sales');
+      
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         showAdminPanel();
       }
+
+      setupRealtimeSubscriptions();
     });
 
-    // Fungsi Format Rupiah Otomatis saat Mengetik di Menu Target
+    function setupRealtimeSubscriptions() {
+      supabaseClient
+        .channel('public:data_settingan_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'data_settingan_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadDataSettinganTv();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
+        .channel('public:setting_tv')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'setting_tv' }, payload => {
+          if (currentView === 'pengaturanTv') {
+            loadConnectedTvStatus();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
+        .channel('public:status_backsound')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, payload => {
+          if (currentView === 'pengaturanSounds') {
+            loadSongsData();
+          }
+        })
+        .subscribe();
+
+      supabaseClient
+        .channel('public:status_soundtwibbon')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_soundtwibbon' }, payload => {
+          if (currentView === 'pengaturanSounds') {
+            loadSongsData();
+          }
+        })
+        .subscribe();
+    }
+
     function formatRupiah(element) {
       let angka = element.value.replace(/[^,\d]/g, '').toString();
       let split = angka.split(',');
@@ -561,9 +735,9 @@
       element.value = rupiah;
     }
 
-    // Fungsi Pindah Menu (Switch View)
     function switchView(view) {
       currentView = view;
+      const menuPengaturanTv = document.getElementById('menuPengaturanTv');
       const menuTarget = document.getElementById('menuTarget');
       const menuSales = document.getElementById('menuSales');
       const menuComser = document.getElementById('menuComser');
@@ -571,6 +745,7 @@
       const menuTwibbonSales = document.getElementById('menuTwibbonSales');
       const menuRunningText = document.getElementById('menuRunningText');
       const menuKaryawan = document.getElementById('menuKaryawan');
+      const menuPengaturanSounds = document.getElementById('menuPengaturanSounds');
       const menuDepartemen = document.getElementById('menuDepartemen');
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
@@ -579,6 +754,8 @@
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
 
+      const viewPengaturanTvSection = document.getElementById('viewPengaturanTvSection');
+      const viewPengaturanSoundsSection = document.getElementById('viewPengaturanSoundsSection');
       const viewTargetSection = document.getElementById('viewTargetSection');
       const viewRunningTextSection = document.getElementById('viewRunningTextSection');
       const viewTwibbonSalesSection = document.getElementById('viewTwibbonSalesSection');
@@ -590,6 +767,8 @@
       const activeClass = "block p-2.5 rounded-lg bg-slate-800 text-xs text-blue-300 font-semibold flex items-center gap-2.5 transition shadow-sm border-l-2 border-blue-500";
       const inactiveClass = "block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white flex items-center gap-2.5 transition";
 
+      if (menuPengaturanTv) menuPengaturanTv.className = inactiveClass;
+      if (menuPengaturanSounds) menuPengaturanSounds.className = inactiveClass;
       menuTarget.className = inactiveClass;
       menuSales.className = inactiveClass;
       if (menuComser) menuComser.className = inactiveClass;
@@ -602,12 +781,26 @@
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
 
+      if (viewPengaturanTvSection) viewPengaturanTvSection.classList.add('hidden');
+      if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.add('hidden');
       viewTargetSection.classList.add('hidden');
       if (viewRunningTextSection) viewRunningTextSection.classList.add('hidden');
       if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
       viewExcelSection.classList.add('hidden');
 
-      if (view === 'target') {
+      if (view === 'pengaturanTv') {
+        if (menuPengaturanTv) menuPengaturanTv.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-600"></i> Pengaturan TV Sync';
+        viewPengaturanTvSection.classList.remove('hidden');
+        loadDataSettinganTv();
+      } else if (view === 'pengaturanSounds') {
+        if (menuPengaturanSounds) menuPengaturanSounds.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="music" class="w-3.5 h-3.5 text-emerald-600"></i> Sounds Sync';
+        if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.remove('hidden');
+        loadSongsData();
+      } else if (view === 'target') {
         menuTarget.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="target" class="w-3.5 h-3.5 text-blue-600"></i> Target Sync';
@@ -684,7 +877,388 @@
       lucide.createIcons();
     }
 
-    // --- LOGIKA PENCARIAN NIP & AUTO-LOAD NAMA KARYAWAN ---
+    // --- PENGATURAN TV LOGIC ---
+    async function loadConnectedTvStatus() {
+      const { data, error } = await supabaseClient
+        .from('setting_tv')
+        .select('*');
+      
+      if (!error && data && data.length > 0) {
+        activeConnectedTvId = data[0].id_tv || data[0].id || null;
+      } else {
+        activeConnectedTvId = null;
+      }
+      renderTvSettingList();
+    }
+
+    async function loadDataSettinganTv() {
+      await loadConnectedTvStatus();
+      const { data, error } = await supabaseClient
+        .from('data_settingan_tv')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Gagal memuat data_settingan_tv:', error);
+        return;
+      }
+
+      dataSettinganTvList = data || [];
+      renderTvSettingList();
+    }
+
+    function renderTvSettingList() {
+      const container = document.getElementById('tvSettingListContainer');
+      const badge = document.getElementById('tvCountBadge');
+      if (!container) return;
+
+      badge.innerText = `${dataSettinganTvList.length} Unit Tersedia`;
+
+      if (dataSettinganTvList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 text-gray-400 italic text-xs">
+            Belum ada data settingan TV. Silakan input melalui form di sebelah kiri.
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      dataSettinganTvList.forEach((tv, idx) => {
+        const isConnected = String(tv.id) === String(activeConnectedTvId);
+        const connectBtnClass = isConnected
+          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/25 ring-2 ring-emerald-300"
+          : "bg-slate-200 hover:bg-emerald-600 hover:text-white text-gray-700";
+        const connectBtnText = isConnected ? "Connected" : "Connect";
+
+        html += `
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between gap-3 transition-all hover:shadow-md hover:border-blue-200">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 font-bold text-xs shadow-inner border border-blue-100">
+                ${idx + 1}
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="tv" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                  <span class="text-xs font-bold text-gray-900 tracking-wide truncate">ID TV: ${tv.id}</span>
+                </div>
+                <div class="text-[11px] text-gray-500 mt-1 font-medium flex items-center gap-2">
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Panjang: <strong class="text-gray-900">${tv.panjang || tv.panjang_tv || 0} cm</strong></span>
+                  <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-700">Lebar: <strong class="text-gray-900">${tv.lebar || tv.tinggi || tv.tinggi_tv || 0} cm</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="toggleConnectTv('${tv.id}')" class="${connectBtnClass} font-semibold px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs">
+                <i data-lucide="${isConnected ? 'check-circle-2' : 'power'}" class="w-3.5 h-3.5"></i>
+                <span>${connectBtnText}</span>
+              </button>
+              <button onclick="deleteTvSetting('${tv.id}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white font-semibold p-2 rounded-xl text-xs transition shadow-xs flex items-center justify-center" title="Hapus TV">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    async function submitTvSettings() {
+      const idVal = document.getElementById('inputTvId').value.trim();
+      const panjangVal = document.getElementById('inputTvPanjang').value.trim();
+      const tinggiVal = document.getElementById('inputTvTinggi').value.trim();
+      const statusMsg = document.getElementById('statusMsg');
+      const btnSubmit = document.getElementById('btnSubmitTv');
+
+      if (!idVal || !panjangVal || !tinggiVal) {
+        alert('Semua kolom (ID, Panjang, Tinggi) wajib diisi!');
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan...';
+      lucide.createIcons();
+
+      const { error } = await supabaseClient.rpc('upsert_data_settingan_tv', {
+        new_data: [{
+          id: idVal,
+          panjang: Number(panjangVal),
+          lebar: Number(tinggiVal)
+        }]
+      });
+
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Simpan Settingan TV';
+      lucide.createIcons();
+
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menyimpan data TV: ${error.message}`;
+        statusMsg.classList.remove('hidden');
+        setTimeout(() => statusMsg.classList.add('hidden'), 5000);
+      } else {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data settingan TV dengan ID "${idVal}" berhasil disimpan.`;
+        statusMsg.classList.remove('hidden');
+        
+        document.getElementById('inputTvId').value = '';
+        document.getElementById('inputTvPanjang').value = '';
+        document.getElementById('inputTvTinggi').value = '';
+        
+        loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    async function toggleConnectTv(id) {
+      const tv = dataSettinganTvList.find(t => String(t.id) === String(id));
+      if (!tv) return;
+
+      const isCurrentlyConnected = String(tv.id) === String(activeConnectedTvId);
+      const statusMsg = document.getElementById('statusMsg');
+
+      if (isCurrentlyConnected) {
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .delete()
+          .eq('id_tv', id);
+
+        if (error) {
+          await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        }
+        activeConnectedTvId = null;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-blue-600"></i> TV ID "${id}" berhasil di-disconnect.`;
+      } else {
+        await supabaseClient.from('setting_tv').delete().neq('id_tv', '0');
+        
+        const { error } = await supabaseClient
+          .from('setting_tv')
+          .insert([{
+            id_tv: tv.id,
+            panjang_tv: tv.panjang || tv.panjang_tv || 0,
+            tinggi_tv: tv.lebar || tv.tinggi || tv.tinggi_tv || 0
+          }]);
+
+        if (error) {
+          statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
+          statusMsg.innerText = 'Gagal connect TV: ' + error.message;
+          statusMsg.classList.remove('hidden');
+          return;
+        }
+
+        activeConnectedTvId = tv.id;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! TV ID "${id}" terhubung (Connected) dan mereplace data di tabel setting_tv.`;
+      }
+
+      statusMsg.classList.remove('hidden');
+      renderTvSettingList();
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
+    async function deleteTvSetting(id) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus data settingan TV ID "${id}" dari database?`)) return;
+
+      const { error } = await supabaseClient.rpc('delete_data_settingan_tv', {
+        target_id: String(id)
+      });
+
+      const statusMsg = document.getElementById('statusMsg');
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menghapus data TV: ${error.message}`;
+        statusMsg.classList.remove('hidden');
+      } else {
+        if (String(id) === String(activeConnectedTvId)) {
+          await supabaseClient.from('setting_tv').delete().eq('id_tv', id);
+          activeConnectedTvId = null;
+        }
+
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Data settingan TV ID "${id}" berhasil dihapus dari database.`;
+        statusMsg.classList.remove('hidden');
+        
+        await loadDataSettinganTv();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    // --- PENGATURAN SOUNDS ---
+    async function loadSongsData() {
+      try {
+        const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
+        let backsoundActiveMap = {};
+        if (activeBacksound) { 
+          activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; }); 
+        }
+        const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
+        renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
+
+        const { data: activeSoundSales } = await supabaseClient
+          .from('status_soundtwibbon')
+          .select('*')
+          .eq('bucket_nametw', 'SOUND SALES');
+        
+        let soundSalesActiveSong = (activeSoundSales && activeSoundSales.length > 0) ? activeSoundSales[0].nama_lagutw : null;
+        const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
+        renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
+      } catch (err) {
+        console.error("Gagal memuat data songs:", err);
+      }
+    }
+
+    function renderSongList(bucketName, files, activeFileName) {
+      const isSoundSales = bucketName === 'SOUND SALES';
+      const containerId = isSoundSales ? 'listSoundSalesContainer' : 'listBacksoundContainer';
+      const countId = isSoundSales ? 'countSoundSales' : 'countBacksound';
+      const container = document.getElementById(containerId);
+      const countBadge = document.getElementById(countId);
+
+      if (!container) return;
+
+      const validFiles = files.filter(f => f.name && f.name !== '.emptyFolderPlaceholder');
+      countBadge.innerText = `${validFiles.length} Lagu`;
+
+      if (validFiles.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-gray-400 italic text-xs">Belum ada lagu di bucket "${bucketName}".</div>`;
+        return;
+      }
+
+      let html = '';
+      validFiles.forEach((file) => {
+        const fileName = file.name;
+        const isActive = fileName === activeFileName;
+
+        const btnClass = isActive 
+          ? 'bg-emerald-600 text-white shadow-emerald-500/25 ring-2 ring-emerald-300' 
+          : 'bg-rose-600 text-white shadow-rose-500/25 ring-2 ring-rose-300';
+        const btnIcon = isActive ? 'volume-2' : 'volume-x';
+        const btnText = isActive ? 'AKTIF' : 'NON AKTIF';
+
+        html += `
+          <div class="bg-slate-50 p-3 rounded-xl border border-gray-200 flex items-center justify-between gap-3 shadow-xs hover:border-blue-200 transition">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <i data-lucide="music" class="w-4 h-4"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-gray-800 truncate" title="${fileName}">${fileName}</div>
+                <div class="text-[10px] text-gray-400 font-medium">Size: ${Math.round((file.metadata?.size || 0) / 1024)} KB</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button onclick="handleToggleSong('${bucketName}', '${fileName}', ${!isActive})" class="${btnClass} text-[11px] font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1">
+                <i data-lucide="${btnIcon}" class="w-3.5 h-3.5"></i>
+                <span>${btnText}</span>
+              </button>
+
+              <button onclick="deleteSong('${bucketName}', '${fileName}')" class="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-1.5 rounded-lg transition shadow-xs flex items-center justify-center" title="Hapus Lagu">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    async function uploadSong(bucketName) {
+      const inputId = bucketName === 'BACKSOUND' ? 'inputUploadBacksound' : 'inputUploadSoundSales';
+      const fileInput = document.getElementById(inputId);
+      const statusMsg = document.getElementById('statusMsg');
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Pilih file lagu terlebih dahulu!');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const fileName = file.name;
+
+      const { error } = await supabaseClient.storage.from(bucketName).upload(fileName, file, { cacheControl: '3600', upsert: true });
+
+      if (error) {
+        alert('Gagal upload lagu: ' + error.message);
+        return;
+      }
+
+      statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan ke bucket "${bucketName}".`;
+      statusMsg.classList.remove('hidden');
+      fileInput.value = '';
+      loadSongsData();
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+
+    async function handleToggleSong(bucketName, fileName, makeActive) {
+      const statusMsg = document.getElementById('statusMsg');
+      const targetNama = makeActive ? fileName : '';
+      const targetStatus = makeActive ? 'AKTIF' : 'NON AKTIF';
+
+      let error = null;
+      if (bucketName === 'SOUND SALES') {
+        const res = await supabaseClient.rpc('update_status_soundtwibbon', {
+          p_bucket: 'SOUND SALES',
+          p_nama: targetNama,
+          p_status: targetStatus
+        });
+        error = res.error;
+      } else {
+        const res = await supabaseClient.rpc('update_status_backsound', {
+          p_bucket: bucketName,
+          p_nama: targetNama,
+          p_status: targetStatus
+        });
+        error = res.error;
+      }
+
+      if (error) {
+        alert('Gagal memperbarui status lagu: ' + error.message);
+        return;
+      }
+
+      loadSongsData();
+
+      if (statusMsg) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Status lagu "${fileName}" pada ${bucketName} berhasil diperbarui menjadi ${targetStatus}.`;
+        statusMsg.classList.remove('hidden');
+        lucide.createIcons();
+        setTimeout(() => statusMsg.classList.add('hidden'), 3500);
+      }
+    }
+
+    async function deleteSong(bucketName, fileName) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus lagu "${fileName}"?`)) return;
+
+      const { error } = await supabaseClient.storage.from(bucketName).remove([fileName]);
+      const statusMsg = document.getElementById('statusMsg');
+
+      if (error) {
+        alert('Gagal menghapus lagu: ' + error.message);
+      } else {
+        if (bucketName === 'SOUND SALES') {
+          await supabaseClient.rpc('update_status_soundtwibbon', { p_bucket: 'SOUND SALES', p_nama: '', p_status: 'NON AKTIF' });
+        } else {
+          await supabaseClient.rpc('update_status_backsound', { p_bucket: bucketName, p_nama: '', p_status: 'NON AKTIF' });
+        }
+
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Lagu "${fileName}" berhasil dihapus.`;
+        statusMsg.classList.remove('hidden');
+        loadSongsData();
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      }
+    }
+
+    // --- TWIBBON SALES & POPUP INTEGRATION ---
     async function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
@@ -709,9 +1283,8 @@
       } else if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
       } else {
-        namaInput.value = 'NIP tidak ditemukan di data_karyawan';
+        namaInput.value = 'NIP tidak ditemukan';
       }
-
       updateTwibbonPreview();
     }
 
@@ -728,16 +1301,13 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      // URL Bingkai Twibbon
-      const twibbonImgUrl = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
-      document.getElementById('previewTwibbonImage').src = twibbonImgUrl;
+      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
 
       const photoBg = document.getElementById('previewPhotoBg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
       if (nip) {
-        const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg`;
-        photoBg.style.backgroundImage = `url('${photoUrl}')`;
+        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
         photoBg.classList.remove('hidden');
         placeholderText.classList.add('hidden');
       } else {
@@ -745,76 +1315,64 @@
         placeholderText.classList.remove('hidden');
       }
 
-      // Foto Sales Transform
-      const photoScale = document.getElementById('photoScale').value;
-      const photoX = document.getElementById('photoX').value;
-      const photoY = document.getElementById('photoY').value;
-      photoBg.style.transform = `translate(${photoX}px, ${photoY}px) scale(${photoScale})`;
+      photoBg.style.transform = `translate(${document.getElementById('photoX').value}px, ${document.getElementById('photoY').value}px) scale(${document.getElementById('photoScale').value})`;
 
-      // Render Teks Masing-Masing (Tanpa Background, Warna Default Hitam, Tanpa Shadow)
-      const elNama = document.getElementById('previewNamaText');
-      const elSales = document.getElementById('previewSalesText');
-      const elQty = document.getElementById('previewQtyText');
-      const elComser = document.getElementById('previewComserText');
-
-      function applyTextStyling(el, textContent, sizeId, colorId, yId, xId) {
-        if (!textContent) {
-          el.style.display = 'none';
-          return;
-        }
-
-        el.style.top = document.getElementById(yId).value + 'px';
-        el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
-        
-        const inner = el.querySelector('.inner-text');
-        inner.innerText = textContent;
-        inner.style.fontSize = document.getElementById(sizeId).value + 'px';
-        inner.style.color = document.getElementById(colorId).value;
-        
-        el.style.display = 'block';
-      }
-
-      // 1. Nama Karyawan
-      const isValidNama = nama && !nama.includes('tidak ditemukan') && !nama.includes('Error');
-      applyTextStyling(elNama, isValidNama ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
-
-      // 2. Value Sales
-      applyTextStyling(elSales, valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
-
-      // 3. Qty FP
-      applyTextStyling(elQty, qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
-
-      // 4. Value Comser FP
-      applyTextStyling(elComser, valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
+      applyTextStyling('previewNamaText', (nama && !nama.includes('tidak ditemukan')) ? nama : '', 'sizeNama', 'colorNama', 'yNama', 'xNama');
+      applyTextStyling('previewSalesText', valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
+      applyTextStyling('previewQtyText', qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
+      applyTextStyling('previewComserText', valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
     }
 
-    // FUNGSI DOWNLOAD TWIBBON JPG FULL HD
+    function applyTextStyling(elementId, textContent, sizeId, colorId, yId, xId) {
+      const el = document.getElementById(elementId);
+      if (!textContent) { el.style.display = 'none'; return; }
+      el.style.top = document.getElementById(yId).value + 'px';
+      el.style.transform = `translateX(calc(-50% + ${document.getElementById(xId).value}px))`;
+      const inner = el.querySelector('.inner-text');
+      inner.innerText = textContent;
+      inner.style.fontSize = document.getElementById(sizeId).value + 'px';
+      inner.style.color = document.getElementById(colorId).value;
+      el.style.display = 'block';
+    }
+
     async function downloadTwibbon() {
       const previewBox = document.getElementById('twibbonPreviewBox');
       const btnDownload = document.getElementById('btnDownloadTwibbon');
       const nip = document.getElementById('twibbonNip').value.trim();
       const nama = document.getElementById('twibbonNama').value.trim();
+      const valSales = document.getElementById('twibbonValueSales').value.trim();
+      const qtyFp = document.getElementById('twibbonQtyFp').value.trim();
+      const valComser = document.getElementById('twibbonValueComser').value.trim();
 
       if (!nip) {
-        alert('Silakan masukkan NIP terlebih dahulu untuk mendownload twibbon!');
+        alert('Silakan masukkan NIP terlebih dahulu!');
         document.getElementById('twibbonNip').focus();
         return;
       }
 
       btnDownload.disabled = true;
-      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyiapkan Gambar Full HD...';
+      btnDownload.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Data (Replace) & Download...';
       lucide.createIcons();
 
       try {
-        const canvas = await html2canvas(previewBox, {
-          scale: 4,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: '#ffffff'
-        });
-
-        const imageURL = canvas.toDataURL('image/jpeg', 0.95);
+        await supabaseClient.from('popup_twibbon').delete().neq('nip', 0);
         
+        const { error: insertError } = await supabaseClient
+          .from('popup_twibbon')
+          .insert({
+            nip: Number(nip) || 0,
+            nama: nama || '-',
+            value: valSales || '',
+            qtyfp: qtyFp || '',
+            valuecnc: valComser || ''
+          });
+
+        if (insertError) {
+          console.error('Gagal mengirim data ke popup_twibbon:', insertError);
+        }
+
+        const canvas = await html2canvas(previewBox, { scale: 4, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
+        const imageURL = canvas.toDataURL('image/jpeg', 0.95);
         const twibbonType = document.getElementById('twibbonType').value;
         const cleanName = (nama && !nama.includes('tidak ditemukan')) ? nama.replace(/[^a-zA-Z0-9]/g, '_') : 'Sales';
         
@@ -827,13 +1385,10 @@
 
         const statusMsg = document.getElementById('statusMsg');
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Twibbon berhasil didownload dalam format JPG Full HD.`;
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Data berhasil dikirim (Replace) ke tabel "popup_twibbon" dan Twibbon didownload.`;
         statusMsg.classList.remove('hidden');
-        lucide.createIcons();
-        
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       } catch (err) {
-        console.error(err);
         alert('Gagal mendownload gambar: ' + err.message);
       } finally {
         btnDownload.disabled = false;
@@ -842,60 +1397,29 @@
       }
     }
 
-    // FUNGSI SAVE EDITING (BEBAS INP ISSUE / TANPA ALERT BLOKIR)
     function saveTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const settings = {
         photoScale: document.getElementById('photoScale').value,
         photoX: document.getElementById('photoX').value,
         photoY: document.getElementById('photoY').value,
-        sizeNama: document.getElementById('sizeNama').value,
-        xNama: document.getElementById('xNama').value,
-        yNama: document.getElementById('yNama').value,
-        colorNama: document.getElementById('colorNama').value,
-        sizeSales: document.getElementById('sizeSales').value,
-        xSales: document.getElementById('xSales').value,
-        ySales: document.getElementById('ySales').value,
-        colorSales: document.getElementById('colorSales').value,
-        sizeQty: document.getElementById('sizeQty').value,
-        xQty: document.getElementById('xQty').value,
-        yQty: document.getElementById('yQty').value,
-        colorQty: document.getElementById('colorQty').value,
-        sizeComser: document.getElementById('sizeComser').value,
-        xComser: document.getElementById('xComser').value,
-        yComser: document.getElementById('yComser').value,
-        colorComser: document.getElementById('colorComser').value
+        sizeNama: document.getElementById('sizeNama').value, xNama: document.getElementById('xNama').value, yNama: document.getElementById('yNama').value, colorNama: document.getElementById('colorNama').value,
+        sizeSales: document.getElementById('sizeSales').value, xSales: document.getElementById('xSales').value, ySales: document.getElementById('ySales').value, colorSales: document.getElementById('colorSales').value,
+        sizeQty: document.getElementById('sizeQty').value, xQty: document.getElementById('xQty').value, yQty: document.getElementById('yQty').value, colorQty: document.getElementById('colorQty').value,
+        sizeComser: document.getElementById('sizeComser').value, xComser: document.getElementById('xComser').value, yComser: document.getElementById('yComser').value, colorComser: document.getElementById('colorComser').value
       };
-
       localStorage.setItem(`twibbon_settings_${twibbonType}`, JSON.stringify(settings));
-      
-      // Menggunakan statusMsg non-blokir agar performa UI tetap mulus dan bebas INP issue
-      const statusMsg = document.getElementById('statusMsg');
-      statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
-      statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Konfigurasi tata letak & warna untuk "${twibbonType.toUpperCase()}" berhasil disimpan.`;
-      statusMsg.classList.remove('hidden');
-      lucide.createIcons();
-      
-      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      alert('Konfigurasi tata letak berhasil disimpan!');
     }
 
-    // FUNGSI RESET DEFAULT SETTINGS PER TWIBBON
     function resetTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       localStorage.removeItem(`twibbon_settings_${twibbonType}`);
       loadTwibbonSettings();
       updateTwibbonPreview();
-
-      const statusMsg = document.getElementById('statusMsg');
-      statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm flex items-center gap-2';
-      statusMsg.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-blue-600"></i> Berhasil mereset format edit "${twibbonType.toUpperCase()}" ke pengaturan default.`;
-      statusMsg.classList.remove('hidden');
-      lucide.createIcons();
-      
-      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+      alert('Format edit berhasil direset ke default.');
     }
 
-    // FUNGSI LOAD / DEFAULT SETTINGS
     function loadTwibbonSettings() {
       const twibbonType = document.getElementById('twibbonType').value;
       const saved = localStorage.getItem(`twibbon_settings_${twibbonType}`);
@@ -905,57 +1429,22 @@
           document.getElementById('photoScale').value = s.photoScale || 1;
           document.getElementById('photoX').value = s.photoX || 0;
           document.getElementById('photoY').value = s.photoY || 0;
-
-          document.getElementById('sizeNama').value = s.sizeNama || 18;
-          document.getElementById('xNama').value = s.xNama || 0;
-          document.getElementById('yNama').value = s.yNama !== undefined ? s.yNama : 240;
-          document.getElementById('colorNama').value = s.colorNama || '#000000';
-
-          document.getElementById('sizeSales').value = s.sizeSales || 14;
-          document.getElementById('xSales').value = s.xSales || 0;
-          document.getElementById('ySales').value = s.ySales !== undefined ? s.ySales : 280;
-          document.getElementById('colorSales').value = s.colorSales || '#000000';
-
-          document.getElementById('sizeQty').value = s.sizeQty || 14;
-          document.getElementById('xQty').value = s.xQty || 0;
-          document.getElementById('yQty').value = s.yQty !== undefined ? s.yQty : 315;
-          document.getElementById('colorQty').value = s.colorQty || '#000000';
-
-          document.getElementById('sizeComser').value = s.sizeComser || 14;
-          document.getElementById('xComser').value = s.xComser || 0;
-          document.getElementById('yComser').value = s.yComser !== undefined ? s.yComser : 350;
-          document.getElementById('colorComser').value = s.colorComser || '#000000';
-        } catch (e) {
-          console.error(e);
-        }
+          document.getElementById('sizeNama').value = s.sizeNama || 18; document.getElementById('xNama').value = s.xNama || 0; document.getElementById('yNama').value = s.yNama !== undefined ? s.yNama : 240; document.getElementById('colorNama').value = s.colorNama || '#000000';
+          document.getElementById('sizeSales').value = s.sizeSales || 14; document.getElementById('xSales').value = s.xSales || 0; document.getElementById('ySales').value = s.ySales !== undefined ? s.ySales : 280; document.getElementById('colorSales').value = s.colorSales || '#000000';
+          document.getElementById('sizeQty').value = s.sizeQty || 14; document.getElementById('xQty').value = s.xQty || 0; document.getElementById('yQty').value = s.yQty !== undefined ? s.yQty : 315; document.getElementById('colorQty').value = s.colorQty || '#000000';
+          document.getElementById('sizeComser').value = s.sizeComser || 14; document.getElementById('xComser').value = s.xComser || 0; document.getElementById('yComser').value = s.yComser !== undefined ? s.yComser : 350; document.getElementById('colorComser').value = s.colorComser || '#000000';
+        } catch (e) {}
       } else {
         document.getElementById('photoScale').value = 1;
         document.getElementById('photoX').value = 0;
         document.getElementById('photoY').value = 0;
-
-        document.getElementById('sizeNama').value = 18;
-        document.getElementById('xNama').value = 0;
-        document.getElementById('yNama').value = 240;
-        document.getElementById('colorNama').value = '#000000';
-
-        document.getElementById('sizeSales').value = 14;
-        document.getElementById('xSales').value = 0;
-        document.getElementById('ySales').value = 280;
-        document.getElementById('colorSales').value = '#000000';
-
-        document.getElementById('sizeQty').value = 14;
-        document.getElementById('xQty').value = 0;
-        document.getElementById('yQty').value = 315;
-        document.getElementById('colorQty').value = '#000000';
-
-        document.getElementById('sizeComser').value = 14;
-        document.getElementById('xComser').value = 0;
-        document.getElementById('yComser').value = 350;
-        document.getElementById('colorComser').value = '#000000';
+        document.getElementById('sizeNama').value = 18; document.getElementById('xNama').value = 0; document.getElementById('yNama').value = 240; document.getElementById('colorNama').value = '#000000';
+        document.getElementById('sizeSales').value = 14; document.getElementById('xSales').value = 0; document.getElementById('ySales').value = 280; document.getElementById('colorSales').value = '#000000';
+        document.getElementById('sizeQty').value = 14; document.getElementById('xQty').value = 0; document.getElementById('yQty').value = 315; document.getElementById('colorQty').value = '#000000';
+        document.getElementById('sizeComser').value = 14; document.getElementById('xComser').value = 0; document.getElementById('yComser').value = 350; document.getElementById('colorComser').value = '#000000';
       }
     }
 
-    // Fungsi Login
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value;
@@ -967,11 +1456,7 @@
       btnLogin.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
       lucide.createIcons();
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
-
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       btnLogin.disabled = false;
       btnLogin.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Masuk Admin';
       lucide.createIcons();
@@ -999,284 +1484,58 @@
 
     function toggleMenu(id) {
       const menu = document.getElementById(id);
-      const arrow = document.getElementById('arrowTv');
       menu.classList.toggle('hidden');
-      arrow.classList.toggle('rotate-180');
+      
+      if (id === 'submenuTv') {
+        const arrow = document.getElementById('arrowTv');
+        if (arrow) arrow.classList.toggle('rotate-180');
+      } else if (id === 'submenuPengaturan') {
+        const arrow = document.getElementById('arrowPengaturan');
+        if (arrow) arrow.classList.toggle('rotate-180');
+      }
     }
 
-    // Penanganan Paste Excel & Preview Otomatis
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
         if (!pastedText.trim()) return;
-
         const rows = pastedText.split('\n');
         let parsed = [];
-
         rows.forEach((row, index) => {
           if (!row.trim()) return;
           const cols = row.split('\t');
-
           if (currentView === 'karyawan') {
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
-
-            if (index === 0 && (nip.toUpperCase().includes('NIP') || nama.toUpperCase().includes('NAMA'))) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip_kar: Number(nip) || 0,
-              nama_kar: nama || '-'
-            });
+            if (nip && nip !== '0') parsed.push({ nip_kar: Number(nip) || 0, nama_kar: nama || '-' });
           } else if (currentView === 'sales' || currentView === 'mtdSales') {
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
             let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip: String(nip),
-              nama: nama || 'NONAME',
-              dept: dept || '-',
-              total: Number(totalStr) || 0
-            });
-          } else if (currentView === 'comser') {
-            let nip = cols[0] ? cols[0].trim() : '';
-            let nama = cols[1] ? cols[1].trim() : '';
-            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
-            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip_cnc: String(nip),
-              nama_cnc: nama || 'NONAME',
-              qty_cnc: Number(qtyStr) || 0,
-              total_cnc: Number(totalValStr) || 0
-            });
-          } else if (currentView === 'mtdComser') {
-            let nip = cols[0] ? cols[0].trim() : '';
-            let nama = cols[1] ? cols[1].trim() : '';
-            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
-            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip_mtdcnc: String(nip),
-              nama_mtdcnc: nama || 'NONAME',
-              qty_mtdcnc: Number(qtyStr) || 0,
-              total_mtdcnc: Number(totalValStr) || 0
-            });
-          } else if (currentView === 'departemen') {
-            let kodeDept = cols[0] ? cols[0].trim() : '';
-            let namaDept = cols[1] ? cols[1].trim() : '';
-            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
-            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
-            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
-            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
-            if (!kodeDept || kodeDept === '0') return;
-
-            parsed.push({
-              kode_dept: kodeDept,
-              nama_dept: namaDept || '-',
-              total_sku: Number(totalSku) || 0,
-              total_qty: Number(totalQty) || 0,
-              exclude_ppn: Number(excludePpn) || 0,
-              include_ppn: Number(includePpn) || 0
-            });
-          } else if (currentView === 'furnipro') {
-            let nip = cols[0] ? cols[0].trim() : '';
-            let nama = cols[1] ? cols[1].trim() : '';
-            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
-            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip_fp: String(nip),
-              nama_fp: nama || 'NONAME',
-              qty_fp: Number(qtyStr) || 0,
-              total_fp: Number(totalValStr) || 0
-            });
-          } else if (currentView === 'mtdFurnipro') {
-            let nip = cols[0] ? cols[0].trim() : '';
-            let nama = cols[1] ? cols[1].trim() : '';
-            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
-            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
-
-            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
-            if (!nip || nip === '0') return;
-
-            parsed.push({
-              nip_mtdfp: String(nip),
-              nama_mtdfp: nama || 'NONAME',
-              qty_mtdfp: Number(qtyStr) || 0,
-              total_mtdfp: Number(totalValStr) || 0
-            });
+            if (nip && nip !== '0') parsed.push({ nip: String(nip), nama: nama || 'NONAME', dept: dept || '-', total: Number(totalStr) || 0 });
           }
         });
-
-        if (currentView === 'karyawan') {
-          karyawanData = parsed;
-        } else if (currentView === 'sales') {
-          salesData = parsed;
-        } else if (currentView === 'mtdSales') {
-          mtdSalesData = parsed;
-        } else if (currentView === 'comser') {
-          let map = {};
-          parsed.forEach(item => {
-            if (map[item.nip_cnc]) {
-              map[item.nip_cnc].qty_cnc += item.qty_cnc;
-              map[item.nip_cnc].total_cnc += item.total_cnc;
-            } else {
-              map[item.nip_cnc] = {
-                nip_cnc: item.nip_cnc,
-                nama_cnc: item.nama_cnc,
-                qty_cnc: item.qty_cnc,
-                total_cnc: item.total_cnc
-              };
-            }
-          });
-          comserData = Object.values(map);
-        } else if (currentView === 'mtdComser') {
-          let map = {};
-          parsed.forEach(item => {
-            if (map[item.nip_mtdcnc]) {
-              map[item.nip_mtdcnc].qty_mtdcnc += item.qty_mtdcnc;
-              map[item.nip_mtdcnc].total_mtdcnc += item.total_mtdcnc;
-            } else {
-              map[item.nip_mtdcnc] = {
-                nip_mtdcnc: item.nip_mtdcnc,
-                nama_mtdcnc: item.nama_mtdcnc,
-                qty_mtdcnc: item.qty_mtdcnc,
-                total_mtdcnc: item.total_mtdcnc
-              };
-            }
-          });
-          mtdComserData = Object.values(map);
-        } else if (currentView === 'departemen') {
-          departemenData = parsed;
-        } else if (currentView === 'furnipro') {
-          let map = {};
-          parsed.forEach(item => {
-            if (map[item.nip_fp]) {
-              map[item.nip_fp].qty_fp += item.qty_fp;
-              map[item.nip_fp].total_fp += item.total_fp;
-            } else {
-              map[item.nip_fp] = {
-                nip_fp: item.nip_fp,
-                nama_fp: item.nama_fp,
-                qty_fp: item.qty_fp,
-                total_fp: item.total_fp
-              };
-            }
-          });
-          furniproData = Object.values(map);
-        } else if (currentView === 'mtdFurnipro') {
-          let map = {};
-          parsed.forEach(item => {
-            if (map[item.nip_mtdfp]) {
-              map[item.nip_mtdfp].qty_mtdfp += item.qty_mtdfp;
-              map[item.nip_mtdfp].total_mtdfp += item.total_mtdfp;
-            } else {
-              map[item.nip_mtdfp] = {
-                nip_mtdfp: item.nip_mtdfp,
-                nama_mtdfp: item.nama_mtdfp,
-                qty_mtdfp: item.qty_mtdfp,
-                total_mtdfp: item.total_mtdfp
-              };
-            }
-          });
-          mtdFurniproData = Object.values(map);
-        }
-
+        if (currentView === 'karyawan') karyawanData = parsed;
+        else if (currentView === 'sales') salesData = parsed;
         renderTableRows();
       }, 100);
     }
 
-    // Render Tabel Preview & Header Otomatis
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
       const totalBarisSpan = document.getElementById('totalBaris');
-      
-      let activeData = salesData;
-      if (currentView === 'karyawan') activeData = karyawanData;
-      else if (currentView === 'sales') activeData = salesData;
-      else if (currentView === 'mtdSales') activeData = mtdSalesData;
-      else if (currentView === 'comser') activeData = comserData;
-      else if (currentView === 'mtdComser') activeData = mtdComserData;
-      else if (currentView === 'departemen') activeData = departemenData;
-      else if (currentView === 'furnipro') activeData = furniproData;
-      else if (currentView === 'mtdFurnipro') activeData = mtdFurniproData;
+      let activeData = currentView === 'karyawan' ? karyawanData : salesData;
 
       if (currentView === 'karyawan') {
-        thead.innerHTML = `
-          <tr>
-            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">NIP</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA</th>
-          </tr>
-        `;
-      } else if (currentView === 'sales' || currentView === 'mtdSales') {
-        thead.innerHTML = `
-          <tr>
-            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">NIP</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA</th>
-            <th class="border border-slate-700 px-4 py-3 w-32">ALL DEPT</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL</th>
-          </tr>
-        `;
-      } else if (currentView === 'comser' || currentView === 'mtdComser') {
-        thead.innerHTML = `
-          <tr>
-            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">NIP</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL QTY</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL VALUE</th>
-          </tr>
-        `;
-      } else if (currentView === 'departemen') {
-        thead.innerHTML = `
-          <tr>
-            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">KODE DEPT</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA DEPT</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL SKU</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL QTY</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">EXCLUDE PPN</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">INCLUDE PPN</th>
-          </tr>
-        `;
-      } else if (currentView === 'furnipro' || currentView === 'mtdFurnipro') {
-        thead.innerHTML = `
-          <tr>
-            <th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th>
-            <th class="border border-slate-700 px-4 py-3">NIP</th>
-            <th class="border border-slate-700 px-4 py-3">NAMA</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL QTY</th>
-            <th class="border border-slate-700 px-4 py-3 text-right">TOTAL VALUE</th>
-          </tr>
-        `;
+        thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th></tr>`;
+      } else {
+        thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th><th class="border border-slate-700 px-4 py-3 w-32">ALL DEPT</th><th class="border border-slate-700 px-4 py-3 text-right">TOTAL</th></tr>`;
       }
 
       if (activeData.length === 0) {
-        let colSpan = 5;
-        if (currentView === 'karyawan') colSpan = 3;
-        else if (currentView === 'departemen') colSpan = 7;
-        
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-16 text-gray-400 italic">Belum ada data untuk ${currentView.toUpperCase()}. Silakan paste data dari Excel.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-16 text-gray-400 italic">Belum ada data. Silakan paste dari Excel.</td></tr>`;
         totalBarisSpan.innerText = '0';
         return;
       }
@@ -1284,237 +1543,73 @@
       let html = '';
       activeData.forEach((item, idx) => {
         if (currentView === 'karyawan') {
-          html += `
-            <tr class="hover:bg-indigo-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono font-semibold text-indigo-600">${item.nip_kar}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_kar}</td>
-            </tr>
-          `;
-        } else if (currentView === 'sales' || currentView === 'mtdSales') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-center font-bold text-blue-600">${item.dept}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-gray-900">${item.total.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
-        } else if (currentView === 'comser') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip_cnc}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_cnc}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-blue-600">${item.qty_cnc.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-emerald-600">${item.total_cnc.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
-        } else if (currentView === 'mtdComser') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip_mtdcnc}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_mtdcnc}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-blue-600">${item.qty_mtdcnc.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-emerald-600">${item.total_mtdcnc.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
-        } else if (currentView === 'departemen') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono font-bold text-blue-600">${item.kode_dept}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_dept}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono">${item.total_sku.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono">${item.total_qty.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono">${item.exclude_ppn.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-emerald-600">${item.include_ppn.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
-        } else if (currentView === 'furnipro') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip_fp}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_fp}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-blue-600">${item.qty_fp.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-emerald-600">${item.total_fp.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
-        } else if (currentView === 'mtdFurnipro') {
-          html += `
-            <tr class="hover:bg-blue-50/50 transition">
-              <td class="border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-medium">${idx + 1}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip_mtdfp}</td>
-              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-gray-800">${item.nama_mtdfp}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-blue-600">${item.qty_mtdfp.toLocaleString('id-ID')}</td>
-              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-emerald-600">${item.total_mtdfp.toLocaleString('id-ID')}</td>
-            </tr>
-          `;
+          html += `<tr class="hover:bg-indigo-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono text-indigo-600 font-semibold">${item.nip_kar}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama_kar}</td></tr>`;
+        } else {
+          html += `<tr class="hover:bg-blue-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama}</td><td class="border border-gray-200 px-4 py-2.5 text-center font-bold text-blue-600">${item.dept}</td><td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold">${item.total.toLocaleString('id-ID')}</td></tr>`;
         }
       });
-
       tbody.innerHTML = html;
       totalBarisSpan.innerText = activeData.length;
     }
 
     function resetData() {
-      if (currentView === 'karyawan') karyawanData = [];
-      else if (currentView === 'sales') salesData = [];
-      else if (currentView === 'mtdSales') mtdSalesData = [];
-      else if (currentView === 'comser') comserData = [];
-      else if (currentView === 'mtdComser') mtdComserData = [];
-      else if (currentView === 'departemen') departemenData = [];
-      else if (currentView === 'furnipro') furniproData = [];
-      else if (currentView === 'mtdFurnipro') mtdFurniproData = [];
-      
+      salesData = []; karyawanData = [];
       document.getElementById('excelPasteInput').value = '';
       renderTableRows();
-      document.getElementById('statusMsg').classList.add('hidden');
     }
 
-    // FUNGSI KIRIM TARGET
     async function kirimTargetKeSupabase() {
-      const targetRaw = document.getElementById('inputTargetSales').value;
-      const cleanTarget = targetRaw.replace(/\./g, '');
-      const statusMsg = document.getElementById('statusMsg');
-      const btnKirimTarget = document.getElementById('btnKirimTarget');
+      const cleanSales = document.getElementById('inputTargetSales').value.replace(/\./g, '') || '0';
+      const cleanFp = document.getElementById('inputTargetFp').value.replace(/[^0-9]/g, '') || '0';
+      const cleanComser = document.getElementById('inputTargetComser').value.replace(/\./g, '') || '0';
 
-      if (!cleanTarget || Number(cleanTarget) <= 0) {
-        alert('Masukkan nominal target yang valid!');
+      if (!cleanSales && !cleanFp && !cleanComser) {
+        alert('Minimal salah satu target harus diisi!');
         return;
       }
 
-      btnKirimTarget.disabled = true;
-      btnKirimTarget.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      const btnKirim = document.getElementById('btnKirimTarget');
+      btnKirim.disabled = true;
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan Target...';
       lucide.createIcons();
 
       const { error } = await supabaseClient.rpc('replace_target_today', {
-        new_target: Number(cleanTarget)
-      });
-
-      btnKirimTarget.disabled = false;
-      btnKirimTarget.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini';
-      lucide.createIcons();
-
-      if (error) {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
-        statusMsg.innerText = 'Gagal menyimpan target: ' + error.message;
-        statusMsg.classList.remove('hidden');
-      } else {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = 'Sukses! Target hari ini berhasil diperbarui ke database.';
-        statusMsg.classList.remove('hidden');
-        document.getElementById('inputTargetSales').value = '';
-      }
-    }
-
-    // FUNGSI KIRIM RUNNING TEXT
-    async function kirimRunningTextKeSupabase() {
-      const textVal = document.getElementById('inputRunningTextValue').value.trim();
-      const statusMsg = document.getElementById('statusMsg');
-      const btnKirimRunningText = document.getElementById('btnKirimRunningText');
-
-      if (!textVal) {
-        alert('Running text tidak boleh kosong!');
-        return;
-      }
-
-      btnKirimRunningText.disabled = true;
-      btnKirimRunningText.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
-      lucide.createIcons();
-
-      const { error } = await supabaseClient.rpc('replace_running_text', {
-        new_data: [{ run_text: textVal }]
-      });
-
-      btnKirimRunningText.disabled = false;
-      btnKirimRunningText.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Running Text ke Database';
-      lucide.createIcons();
-
-      if (error) {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
-        statusMsg.innerText = 'Gagal menyimpan running text: ' + error.message;
-        statusMsg.classList.remove('hidden');
-      } else {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = 'Sukses! Running text berhasil diperbarui ke database.';
-        statusMsg.classList.remove('hidden');
-        document.getElementById('inputRunningTextValue').value = '';
-      }
-    }
-
-    // FUNGSI KIRIM DATA TABEL KE SUPABASE
-    async function kirimKeSupabase() {
-      let activeData = [];
-      let rpcName = '';
-      let tableName = '';
-
-      if (currentView === 'karyawan') {
-        activeData = karyawanData;
-        rpcName = 'upsert_data_karyawan';
-        tableName = 'data_karyawan';
-      } else if (currentView === 'sales') {
-        activeData = salesData;
-        rpcName = 'replace_laporan_sales';
-        tableName = 'laporan_sales';
-      } else if (currentView === 'mtdSales') {
-        activeData = mtdSalesData;
-        rpcName = 'replace_mtd_sales'; 
-        tableName = 'mtd_sales';
-      } else if (currentView === 'comser') {
-        activeData = comserData;
-        rpcName = 'replace_daily_comser'; 
-        tableName = 'daily_comser';
-      } else if (currentView === 'mtdComser') {
-        activeData = mtdComserData;
-        rpcName = 'replace_mtd_comser'; 
-        tableName = 'mtd_comser';
-      } else if (currentView === 'departemen') {
-        activeData = departemenData;
-        rpcName = 'replace_laporan_departemen';
-        tableName = 'laporan_departemen';
-      } else if (currentView === 'furnipro') {
-        activeData = furniproData;
-        rpcName = 'replace_daily_furnipro'; 
-        tableName = 'daily_furnipro';
-      } else if (currentView === 'mtdFurnipro') {
-        activeData = mtdFurniproData;
-        rpcName = 'replace_mtd_fp'; 
-        tableName = 'mtd_fp';
-      }
-
-      if (activeData.length === 0) {
-        alert('Belum ada data valid yang akan dikirim!');
-        return;
-      }
-
-      const statusMsg = document.getElementById('statusMsg');
-      const btnKirim = document.getElementById('btnKirim');
-
-      btnKirim.disabled = true;
-      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
-      lucide.createIcons();
-
-      const { error } = await supabaseClient.rpc(rpcName, {
-        new_data: activeData
+        new_target_sales: Number(cleanSales),
+        new_target_fp: Number(cleanFp),
+        new_target_comser: Number(cleanComser)
       });
 
       btnKirim.disabled = false;
-      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris" class="bg-blue-700 px-1.5 py-0.5 rounded text-[11px]">${activeData.length}</span> Baris ke Database`;
+      btnKirim.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Simpan Target Hari Ini';
       lucide.createIcons();
 
+      const statusMsg = document.getElementById('statusMsg');
       if (error) {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm';
-        statusMsg.innerText = 'Gagal memproses data: ' + error.message;
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i> Gagal menyimpan target: ${error.message}`;
         statusMsg.classList.remove('hidden');
       } else {
-        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm';
-        statusMsg.innerText = `Sukses! Data berhasil diperbarui ke tabel ${tableName}!`;
-        statusMsg.classList.remove('hidden'); 
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Target Sales, FP, dan Comser berhasil disimpan ke database.`;
+        statusMsg.classList.remove('hidden');
+        setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       }
+    }
+
+    async function kirimRunningTextKeSupabase() {
+      const textVal = document.getElementById('inputRunningTextValue').value.trim();
+      if (!textVal) return;
+      await supabaseClient.rpc('replace_running_text', { new_data: [{ run_text: textVal }] });
+      alert('Running text berhasil dikirim!');
+    }
+
+    async function kirimKeSupabase() {
+      const activeData = currentView === 'karyawan' ? karyawanData : salesData;
+      const rpcName = currentView === 'karyawan' ? 'upsert_data_karyawan' : 'replace_laporan_sales';
+      if (activeData.length === 0) { alert('Data kosong!'); return; }
+      const { error } = await supabaseClient.rpc(rpcName, { new_data: activeData });
+      if (error) alert('Gagal: ' + error.message);
+      else alert('Sukses memperbarui data ke database!');
     }
   </script>
 </body>
