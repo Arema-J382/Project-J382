@@ -1495,15 +1495,58 @@
       }
     }
 
+    // ===== Helper data aktif per menu (Daily/MTD + Karyawan) =====
+    function getActiveData() {
+      if (currentView === 'karyawan') return karyawanData;
+      if (currentView === 'sales') return salesData;
+      if (currentView === 'mtdSales') return mtdSalesData;
+      if (currentView === 'comser') return comserData;
+      if (currentView === 'mtdComser') return mtdComserData;
+      if (currentView === 'departemen') return departemenData;
+      if (currentView === 'furnipro') return furniproData;
+      if (currentView === 'mtdFurnipro') return mtdFurniproData;
+      return salesData;
+    }
+
+    // Menggabungkan baris dengan NIP yang sama (Summed by NIP)
+    function sumByNip(parsed, nipKey, namaKey, qtyKey, totalKey) {
+      let map = {};
+      parsed.forEach(item => {
+        if (map[item[nipKey]]) {
+          map[item[nipKey]][qtyKey] += item[qtyKey];
+          map[item[nipKey]][totalKey] += item[totalKey];
+        } else {
+          map[item[nipKey]] = {
+            [nipKey]: item[nipKey],
+            [namaKey]: item[namaKey],
+            [qtyKey]: item[qtyKey],
+            [totalKey]: item[totalKey]
+          };
+        }
+      });
+      return Object.values(map);
+    }
+
+    // Penanganan Paste Excel & Preview Otomatis
     function handleExcelPaste(e) {
       setTimeout(() => {
         const pastedText = document.getElementById('excelPasteInput').value;
         if (!pastedText.trim()) return;
         const rows = pastedText.split('\n');
         let parsed = [];
+
+        // Konfigurasi kolom untuk menu Comser & Furnipro (Daily + MTD)
+        const nipGroupCfg = {
+          comser:       { nip: 'nip_cnc',    nama: 'nama_cnc',    qty: 'qty_cnc',    total: 'total_cnc' },
+          mtdComser:    { nip: 'nip_mtdcnc', nama: 'nama_mtdcnc', qty: 'qty_mtdcnc', total: 'total_mtdcnc' },
+          furnipro:     { nip: 'nip_fp',     nama: 'nama_fp',     qty: 'qty_fp',     total: 'total_fp' },
+          mtdFurnipro:  { nip: 'nip_mtdfp',  nama: 'nama_mtdfp',  qty: 'qty_mtdfp',  total: 'total_mtdfp' }
+        };
+
         rows.forEach((row, index) => {
           if (!row.trim()) return;
           const cols = row.split('\t');
+
           if (currentView === 'karyawan') {
             let nip = cols[0] ? cols[0].trim() : '';
             let nama = cols[1] ? cols[1].trim() : '';
@@ -1513,49 +1556,214 @@
             let nama = cols[1] ? cols[1].trim() : '';
             let dept = cols[2] ? cols[2].trim() : '';
             let totalStr = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
-            if (nip && nip !== '0') parsed.push({ nip: String(nip), nama: nama || 'NONAME', dept: dept || '-', total: Number(totalStr) || 0 });
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              nip: String(nip),
+              nama: nama || 'NONAME',
+              dept: dept || '-',
+              total: Number(totalStr) || 0
+            });
+          } else if (nipGroupCfg[currentView]) {
+            const cfg = nipGroupCfg[currentView];
+            let nip = cols[0] ? cols[0].trim() : '';
+            let nama = cols[1] ? cols[1].trim() : '';
+            let qtyStr = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+            let totalValStr = cols[8] ? cols[8].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (nip.toUpperCase() === 'NIP' || nama.toUpperCase() === 'NAMA')) return;
+            if (!nip || nip === '0') return;
+
+            parsed.push({
+              [cfg.nip]: String(nip),
+              [cfg.nama]: nama || 'NONAME',
+              [cfg.qty]: Number(qtyStr) || 0,
+              [cfg.total]: Number(totalValStr) || 0
+            });
+          } else if (currentView === 'departemen') {
+            let kodeDept = cols[0] ? cols[0].trim() : '';
+            let namaDept = cols[1] ? cols[1].trim() : '';
+            let totalSku = cols[2] ? cols[2].trim().replace(/,/g, '') : '0';
+            let totalQty = cols[3] ? cols[3].trim().replace(/,/g, '') : '0';
+            let excludePpn = cols[4] ? cols[4].trim().replace(/,/g, '') : '0';
+            let includePpn = cols[5] ? cols[5].trim().replace(/,/g, '') : '0';
+
+            if (index === 0 && (kodeDept.toUpperCase() === 'KODE DEPT' || namaDept.toUpperCase() === 'NAMA DEPT')) return;
+            if (!kodeDept || kodeDept === '0') return;
+
+            parsed.push({
+              kode_dept: kodeDept,
+              nama_dept: namaDept || '-',
+              total_sku: Number(totalSku) || 0,
+              total_qty: Number(totalQty) || 0,
+              exclude_ppn: Number(excludePpn) || 0,
+              include_ppn: Number(includePpn) || 0
+            });
           }
         });
+
         if (currentView === 'karyawan') karyawanData = parsed;
         else if (currentView === 'sales') salesData = parsed;
+        else if (currentView === 'mtdSales') mtdSalesData = parsed;
+        else if (currentView === 'comser') comserData = sumByNip(parsed, 'nip_cnc', 'nama_cnc', 'qty_cnc', 'total_cnc');
+        else if (currentView === 'mtdComser') mtdComserData = sumByNip(parsed, 'nip_mtdcnc', 'nama_mtdcnc', 'qty_mtdcnc', 'total_mtdcnc');
+        else if (currentView === 'departemen') departemenData = parsed;
+        else if (currentView === 'furnipro') furniproData = sumByNip(parsed, 'nip_fp', 'nama_fp', 'qty_fp', 'total_fp');
+        else if (currentView === 'mtdFurnipro') mtdFurniproData = sumByNip(parsed, 'nip_mtdfp', 'nama_mtdfp', 'qty_mtdfp', 'total_mtdfp');
+
         renderTableRows();
       }, 100);
     }
 
+    // Render Tabel Preview & Header Otomatis
     function renderTableRows() {
       const thead = document.getElementById('previewTableHead');
       const tbody = document.getElementById('previewTableBody');
       const totalBarisSpan = document.getElementById('totalBaris');
-      let activeData = currentView === 'karyawan' ? karyawanData : salesData;
+      let activeData = getActiveData();
+
+      const thBase = 'border border-slate-700 px-4 py-3.5 text-[11px] font-bold tracking-wider uppercase';
+      const ico = (name, color) => `<i data-lucide="${name}" class="w-3.5 h-3.5 ${color} inline-block mr-1.5 -mt-0.5"></i>`;
+      const tdNo = 'border border-gray-200 px-4 py-2.5 text-center text-gray-500 bg-gray-50 font-semibold';
 
       if (currentView === 'karyawan') {
+        // Menu Karyawan: tampilan sama persis dengan master
         thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th></tr>`;
-      } else {
-        thead.innerHTML = `<tr><th class="border border-slate-700 px-4 py-3 w-16 text-center">NO</th><th class="border border-slate-700 px-4 py-3">NIP</th><th class="border border-slate-700 px-4 py-3">NAMA</th><th class="border border-slate-700 px-4 py-3 w-32">ALL DEPT</th><th class="border border-slate-700 px-4 py-3 text-right">TOTAL</th></tr>`;
+      } else if (currentView === 'sales' || currentView === 'mtdSales') {
+        thead.innerHTML = `
+          <tr>
+            <th class="${thBase} w-16 text-center">${ico('hash', 'text-slate-400')}NO</th>
+            <th class="${thBase}">${ico('credit-card', 'text-blue-300')}NIP</th>
+            <th class="${thBase}">${ico('user', 'text-emerald-300')}NAMA</th>
+            <th class="${thBase} w-32">${ico('layers', 'text-purple-300')}ALL DEPT</th>
+            <th class="${thBase} text-right">${ico('banknote', 'text-amber-300')}TOTAL</th>
+          </tr>`;
+      } else if (currentView === 'comser' || currentView === 'mtdComser' || currentView === 'furnipro' || currentView === 'mtdFurnipro') {
+        thead.innerHTML = `
+          <tr>
+            <th class="${thBase} w-16 text-center">${ico('hash', 'text-slate-400')}NO</th>
+            <th class="${thBase}">${ico('credit-card', 'text-blue-300')}NIP</th>
+            <th class="${thBase}">${ico('user', 'text-emerald-300')}NAMA</th>
+            <th class="${thBase} text-right">${ico('package', 'text-sky-300')}TOTAL QTY</th>
+            <th class="${thBase} text-right">${ico('banknote', 'text-amber-300')}TOTAL VALUE</th>
+          </tr>`;
+      } else if (currentView === 'departemen') {
+        thead.innerHTML = `
+          <tr>
+            <th class="${thBase} w-16 text-center">${ico('hash', 'text-slate-400')}NO</th>
+            <th class="${thBase}">${ico('tag', 'text-blue-300')}KODE DEPT</th>
+            <th class="${thBase}">${ico('grid', 'text-purple-300')}NAMA DEPT</th>
+            <th class="${thBase} text-right">${ico('boxes', 'text-sky-300')}TOTAL SKU</th>
+            <th class="${thBase} text-right">${ico('package', 'text-sky-300')}TOTAL QTY</th>
+            <th class="${thBase} text-right">${ico('receipt', 'text-orange-300')}EXCLUDE PPN</th>
+            <th class="${thBase} text-right">${ico('banknote', 'text-amber-300')}INCLUDE PPN</th>
+          </tr>`;
       }
 
       if (activeData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-16 text-gray-400 italic">Belum ada data. Silakan paste dari Excel.</td></tr>`;
+        let colSpan = 5;
+        if (currentView === 'karyawan') colSpan = 3;
+        else if (currentView === 'departemen') colSpan = 7;
+
+        if (currentView === 'karyawan') {
+          tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-16 text-gray-400 italic">Belum ada data. Silakan paste dari Excel.</td></tr>`;
+        } else {
+          tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-16 text-gray-400 italic">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <i data-lucide="clipboard-paste" class="w-9 h-9 text-gray-300 animate-bounce"></i>
+              <span class="text-sm">Belum ada data untuk <b class="text-gray-500">${currentView.toUpperCase()}</b>.</span>
+              <span class="text-xs">Silakan paste data dari Excel ke kotak di atas.</span>
+            </div></td></tr>`;
+        }
         totalBarisSpan.innerText = '0';
+        lucide.createIcons();
         return;
       }
 
       let html = '';
       activeData.forEach((item, idx) => {
+        const zebra = idx % 2 === 1 ? 'bg-slate-50/60' : '';
         if (currentView === 'karyawan') {
           html += `<tr class="hover:bg-indigo-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono text-indigo-600 font-semibold">${item.nip_kar}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama_kar}</td></tr>`;
-        } else {
-          html += `<tr class="hover:bg-blue-50/50 transition"><td class="border border-gray-200 px-4 py-2.5 text-center bg-gray-50">${idx+1}</td><td class="border border-gray-200 px-4 py-2.5 font-mono">${item.nip}</td><td class="border border-gray-200 px-4 py-2.5 font-semibold">${item.nama}</td><td class="border border-gray-200 px-4 py-2.5 text-center font-bold text-blue-600">${item.dept}</td><td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold">${item.total.toLocaleString('id-ID')}</td></tr>`;
+        } else if (currentView === 'sales' || currentView === 'mtdSales') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono text-[13px] text-slate-700">${item.nip}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-center"><span class="inline-block bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-0.5 font-bold text-[11px]">${item.dept}</span></td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-gray-900">${item.total.toLocaleString('id-ID')}</td>
+            </tr>`;
+        } else if (currentView === 'comser') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono text-[13px] text-slate-700">${item.nip_cnc}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama_cnc}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-blue-600">${item.qty_cnc.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-emerald-600">${item.total_cnc.toLocaleString('id-ID')}</td>
+            </tr>`;
+        } else if (currentView === 'mtdComser') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono text-[13px] text-slate-700">${item.nip_mtdcnc}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama_mtdcnc}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-blue-600">${item.qty_mtdcnc.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-emerald-600">${item.total_mtdcnc.toLocaleString('id-ID')}</td>
+            </tr>`;
+        } else if (currentView === 'departemen') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono font-bold text-[13px] text-blue-600">${item.kode_dept}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama_dept}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono text-[13px]">${item.total_sku.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono text-[13px]">${item.total_qty.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono text-[13px]">${item.exclude_ppn.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-emerald-600">${item.include_ppn.toLocaleString('id-ID')}</td>
+            </tr>`;
+        } else if (currentView === 'furnipro') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono text-[13px] text-slate-700">${item.nip_fp}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama_fp}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-blue-600">${item.qty_fp.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-emerald-600">${item.total_fp.toLocaleString('id-ID')}</td>
+            </tr>`;
+        } else if (currentView === 'mtdFurnipro') {
+          html += `
+            <tr class="hover:bg-blue-50/60 transition ${zebra}">
+              <td class="${tdNo}">${idx + 1}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-mono text-[13px] text-slate-700">${item.nip_mtdfp}</td>
+              <td class="border border-gray-200 px-4 py-2.5 font-semibold text-[13px] text-gray-800">${item.nama_mtdfp}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-blue-600">${item.qty_mtdfp.toLocaleString('id-ID')}</td>
+              <td class="border border-gray-200 px-4 py-2.5 text-right font-mono font-bold text-[13px] text-emerald-600">${item.total_mtdfp.toLocaleString('id-ID')}</td>
+            </tr>`;
         }
       });
+
       tbody.innerHTML = html;
       totalBarisSpan.innerText = activeData.length;
+      lucide.createIcons();
     }
 
     function resetData() {
-      salesData = []; karyawanData = [];
+      if (currentView === 'karyawan') { salesData = []; karyawanData = []; }
+      else if (currentView === 'sales') salesData = [];
+      else if (currentView === 'mtdSales') mtdSalesData = [];
+      else if (currentView === 'comser') comserData = [];
+      else if (currentView === 'mtdComser') mtdComserData = [];
+      else if (currentView === 'departemen') departemenData = [];
+      else if (currentView === 'furnipro') furniproData = [];
+      else if (currentView === 'mtdFurnipro') mtdFurniproData = [];
+
       document.getElementById('excelPasteInput').value = '';
       renderTableRows();
+      document.getElementById('statusMsg').classList.add('hidden');
     }
 
     async function kirimTargetKeSupabase() {
@@ -1603,13 +1811,84 @@
       alert('Running text berhasil dikirim!');
     }
 
+    // FUNGSI KIRIM DATA TABEL KE SUPABASE
     async function kirimKeSupabase() {
-      const activeData = currentView === 'karyawan' ? karyawanData : salesData;
-      const rpcName = currentView === 'karyawan' ? 'upsert_data_karyawan' : 'replace_laporan_sales';
-      if (activeData.length === 0) { alert('Data kosong!'); return; }
-      const { error } = await supabaseClient.rpc(rpcName, { new_data: activeData });
-      if (error) alert('Gagal: ' + error.message);
-      else alert('Sukses memperbarui data ke database!');
+      if (currentView === 'karyawan') {
+        // Menu Karyawan: logika sama persis dengan master
+        const dataKaryawan = karyawanData;
+        if (dataKaryawan.length === 0) { alert('Data kosong!'); return; }
+        const { error: errKar } = await supabaseClient.rpc('upsert_data_karyawan', { new_data: dataKaryawan });
+        if (errKar) alert('Gagal: ' + errKar.message);
+        else alert('Sukses memperbarui data ke database!');
+        return;
+      }
+
+      let activeData = [];
+      let rpcName = '';
+      let tableName = '';
+
+      if (currentView === 'sales') {
+        activeData = salesData;
+        rpcName = 'replace_laporan_sales';
+        tableName = 'laporan_sales';
+      } else if (currentView === 'mtdSales') {
+        activeData = mtdSalesData;
+        rpcName = 'replace_mtd_sales';
+        tableName = 'mtd_sales';
+      } else if (currentView === 'comser') {
+        activeData = comserData;
+        rpcName = 'replace_daily_comser';
+        tableName = 'daily_comser';
+      } else if (currentView === 'mtdComser') {
+        activeData = mtdComserData;
+        rpcName = 'replace_mtd_comser';
+        tableName = 'mtd_comser';
+      } else if (currentView === 'departemen') {
+        activeData = departemenData;
+        rpcName = 'replace_laporan_departemen';
+        tableName = 'laporan_departemen';
+      } else if (currentView === 'furnipro') {
+        activeData = furniproData;
+        rpcName = 'replace_daily_furnipro';
+        tableName = 'daily_furnipro';
+      } else if (currentView === 'mtdFurnipro') {
+        activeData = mtdFurniproData;
+        rpcName = 'replace_mtd_fp';
+        tableName = 'mtd_fp';
+      }
+
+      if (activeData.length === 0) {
+        alert('Belum ada data valid yang akan dikirim!');
+        return;
+      }
+
+      const statusMsg = document.getElementById('statusMsg');
+      const btnKirim = document.getElementById('btnKirim');
+
+      btnKirim.disabled = true;
+      btnKirim.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
+
+      const { error } = await supabaseClient.rpc(rpcName, {
+        new_data: activeData
+      });
+
+      btnKirim.disabled = false;
+      btnKirim.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="totalBaris" class="bg-blue-700 px-1.5 py-0.5 rounded text-[11px]">${activeData.length}</span> Baris ke Database`;
+      lucide.createIcons();
+
+      if (error) {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-700 border border-red-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4 text-red-600 shrink-0"></i><span></span>';
+        statusMsg.querySelector('span').textContent = 'Gagal memproses data: ' + error.message;
+        statusMsg.classList.remove('hidden');
+      } else {
+        statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
+        statusMsg.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i><span></span>';
+        statusMsg.querySelector('span').textContent = `Sukses! Data berhasil diperbarui ke tabel ${tableName}!`;
+        statusMsg.classList.remove('hidden');
+      }
+      lucide.createIcons();
     }
   </script>
 </body>
