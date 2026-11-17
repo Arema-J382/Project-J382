@@ -190,6 +190,11 @@
     .mt-live { font-variant-numeric: tabular-nums; }
     .mt-skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: mtSheen 1.4s linear infinite; }
     @media (prefers-reduced-motion: reduce) { .mt-bell.is-idle svg, .mt-bell.is-idle::after { animation: none !important; } }
+
+    .mt-foto { transition: transform .2s ease, box-shadow .2s ease; cursor: zoom-in; }
+    .mt-foto:hover { transform: scale(1.12); box-shadow: 0 8px 18px -8px rgba(15,23,42,.5); }
+    .mt-head { background: linear-gradient(90deg, #0f172a, #1e293b); }
+    .mt-rt-dot { display: inline-block; width: 7px; height: 7px; border-radius: 999px; }
   </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
@@ -930,6 +935,7 @@
                 <p class="text-xs text-gray-500 mt-1">Pantau koneksi internet, baterai, dan peminjam tablet hari ini, lalu bunyikan alarm tablet yang dipilih.</p>
               </div>
               <div class="flex items-center gap-2.5">
+                <span id="mtRealtimeBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border bg-amber-50 text-amber-700 border-amber-200"><span class="mt-rt-dot bg-amber-500"></span>Menyambungkan...</span>
                 <span id="mtLastUpdate" class="text-[11px] text-gray-400 font-medium"></span>
                 <button id="mtBtnRefresh" onclick="loadMonitoringTablet(true)" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-sky-600 hover:text-white text-gray-700 transition shadow-xs">
                   <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
@@ -2974,8 +2980,11 @@
   <script>
     let monitoringTabletList = [];
     let monitoringLoading = false;
+    let monitoringPending = false;
     let monitoringDebounce = null;
     let mtLastSig = '';
+    let mtLastLoad = 0;
+    const mtRealtimeOk = { kon: false, sts: false };
     const mtTerpilih = new Set();      // kode_sts tablet yang dipilih
     const mtBellState = {};            // kode_sts -> 'sending' | 'sent'
 
@@ -2983,6 +2992,7 @@
     const mtAdaIsi = v => v !== null && v !== undefined && String(v).trim() !== '';
     const mtKodeTablet = t => (t && mtAdaIsi(t.kode_sts)) ? String(t.kode_sts).trim() : '';
     const mtCariByKode = kode => monitoringTabletList.find(t => mtKodeTablet(t) === kode);
+    const mtUrlAman = u => mtAdaIsi(u) && /^(https?:\/\/|data:image\/)/i.test(String(u).trim());
 
     // Tanggal hari ini (zona WIB) format YYYY-MM-DD, cocok dengan kolom "tgl" bertipe date
     function mtTanggalHariIni() {
@@ -2999,6 +3009,16 @@
       return parts.join(' ');
     }
 
+    function mtFormatWaktu(ts) {
+      if (!mtAdaIsi(ts)) return null;
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return null;
+      return {
+        jam: d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+        tgl: d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short' })
+      };
+    }
+
     // Durasi pinjam: sudah kembali = waktu_kembali - waktu_pinjam, masih dipinjam = berjalan (live) sampai sekarang
     function mtDurasiInfo(p) {
       if (!mtAdaIsi(p.waktu_pinjam)) return null;
@@ -3013,27 +3033,43 @@
       return { teks: mtFormatDetik((Date.now() - mulai) / 1000), live: true, start: p.waktu_pinjam };
     }
 
+    function mtUpdateRealtimeBadge() {
+      const el = document.getElementById('mtRealtimeBadge');
+      if (!el) return;
+      const ok = mtRealtimeOk.kon && mtRealtimeOk.sts;
+      el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ' +
+        (ok ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200');
+      el.innerHTML = '<span class="mt-rt-dot ' + (ok ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500') + '"></span>' +
+        (ok ? 'Realtime aktif' : 'Auto-refresh 5 detik');
+    }
+
     async function loadMonitoringTablet(paksa) {
-      if (monitoringLoading) return;
+      if (monitoringLoading) { monitoringPending = true; return; }
       monitoringLoading = true;
 
       const list = document.getElementById('mtList');
       const btn = document.getElementById('mtBtnRefresh');
       if (btn) { const svg = btn.querySelector('svg'); if (svg) svg.classList.add('animate-spin'); }
       if (list && !list.querySelector('.mt-card')) {
-        list.innerHTML = [1, 2, 3].map(() => '<div class="mt-skeleton h-24 rounded-2xl border border-gray-100"></div>').join('');
+        list.innerHTML = [1, 2, 3].map(() => '<div class="mt-skeleton h-24 rounded-2xl border border-gray-100 mb-3"></div>').join('');
       }
 
       try {
+        // Semua data HARI INI (WIB): tgl hari ini ATAU waktu pinjam / waktu kembali jatuh pada hari ini
         const hari = mtTanggalHariIni();
+        const mulaiHari = new Date(hari + 'T00:00:00+07:00');
+        const awal = mulaiHari.toISOString();
+        const akhir = new Date(mulaiHari.getTime() + 86400000).toISOString();
+
         const [kon, sts] = await Promise.all([
           supabaseClient.from('koneksi_tablet')
             .select('id, nama_tab_sts, kode_sts, status_internet, status_baterai')
             .order('nama_tab_sts', { ascending: true }),
           supabaseClient.from('status_tablet')
-            .select('id, nama_tablet, nama, status, waktu_pinjam, waktu_kembali, tgl')
-            .eq('tgl', hari)
+            .select('id, nama_tablet, nama, status, tgl, waktu_pinjam, waktu_kembali, url, url_kembali')
+            .or('tgl.eq.' + hari + ',and(waktu_pinjam.gte.' + awal + ',waktu_pinjam.lt.' + akhir + '),and(waktu_kembali.gte.' + awal + ',waktu_kembali.lt.' + akhir + ')')
             .order('waktu_pinjam', { ascending: true })
+            .limit(1000)
         ]);
         if (kon.error) throw kon.error;
         if (sts.error) throw sts.error;
@@ -3054,22 +3090,25 @@
         const kodeAda = new Set(monitoringTabletList.map(mtKodeTablet));
         [...mtTerpilih].forEach(k => { if (!kodeAda.has(k)) mtTerpilih.delete(k); });
 
+        mtLastLoad = Date.now();
         const el = document.getElementById('mtLastUpdate');
         if (el) el.textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
         // render ulang hanya jika data berubah (mencegah kedip saat refresh otomatis)
-        const sig = JSON.stringify(monitoringTabletList.map(t => [t.id, t.nama_tab_sts, t.kode_sts, t.status_internet, t.status_baterai, t.peminjam.map(p => [p.id, p.nama, p.status, p.waktu_pinjam, p.waktu_kembali])]));
+        const sig = JSON.stringify(monitoringTabletList.map(t => [t.id, t.nama_tab_sts, t.kode_sts, t.status_internet, t.status_baterai,
+          t.peminjam.map(p => [p.id, p.nama, p.status, p.waktu_pinjam, p.waktu_kembali, p.url, p.url_kembali])]));
         if (paksa === true || sig !== mtLastSig || !document.querySelector('#mtList .mt-card')) {
           mtLastSig = sig;
           renderMonitoringTablet();
         }
       } catch (err) {
         console.error('Gagal memuat Monitoring Tablet:', err);
-        if (list) list.innerHTML = '<div class="text-center py-14 text-red-500 text-xs font-semibold">Gagal memuat data tablet. Periksa koneksi atau RLS policy tabel koneksi_tablet &amp; status_tablet.</div>';
-        showToast('Gagal memuat data Monitoring Tablet.', 'error');
+        if (list && !list.querySelector('.mt-card')) list.innerHTML = '<div class="text-center py-14 text-red-500 text-xs font-semibold">Gagal memuat data tablet. Periksa koneksi atau RLS policy tabel koneksi_tablet &amp; status_tablet.</div>';
+        if (!document.querySelector('#mtList .mt-card')) showToast('Gagal memuat data Monitoring Tablet.', 'error');
       } finally {
         monitoringLoading = false;
         if (btn) { const svg = btn.querySelector('svg'); if (svg) svg.classList.remove('animate-spin'); }
+        if (monitoringPending) { monitoringPending = false; loadMonitoringTablet(); }
       }
     }
 
@@ -3080,12 +3119,6 @@
         '<div class="text-[10px] font-bold tracking-wider uppercase opacity-70 mt-1">' + label + '</div></div></div>';
     }
 
-    // Kotak info perangkat (Internet & Baterai) -> tinggi sama, sejajar
-    function mtDevBox(icon, label, isi) {
-      return '<div class="mt-dev"><div class="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-gray-400 uppercase"><i data-lucide="' + icon + '" class="w-3 h-3"></i>' + label + '</div>' +
-        '<div class="flex items-center">' + (isi || '<span class="text-xs text-gray-300">-</span>') + '</div></div>';
-    }
-
     // Tombol lonceng alarm (konsep sama dengan file SMT: kirim -> loading -> terkirim)
     function mtBellHtml(kode) {
       const state = kode ? mtBellState[kode] : '';
@@ -3093,10 +3126,11 @@
       const icon = state === 'sending' ? 'loader-2' : (state === 'sent' ? 'check' : 'bell');
       const label = state === 'sending' ? 'Mengirim' : (state === 'sent' ? 'Terkirim' : 'Bunyikan');
       const warna = state === 'sent' ? 'text-emerald-600' : (state === 'sending' ? 'text-amber-700' : 'text-gray-400');
-      return '<button type="button" data-kode="' + mtEsc(kode) + '" onclick="mtBunyikan(this.dataset.kode)" ' + (kode ? '' : 'disabled ') +
+      return '<div class="flex flex-col items-center gap-1.5">' +
+        '<button type="button" data-kode="' + mtEsc(kode) + '" onclick="mtBunyikan(this.dataset.kode)" ' + (kode ? '' : 'disabled ') +
         'title="' + (kode ? 'Bunyikan alarm di tablet ini' : 'Kode unik tablet kosong') + '" aria-label="Bunyikan alarm tablet" class="mt-bell ' + cls + '">' +
         '<i data-lucide="' + icon + '"></i></button>' +
-        '<span class="text-[10px] font-bold tracking-wider uppercase ' + warna + '">' + label + '</span>';
+        '<span class="text-[10px] font-bold tracking-wider uppercase ' + warna + '">' + label + '</span></div>';
     }
 
     function mtRefreshBell(kode) {
@@ -3134,6 +3168,52 @@
       mtUpdateToolbar();
     }
 
+    // ===== FOTO: thumbnail + pratinjau layar penuh =====
+    function mtFotoHtml(url) {
+      if (!mtUrlAman(url)) return '';
+      return '<button type="button" data-foto="' + mtEsc(String(url).trim()) + '" onclick="mtBukaFoto(this.dataset.foto)" title="Lihat foto" class="mt-foto w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shrink-0 bg-slate-100">' +
+        '<img src="' + mtEsc(String(url).trim()) + '" alt="Foto" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.parentElement.style.display=\'none\'"></button>';
+    }
+
+    function mtBukaFoto(url) {
+      if (!mtUrlAman(url)) return;
+      const lama = document.getElementById('mtFotoOverlay');
+      if (lama) lama.remove();
+      const ov = document.createElement('div');
+      ov.id = 'mtFotoOverlay';
+      ov.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(15,23,42,.86);display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;animation:fadeIn .2s ease both;';
+      const img = document.createElement('img');
+      img.alt = 'Foto';
+      img.src = url;
+      img.style.cssText = 'max-width:100%;max-height:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:popIn .25s ease both;';
+      ov.appendChild(img);
+      ov.addEventListener('click', () => ov.remove());
+      document.body.appendChild(ov);
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { const ov = document.getElementById('mtFotoOverlay'); if (ov) ov.remove(); } });
+
+    function mtWaktuCell(ts, url) {
+      const w = mtFormatWaktu(ts);
+      const f = mtFotoHtml(url);
+      if (!w && !f) return '';
+      return '<div class="flex items-center gap-2.5">' +
+        (w ? '<div class="leading-tight"><div class="text-xs font-bold text-gray-900 tabular-nums">' + w.jam + '</div><div class="text-[10px] text-gray-400 font-medium">' + mtEsc(w.tgl) + ' WIB</div></div>' : '') +
+        f + '</div>';
+    }
+
+    // Definisi kolom (satu template grid dipakai header & semua kartu => semua kolom sejajar)
+    const MT_KOLOM = {
+      tablet:   { judul: 'Nama Tablet',       w: 'minmax(190px,1.4fr)', min: 190 },
+      internet: { judul: 'Status Internet',   w: 'minmax(135px,1fr)',   min: 135 },
+      baterai:  { judul: 'Status Baterai',    w: 'minmax(125px,.9fr)',  min: 125 },
+      nama:     { judul: 'Peminjam Hari Ini', w: 'minmax(115px,1fr)',   min: 115 },
+      durasi:   { judul: 'Durasi Pinjam',     w: 'minmax(130px,.9fr)',  min: 130 },
+      pinjam:   { judul: 'Waktu Pinjam',      w: 'minmax(155px,1.1fr)', min: 155 },
+      kembali:  { judul: 'Waktu Kembali',     w: 'minmax(155px,1.1fr)', min: 155 },
+      status:   { judul: 'Status',            w: 'minmax(125px,.9fr)',  min: 125 },
+      bell:     { judul: 'Alarm',             w: '80px',                min: 80 }
+    };
+
     function renderMonitoringTablet() {
       const list = document.getElementById('mtList');
       const sum = document.getElementById('mtSummary');
@@ -3157,52 +3237,86 @@
         mtChip('wifi-off', 'Offline', data.length - online, 'bg-red-50 border-red-100 text-red-700') +
         mtChip('user-check', 'Sedang Dipinjam', dipinjam, 'bg-amber-50 border-amber-100 text-amber-700');
 
-      const animasi = !list.querySelector('.mt-card');   // animasi masuk hanya saat pertama tampil
-
-      list.innerHTML = data.map((t, idx) => {
-        const kode = mtKodeTablet(t);
-        const dipilih = !!(kode && mtTerpilih.has(kode));
-
-        // --- Internet ---
-        const net = String(t.status_internet || '').trim();
-        const isOnline = /^online/i.test(net);
-        const netHtml = mtAdaIsi(net)
-          ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ' +
-            (isOnline ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200') + '">' +
-            '<span class="w-1.5 h-1.5 rounded-full ' + (isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-red-500') + '"></span>' + mtEsc(net) + '</span>'
-          : '';
-
-        // --- Baterai ---
-        let battHtml = '';
-        if (mtAdaIsi(t.status_baterai) && isFinite(Number(t.status_baterai))) {
-          const b = Math.max(0, Math.min(100, Number(t.status_baterai)));
-          const warna = b < 20 ? 'bg-red-500' : (b < 50 ? 'bg-amber-500' : 'bg-emerald-500');
-          battHtml = '<div class="flex items-center gap-2 w-full">' +
-            '<div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden"><div class="mt-batt-bar h-full rounded-full ' + warna + '" style="width:' + b + '%"></div></div>' +
-            '<span class="text-xs font-bold text-gray-800">' + b + '%</span></div>';
-        }
-        const deviceHtml = (netHtml || battHtml)
-          ? '<div class="grid grid-cols-2 gap-2.5 items-stretch">' +
-              mtDevBox('wifi', 'Status Internet', netHtml) + mtDevBox('battery-medium', 'Status Baterai', battHtml) + '</div>'
-          : '';
-
-        // --- Peminjam hari ini + durasi di samping nama (kolom kosong dilewati) ---
-        const rows = t.peminjam.map(p => ({
+      // Siapkan baris peminjam tiap tablet
+      const info = data.map(t => ({
+        t,
+        kode: mtKodeTablet(t),
+        rows: t.peminjam.map(p => ({
           nama: mtAdaIsi(p.nama) ? String(p.nama).trim() : '',
           status: mtAdaIsi(p.status) ? String(p.status).trim() : '',
-          dur: mtDurasiInfo(p)
-        }));
-        const adaNama = rows.some(r => r.nama), adaStatus = rows.some(r => r.status), adaDurasi = rows.some(r => r.dur);
-        const kolom = [];
-        if (adaNama) kolom.push('nama');
-        if (adaDurasi) kolom.push('durasi');
-        if (adaStatus) kolom.push('status');
+          dur: mtDurasiInfo(p),
+          wPinjam: p.waktu_pinjam, fPinjam: p.url,
+          wKembali: p.waktu_kembali, fKembali: p.url_kembali
+        }))
+      }));
+      const semuaRows = info.flatMap(i => i.rows);
 
-        let peminjamHtml = '';
-        if (rows.length && kolom.length) {
-          const judul = { nama: 'Peminjam Hari Ini', durasi: 'Durasi Pinjam', status: 'Status' };
-          const lebar = { nama: 'minmax(6rem,11rem)', durasi: 'auto', status: 'minmax(0,1fr)' };
-          const grid = 'display:grid;grid-template-columns:' + kolom.map(k => lebar[k]).join(' ') + ';gap:.9rem;align-items:center;';
+      // Kolom yang seluruhnya kosong dilewati
+      const ada = {
+        internet: data.some(t => mtAdaIsi(t.status_internet)),
+        baterai: data.some(t => mtAdaIsi(t.status_baterai) && isFinite(Number(t.status_baterai))),
+        nama: semuaRows.some(r => r.nama),
+        durasi: semuaRows.some(r => r.dur),
+        pinjam: semuaRows.some(r => mtFormatWaktu(r.wPinjam) || mtUrlAman(r.fPinjam)),
+        kembali: semuaRows.some(r => mtFormatWaktu(r.wKembali) || mtUrlAman(r.fKembali)),
+        status: semuaRows.some(r => r.status)
+      };
+      const urutan = ['tablet', 'internet', 'baterai', 'nama', 'durasi', 'pinjam', 'kembali', 'status', 'bell']
+        .filter(k => k === 'tablet' || k === 'bell' || ada[k]);
+      const kolomNo = {};
+      urutan.forEach((k, i) => { kolomNo[k] = i + 1; });
+      const template = urutan.map(k => MT_KOLOM[k].w).join(' ');
+      const minLebar = urutan.reduce((a, k) => a + MT_KOLOM[k].min, 0) + 34;
+
+      const animasi = !list.querySelector('.mt-card');   // animasi masuk hanya saat pertama tampil
+
+      const header =
+        '<div class="mt-head rounded-xl text-white px-4 mb-3 border border-transparent" style="display:grid;grid-template-columns:' + template + ';">' +
+          urutan.map(k => '<div class="px-2 py-3 text-[10px] font-bold tracking-wider uppercase text-slate-200' + (k === 'bell' ? ' text-center' : '') + '">' + MT_KOLOM[k].judul + '</div>').join('') +
+        '</div>';
+
+      const kartu = info.map((it, idx) => {
+        const t = it.t, kode = it.kode;
+        const dipilih = !!(kode && mtTerpilih.has(kode));
+        const n = Math.max(1, it.rows.length);
+        const span = 'grid-row:1 / span ' + n + ';';
+        const sel = (k, ri) => 'grid-column:' + kolomNo[k] + ';grid-row:' + ri + ';';
+        const selSpan = k => 'grid-column:' + kolomNo[k] + ';' + span;
+        let html = '';
+
+        // --- Nama tablet + checkbox ---
+        html += '<div style="' + selSpan('tablet') + '" class="px-2 py-2 flex items-center gap-2.5 min-w-0">' +
+          '<input type="checkbox" ' + (kode ? '' : 'disabled ') + (dipilih ? 'checked ' : '') + 'data-kode="' + mtEsc(kode) + '" onchange="mtToggleTerpilih(this.dataset.kode, this.checked)" title="' + (kode ? 'Pilih tablet ini' : 'Kode unik tablet kosong') + '" class="w-4 h-4 accent-sky-600 cursor-pointer shrink-0 disabled:cursor-not-allowed">' +
+          '<div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0"><i data-lucide="tablet" class="w-4.5 h-4.5"></i></div>' +
+          '<div class="text-sm font-bold text-gray-900 leading-snug min-w-0">' + mtEsc(t.nama_tab_sts) + '</div></div>';
+
+        // --- Internet ---
+        if (ada.internet) {
+          const net = String(t.status_internet || '').trim();
+          const isOnline = /^online/i.test(net);
+          html += '<div style="' + selSpan('internet') + '" class="px-2 py-2 flex items-center">' + (mtAdaIsi(net)
+            ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ' + (isOnline ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200') + '">' +
+              '<span class="w-1.5 h-1.5 rounded-full shrink-0 ' + (isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-red-500') + '"></span>' + mtEsc(net) + '</span>'
+            : '') + '</div>';
+        }
+
+        // --- Baterai ---
+        if (ada.baterai) {
+          let batt = '';
+          if (mtAdaIsi(t.status_baterai) && isFinite(Number(t.status_baterai))) {
+            const b = Math.max(0, Math.min(100, Number(t.status_baterai)));
+            const warna = b < 20 ? 'bg-red-500' : (b < 50 ? 'bg-amber-500' : 'bg-emerald-500');
+            batt = '<div class="flex items-center gap-2 w-full">' +
+              '<div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden"><div class="mt-batt-bar h-full rounded-full ' + warna + '" style="width:' + b + '%"></div></div>' +
+              '<span class="text-xs font-bold text-gray-800 w-9 text-right">' + b + '%</span></div>';
+          }
+          html += '<div style="' + selSpan('baterai') + '" class="px-2 py-2 flex items-center">' + batt + '</div>';
+        }
+
+        // --- Baris peminjam: nama | durasi | waktu pinjam+foto | waktu kembali+foto | status ---
+        it.rows.forEach((r, i) => {
+          const ri = i + 1;
+          const garis = i > 0 ? ' border-t border-slate-100' : '';
           const badgeStatus = s => {
             const cls = /^dipinjam/i.test(s) ? 'bg-amber-50 text-amber-700 border-amber-200'
               : (/sudah|kembali/i.test(s) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200');
@@ -3213,39 +3327,21 @@
             if (d.live) return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold whitespace-nowrap"><span class="mt-live-dot"></span><span class="mt-live" data-start="' + mtEsc(d.start) + '">' + mtEsc(d.teks) + '</span></span>';
             return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-100 text-[11px] font-bold whitespace-nowrap"><i data-lucide="timer" class="w-3 h-3"></i>' + mtEsc(d.teks) + '</span>';
           };
-          peminjamHtml =
-            '<div class="flex-1 min-w-0 rounded-xl bg-slate-50/80 border border-slate-100 px-3.5 py-2.5">' +
-              '<div class="pb-1.5 mb-1 border-b border-slate-200 text-[10px] font-bold tracking-wider text-gray-400 uppercase" style="' + grid + '">' +
-                kolom.map(k => '<div' + (k === 'status' ? ' class="text-right"' : '') + '>' + judul[k] + '</div>').join('') + '</div>' +
-              rows.map(r =>
-                '<div class="py-1.5 text-xs border-b border-slate-100 last:border-0" style="' + grid + '">' +
-                  kolom.map(k => {
-                    if (k === 'nama') return '<div class="font-semibold text-gray-900 truncate">' + (r.nama ? mtEsc(r.nama) : '') + '</div>';
-                    if (k === 'durasi') return '<div>' + chipDurasi(r.dur) + '</div>';
-                    return '<div class="text-right">' + (r.status ? badgeStatus(r.status) : '') + '</div>';
-                  }).join('') +
-                '</div>'
-              ).join('') +
-            '</div>';
-        } else {
-          peminjamHtml = '<div class="flex-1 hidden lg:block"></div>';
-        }
+          if (ada.nama) html += '<div style="' + sel('nama', ri) + '" class="px-2 py-2 flex items-center text-xs font-semibold text-gray-900 min-w-0' + garis + '"><span class="truncate">' + mtEsc(r.nama) + '</span></div>';
+          if (ada.durasi) html += '<div style="' + sel('durasi', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + chipDurasi(r.dur) + '</div>';
+          if (ada.pinjam) html += '<div style="' + sel('pinjam', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + mtWaktuCell(r.wPinjam, r.fPinjam) + '</div>';
+          if (ada.kembali) html += '<div style="' + sel('kembali', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + mtWaktuCell(r.wKembali, r.fKembali) + '</div>';
+          if (ada.status) html += '<div style="' + sel('status', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + (r.status ? badgeStatus(r.status) : '') + '</div>';
+        });
 
-        return '<div class="mt-card ' + (animasi ? 'mt-enter ' : '') + (dipilih ? 'mt-selected ' : '') + 'bg-white rounded-2xl border border-gray-200 shadow-sm p-4" data-kode="' + mtEsc(kode) + '"' + (animasi ? ' style="animation-delay:' + (idx * 60) + 'ms"' : '') + '>' +
-          '<div class="flex flex-col lg:flex-row lg:items-center gap-4">' +
-            '<div class="lg:w-[23rem] shrink-0">' +
-              '<div class="flex items-center gap-2.5 mb-3">' +
-                '<input type="checkbox" ' + (kode ? '' : 'disabled ') + (dipilih ? 'checked ' : '') + 'data-kode="' + mtEsc(kode) + '" onchange="mtToggleTerpilih(this.dataset.kode, this.checked)" title="' + (kode ? 'Pilih tablet ini' : 'Kode unik tablet kosong') + '" class="w-4 h-4 accent-sky-600 cursor-pointer shrink-0 disabled:cursor-not-allowed">' +
-                '<div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0"><i data-lucide="tablet" class="w-4.5 h-4.5"></i></div>' +
-                '<div class="min-w-0"><div class="text-[10px] font-bold tracking-wider text-gray-400 uppercase">Nama Tablet</div>' +
-                '<div class="text-sm font-bold text-gray-900 leading-snug">' + mtEsc(t.nama_tab_sts) + '</div></div>' +
-              '</div>' +
-              deviceHtml +
-            '</div>' +
-            peminjamHtml +
-            '<div data-bell-wrap="' + mtEsc(kode) + '" class="flex lg:flex-col items-center justify-center gap-2 shrink-0 lg:w-24">' + mtBellHtml(kode) + '</div>' +
-          '</div></div>';
+        // --- Lonceng alarm ---
+        html += '<div data-bell-wrap="' + mtEsc(kode) + '" style="' + selSpan('bell') + '" class="px-2 py-2 flex items-center justify-center">' + mtBellHtml(kode) + '</div>';
+
+        return '<div class="mt-card ' + (animasi ? 'mt-enter ' : '') + (dipilih ? 'mt-selected ' : '') + 'bg-white rounded-2xl border border-gray-200 shadow-sm px-4 py-2 mb-3" data-kode="' + mtEsc(kode) + '"' +
+          ' style="display:grid;grid-template-columns:' + template + ';align-items:stretch;' + (animasi ? 'animation-delay:' + (idx * 60) + 'ms;' : '') + '">' + html + '</div>';
       }).join('');
+
+      list.innerHTML = '<div class="overflow-x-auto custom-scrollbar pb-2"><div style="min-width:' + minLebar + 'px">' + header + kartu + '</div></div>';
 
       mtUpdateToolbar();
       lucide.createIcons();
@@ -3321,14 +3417,23 @@
       const trigger = () => {
         if (currentView !== 'monitoringTablet') return;
         clearTimeout(monitoringDebounce);
-        monitoringDebounce = setTimeout(loadMonitoringTablet, 400);
+        monitoringDebounce = setTimeout(loadMonitoringTablet, 250);
       };
       supabaseClient.channel('public:koneksi_tablet_monitor')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'koneksi_tablet' }, trigger).subscribe();
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'koneksi_tablet' }, trigger)
+        .subscribe(status => { mtRealtimeOk.kon = (status === 'SUBSCRIBED'); mtUpdateRealtimeBadge(); });
       supabaseClient.channel('public:status_tablet_monitor')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_tablet' }, trigger).subscribe();
-      // Cadangan jika Realtime belum diaktifkan pada tabel
-      setInterval(() => { if (currentView === 'monitoringTablet' && !document.hidden) loadMonitoringTablet(); }, 15000);
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_tablet' }, trigger)
+        .subscribe(status => { mtRealtimeOk.sts = (status === 'SUBSCRIBED'); mtUpdateRealtimeBadge(); });
+
+      // Cadangan: jika Realtime belum aktif, data dimuat ulang tiap 5 detik (jika aktif, pengaman tiap 30 detik)
+      setInterval(() => {
+        if (currentView !== 'monitoringTablet' || document.hidden) return;
+        const batas = (mtRealtimeOk.kon && mtRealtimeOk.sts) ? 30000 : 5000;
+        if (Date.now() - mtLastLoad >= batas) loadMonitoringTablet();
+      }, 2000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && currentView === 'monitoringTablet') loadMonitoringTablet(); });
+
       // Durasi pinjam berjalan (detik demi detik)
       setInterval(() => {
         if (currentView !== 'monitoringTablet') return;
