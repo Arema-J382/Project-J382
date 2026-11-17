@@ -155,6 +155,21 @@
     .xl-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; border-radius: 999px; background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 700; }
     .xl-pill { display: inline-block; padding: 3px 12px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 11px; font-weight: 700; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > MONITORING TABLET ===== -->
+  <style>
+    @keyframes mtBellShake { 0%,100% { transform: rotate(0); } 15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); } 45% { transform: rotate(10deg); } 60% { transform: rotate(-8deg); } 75% { transform: rotate(4deg); } }
+    @keyframes mtRing { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,.55); } 100% { box-shadow: 0 0 0 16px rgba(239,68,68,0); } }
+    @keyframes mtSheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+    .mt-card { animation: fadeUp .45s cubic-bezier(.22,.8,.3,1) both; transition: box-shadow .25s ease, border-color .25s ease, transform .25s ease; }
+    .mt-card:hover { box-shadow: 0 10px 28px -12px rgba(15,23,42,.25); border-color: #bfdbfe; transform: translateY(-2px); }
+    .mt-bell { transition: transform .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease; }
+    .mt-bell:hover { transform: scale(1.06); }
+    .mt-bell:active { transform: scale(.94); }
+    .mt-bell.ringing { animation: mtRing 1.2s ease-out infinite; }
+    .mt-bell.ringing svg { animation: mtBellShake .9s ease-in-out infinite; transform-origin: top center; }
+    .mt-skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: mtSheen 1.4s linear infinite; }
+    .mt-batt-bar { transition: width .6s cubic-bezier(.22,.8,.3,1); }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
@@ -210,10 +225,10 @@
               <i data-lucide="tv" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
               <span class="text-sm tracking-wide">TV DASHBOARD</span>
             </div>
-            <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 text-slate-400 transition-transform duration-200 rotate-180"></i>
+            <i data-lucide="chevron-down" id="arrowTv" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
           </button>
           
-          <div id="submenuTv" class="pl-3 mt-1.5 space-y-1.5 border-l border-slate-800 ml-4">
+          <div id="submenuTv" class="hidden pl-3 mt-1.5 space-y-1.5 border-l border-slate-800 ml-4">
             <a href="#" onclick="switchView('target')" id="menuTarget" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="target" class="w-4 h-4 text-emerald-400"></i>
               <span>INPUT TARGET TODAY</span>
@@ -286,6 +301,24 @@
               </div>
             </div>
 
+          </div>
+        </div>
+
+        <!-- ===== MENU UTAMA: PORTAL KARYAWAN ===== -->
+        <div>
+          <button onclick="toggleMenu('submenuPortal')" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/80 transition text-left font-semibold text-slate-100 group">
+            <div class="flex items-center gap-3">
+              <i data-lucide="users-round" class="w-5 h-5 text-sky-400 group-hover:scale-110 transition-transform"></i>
+              <span class="text-sm tracking-wide">PORTAL KARYAWAN</span>
+            </div>
+            <i data-lucide="chevron-down" id="arrowPortal" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+          </button>
+
+          <div id="submenuPortal" class="hidden pl-3 mt-1.5 space-y-1.5 border-l border-slate-800 ml-4">
+            <a href="#" onclick="switchView('monitoringTablet')" id="menuMonitoringTablet" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="tablet-smartphone" class="w-4 h-4 text-sky-400"></i>
+              <span>MONITORING TABLET</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -865,6 +898,28 @@
           </div>
 
           <!-- TABLE EXCEL SECTION -->
+          <!-- MONITORING TABLET SECTION -->
+          <div id="viewMonitoringTabletSection" class="hidden flex-1 flex flex-col">
+            <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                  <i data-lucide="tablet-smartphone" class="w-5 h-5 text-sky-600"></i>
+                  Monitoring Tablet
+                </h2>
+                <p class="text-xs text-gray-500 mt-1">Pantau koneksi internet, baterai, dan peminjam tablet hari ini secara real-time.</p>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <span id="mtLastUpdate" class="text-[11px] text-gray-400 font-medium"></span>
+                <button id="mtBtnRefresh" onclick="loadMonitoringTablet()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-sky-600 hover:text-white text-gray-700 transition shadow-xs">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+                </button>
+              </div>
+            </div>
+
+            <div id="mtSummary" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5"></div>
+            <div id="mtList" class="space-y-3"></div>
+          </div>
+
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div class="flex items-center gap-3">
@@ -1116,6 +1171,8 @@
       const menuFurnipro = document.getElementById('menuFurnipro');
       const menuMtdSales = document.getElementById('menuMtdSales');
       const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); 
+      const menuMonitoringTablet = document.getElementById('menuMonitoringTablet');
+      const viewMonitoringTabletSection = document.getElementById('viewMonitoringTabletSection');
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
       const sectionTitle = document.getElementById('sectionTitle');
@@ -1148,6 +1205,8 @@
       if (menuFurnipro) menuFurnipro.className = inactiveClass;
       if (menuMtdSales) menuMtdSales.className = inactiveClass;
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
+      if (menuMonitoringTablet) menuMonitoringTablet.className = inactiveClass;
+      if (viewMonitoringTabletSection) viewMonitoringTabletSection.classList.add('hidden');
 
       if (viewPengaturanTvSection) viewPengaturanTvSection.classList.add('hidden');
       if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.add('hidden');
@@ -1157,7 +1216,13 @@
       if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
       viewExcelSection.classList.add('hidden');
 
-      if (view === 'pengaturanTv') {
+      if (view === 'monitoringTablet') {
+        if (menuMonitoringTablet) menuMonitoringTablet.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="tablet-smartphone" class="w-3.5 h-3.5 text-sky-600"></i> Monitoring Tablet';
+        if (viewMonitoringTabletSection) viewMonitoringTabletSection.classList.remove('hidden');
+        loadMonitoringTablet();
+      } else if (view === 'pengaturanTv') {
         if (menuPengaturanTv) menuPengaturanTv.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="sliders" class="w-3.5 h-3.5 text-cyan-600"></i> Pengaturan TV Sync';
@@ -2342,6 +2407,9 @@
       if (id === 'submenuTv') {
         const arrow = document.getElementById('arrowTv');
         if (arrow) arrow.classList.toggle('rotate-180');
+      } else if (id === 'submenuPortal') {
+        const arrow = document.getElementById('arrowPortal');
+        if (arrow) arrow.classList.toggle('rotate-180');
       } else if (id === 'submenuPengaturan') {
         const arrow = document.getElementById('arrowPengaturan');
         if (arrow) arrow.classList.toggle('rotate-180');
@@ -2865,6 +2933,277 @@
         showToast(`Sukses! Data berhasil diperbarui ke tabel ${tableName}!`, 'success');
       }
     }
+  </script>
+  <!-- ===== SCRIPT TAMBAHAN: PORTAL KARYAWAN > MONITORING TABLET ===== -->
+  <script>
+    let monitoringTabletList = [];
+    let monitoringBellAktif = {};      // kode_sts -> timeout auto-reset tampilan tombol
+    let monitoringLoading = false;
+    let monitoringDebounce = null;
+    let notifTabletChannel = null;
+    let notifTabletSiap = false;
+
+    const mtEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const mtAdaIsi = v => v !== null && v !== undefined && String(v).trim() !== '';
+
+    // Tanggal hari ini (zona WIB) format YYYY-MM-DD, cocok dengan kolom "tgl" bertipe date
+    function mtTanggalHariIni() {
+      return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
+    }
+
+    // Durasi berdasarkan waktu_pinjam & waktu_kembali (kosong jika salah satunya kosong)
+    function mtHitungDurasi(pinjam, kembali) {
+      if (!mtAdaIsi(pinjam) || !mtAdaIsi(kembali)) return '';
+      const ms = new Date(kembali) - new Date(pinjam);
+      if (isNaN(ms) || ms < 0) return '';
+      const total = Math.round(ms / 1000);
+      const j = Math.floor(total / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const d = total % 60;
+      const parts = [];
+      if (j) parts.push(j + ' jam');
+      if (m) parts.push(m + ' mnt');
+      if (d || !parts.length) parts.push(d + ' dtk');
+      return parts.join(' ');
+    }
+
+    async function loadMonitoringTablet() {
+      if (monitoringLoading) return;
+      monitoringLoading = true;
+
+      const list = document.getElementById('mtList');
+      const btn = document.getElementById('mtBtnRefresh');
+      if (btn) { const svg = btn.querySelector('svg'); if (svg) svg.classList.add('animate-spin'); }
+      if (list && monitoringTabletList.length === 0) {
+        list.innerHTML = [1, 2, 3].map(() => '<div class="mt-skeleton h-24 rounded-2xl border border-gray-100"></div>').join('');
+      }
+
+      try {
+        const hari = mtTanggalHariIni();
+        const [kon, sts] = await Promise.all([
+          supabaseClient.from('koneksi_tablet')
+            .select('id, nama_tab_sts, kode_sts, status_internet, status_baterai')
+            .order('nama_tab_sts', { ascending: true }),
+          supabaseClient.from('status_tablet')
+            .select('id, nama_tablet, nama, status, waktu_pinjam, waktu_kembali, tgl')
+            .eq('tgl', hari)
+            .order('waktu_pinjam', { ascending: true })
+        ]);
+        if (kon.error) throw kon.error;
+        if (sts.error) throw sts.error;
+
+        const peminjamPerTablet = {};
+        (sts.data || []).forEach(p => {
+          const key = String(p.nama_tablet || '').trim().toUpperCase();
+          if (!key) return;
+          (peminjamPerTablet[key] = peminjamPerTablet[key] || []).push(p);
+        });
+
+        monitoringTabletList = (kon.data || []).map(t => ({
+          ...t,
+          peminjam: peminjamPerTablet[String(t.nama_tab_sts || '').trim().toUpperCase()] || []
+        }));
+
+        const el = document.getElementById('mtLastUpdate');
+        if (el) el.textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        renderMonitoringTablet();
+      } catch (err) {
+        console.error('Gagal memuat Monitoring Tablet:', err);
+        if (list) list.innerHTML = '<div class="text-center py-14 text-red-500 text-xs font-semibold">Gagal memuat data tablet. Periksa koneksi atau RLS policy tabel koneksi_tablet &amp; status_tablet.</div>';
+        showToast('Gagal memuat data Monitoring Tablet.', 'error');
+      } finally {
+        monitoringLoading = false;
+        if (btn) { const svg = btn.querySelector('svg'); if (svg) svg.classList.remove('animate-spin'); }
+      }
+    }
+
+    function mtChip(icon, label, nilai, tone) {
+      return '<div class="rounded-2xl border p-3.5 flex items-center gap-3 ' + tone + '">' +
+        '<div class="w-9 h-9 rounded-xl bg-white/70 flex items-center justify-center shrink-0"><i data-lucide="' + icon + '" class="w-4.5 h-4.5"></i></div>' +
+        '<div><div class="text-lg font-extrabold leading-none">' + nilai + '</div>' +
+        '<div class="text-[10px] font-bold tracking-wider uppercase opacity-70 mt-1">' + label + '</div></div></div>';
+    }
+
+    function mtBlok(label, isi) {
+      if (!isi) return '';
+      return '<div><div class="text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1.5">' + label + '</div>' + isi + '</div>';
+    }
+
+    function renderMonitoringTablet() {
+      const list = document.getElementById('mtList');
+      const sum = document.getElementById('mtSummary');
+      if (!list || !sum) return;
+      const data = monitoringTabletList;
+
+      if (!data.length) {
+        sum.innerHTML = '';
+        list.innerHTML = '<div class="text-center py-16 text-gray-400 italic text-xs">Belum ada data tablet pada tabel koneksi_tablet.</div>';
+        return;
+      }
+
+      const online = data.filter(t => /^online/i.test(String(t.status_internet || '').trim())).length;
+      const dipinjam = data.filter(t => t.peminjam.some(p => /^dipinjam/i.test(String(p.status || '').trim()))).length;
+      sum.innerHTML =
+        mtChip('tablet-smartphone', 'Total Tablet', data.length, 'bg-sky-50 border-sky-100 text-sky-700') +
+        mtChip('wifi', 'Online', online, 'bg-emerald-50 border-emerald-100 text-emerald-700') +
+        mtChip('wifi-off', 'Offline', data.length - online, 'bg-red-50 border-red-100 text-red-700') +
+        mtChip('user-check', 'Sedang Dipinjam', dipinjam, 'bg-amber-50 border-amber-100 text-amber-700');
+
+      list.innerHTML = data.map((t, idx) => {
+        // --- Internet ---
+        const net = String(t.status_internet || '').trim();
+        const isOnline = /^online/i.test(net);
+        const netHtml = mtAdaIsi(net)
+          ? '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ' +
+            (isOnline ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200') + '">' +
+            '<span class="w-1.5 h-1.5 rounded-full ' + (isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-red-500') + '"></span>' + mtEsc(net) + '</span>'
+          : '';
+
+        // --- Baterai ---
+        let battHtml = '';
+        if (mtAdaIsi(t.status_baterai) && isFinite(Number(t.status_baterai))) {
+          const b = Math.max(0, Math.min(100, Number(t.status_baterai)));
+          const warna = b < 20 ? 'bg-red-500' : (b < 50 ? 'bg-amber-500' : 'bg-emerald-500');
+          battHtml = '<div class="flex items-center gap-2 min-w-[130px]">' +
+            '<div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden"><div class="mt-batt-bar h-full rounded-full ' + warna + '" style="width:' + b + '%"></div></div>' +
+            '<span class="text-xs font-bold text-gray-800 w-10 text-right">' + b + '%</span></div>';
+        }
+
+        // --- Peminjam hari ini (kolom kosong dilewati) ---
+        const rows = t.peminjam.map(p => ({
+          nama: mtAdaIsi(p.nama) ? String(p.nama).trim() : '',
+          status: mtAdaIsi(p.status) ? String(p.status).trim() : '',
+          durasi: mtHitungDurasi(p.waktu_pinjam, p.waktu_kembali)
+        }));
+        const adaNama = rows.some(r => r.nama), adaStatus = rows.some(r => r.status), adaDurasi = rows.some(r => r.durasi);
+        const kolom = [];
+        if (adaNama) kolom.push('nama');
+        if (adaStatus) kolom.push('status');
+        if (adaDurasi) kolom.push('durasi');
+
+        let peminjamHtml = '';
+        if (rows.length && kolom.length) {
+          const judul = { nama: 'Peminjam Hari Ini', status: 'Status', durasi: 'Durasi' };
+          const grid = 'display:grid;grid-template-columns:' + kolom.map(k => k === 'nama' ? 'minmax(0,1fr)' : 'auto').join(' ') + ';gap:.75rem;align-items:center;';
+          const badgeStatus = s => {
+            const cls = /^dipinjam/i.test(s) ? 'bg-amber-50 text-amber-700 border-amber-200'
+              : (/sudah|kembali/i.test(s) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200');
+            return '<span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap ' + cls + '">' + mtEsc(s) + '</span>';
+          };
+          peminjamHtml =
+            '<div class="flex-1 min-w-0 rounded-xl bg-slate-50/80 border border-slate-100 px-3.5 py-2.5">' +
+              '<div class="pb-1.5 mb-1 border-b border-slate-200 text-[10px] font-bold tracking-wider text-gray-400 uppercase" style="' + grid + '">' +
+                kolom.map(k => '<div>' + judul[k] + '</div>').join('') + '</div>' +
+              rows.map(r =>
+                '<div class="py-1.5 text-xs border-b border-slate-100 last:border-0" style="' + grid + '">' +
+                  kolom.map(k => {
+                    if (k === 'nama') return '<div class="font-semibold text-gray-900 truncate">' + (r.nama ? mtEsc(r.nama) : '') + '</div>';
+                    if (k === 'status') return '<div>' + (r.status ? badgeStatus(r.status) : '') + '</div>';
+                    return '<div class="font-medium text-gray-700 whitespace-nowrap">' + (r.durasi ? '<span class="inline-flex items-center gap-1"><i data-lucide="timer" class="w-3 h-3 text-sky-500"></i>' + mtEsc(r.durasi) + '</span>' : '') + '</div>';
+                  }).join('') +
+                '</div>'
+              ).join('') +
+            '</div>';
+        } else {
+          peminjamHtml = '<div class="flex-1 hidden lg:block"></div>';
+        }
+
+        // --- Tombol lonceng ---
+        const kode = mtAdaIsi(t.kode_sts) ? String(t.kode_sts) : '';
+        const ringing = !!(kode && monitoringBellAktif[kode]);
+        const bellBtn =
+          '<button onclick="toggleBellTablet(' + idx + ')" ' + (kode ? '' : 'disabled ') +
+          'title="' + (ringing ? 'Hentikan bunyi notifikasi' : 'Kirim & bunyikan notifikasi ke tablet') + '" ' +
+          'class="mt-bell ' + (ringing ? 'ringing bg-red-500 text-white' : 'bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-500 hover:text-white') +
+          ' w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">' +
+          '<i data-lucide="' + (ringing ? 'bell-ring' : 'bell') + '" class="w-5 h-5"></i></button>' +
+          '<span class="text-[10px] font-bold tracking-wider uppercase ' + (ringing ? 'text-red-500' : 'text-gray-400') + '">' + (ringing ? 'Hentikan' : 'Bunyikan') + '</span>';
+
+        return '<div class="mt-card bg-white rounded-2xl border border-gray-200 shadow-sm p-4" style="animation-delay:' + (idx * 60) + 'ms">' +
+          '<div class="flex flex-col lg:flex-row lg:items-center gap-4">' +
+            '<div class="lg:w-80 shrink-0">' +
+              '<div class="text-[10px] font-bold tracking-wider text-gray-400 uppercase mb-1.5">Nama Tablet</div>' +
+              '<div class="flex items-center gap-2.5 mb-3">' +
+                '<div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0"><i data-lucide="tablet" class="w-4.5 h-4.5"></i></div>' +
+                '<span class="text-sm font-bold text-gray-900 leading-snug">' + mtEsc(t.nama_tab_sts) + '</span>' +
+              '</div>' +
+              '<div class="flex flex-wrap items-end gap-x-6 gap-y-3">' + mtBlok('Status Internet', netHtml) + mtBlok('Status Baterai', battHtml) + '</div>' +
+            '</div>' +
+            peminjamHtml +
+            '<div class="flex lg:flex-col items-center justify-center gap-2 shrink-0 lg:w-24">' + bellBtn + '</div>' +
+          '</div></div>';
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // ===== NOTIFIKASI KE TABLET (Supabase Realtime Broadcast) =====
+    function siapkanKanalNotifTablet() {
+      if (!notifTabletChannel) {
+        notifTabletChannel = supabaseClient.channel('notif_tablet', { config: { broadcast: { self: false, ack: true } } });
+        notifTabletChannel.subscribe(status => { notifTabletSiap = (status === 'SUBSCRIBED'); });
+      }
+      return notifTabletChannel;
+    }
+
+    async function kirimNotifTablet(t, aksi) {
+      try {
+        const ch = siapkanKanalNotifTablet();
+        for (let i = 0; i < 30 && !notifTabletSiap; i++) await new Promise(r => setTimeout(r, 100));
+        const res = await ch.send({
+          type: 'broadcast',
+          event: 'notifikasi_tablet',
+          payload: {
+            aksi: aksi,                              // 'bunyi' atau 'stop'
+            kode_sts: t.kode_sts,                    // kode unik tablet
+            nama_tab_sts: t.nama_tab_sts,            // nama tablet
+            pesan: 'Panggilan dari Admin: mohon segera hubungi admin.',
+            waktu: new Date().toISOString()
+          }
+        });
+        return res === 'ok';
+      } catch (e) {
+        console.error('Gagal kirim notifikasi tablet:', e);
+        return false;
+      }
+    }
+
+    async function toggleBellTablet(idx) {
+      const t = monitoringTabletList[idx];
+      if (!t) return;
+      if (!mtAdaIsi(t.kode_sts)) { showToast('Kode unik tablet kosong, notifikasi tidak dapat dikirim.', 'error'); return; }
+
+      const kode = String(t.kode_sts);
+      const sedangBunyi = !!monitoringBellAktif[kode];
+      const ok = await kirimNotifTablet(t, sedangBunyi ? 'stop' : 'bunyi');
+
+      if (!ok) { showToast('Gagal mengirim notifikasi ke ' + t.nama_tab_sts + '. Coba lagi.', 'error'); return; }
+
+      if (sedangBunyi) {
+        clearTimeout(monitoringBellAktif[kode]);
+        delete monitoringBellAktif[kode];
+        showToast('Bunyi notifikasi dihentikan: ' + t.nama_tab_sts, 'warning');
+      } else {
+        monitoringBellAktif[kode] = setTimeout(() => { delete monitoringBellAktif[kode]; if (currentView === 'monitoringTablet') renderMonitoringTablet(); }, 60000);
+        showToast('Sukses! Notifikasi dikirim & dibunyikan ke ' + t.nama_tab_sts, 'success');
+      }
+      renderMonitoringTablet();
+    }
+
+    // ===== REALTIME + AUTO REFRESH (hanya aktif saat menu Monitoring Tablet dibuka) =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const trigger = () => {
+        if (currentView !== 'monitoringTablet') return;
+        clearTimeout(monitoringDebounce);
+        monitoringDebounce = setTimeout(loadMonitoringTablet, 400);
+      };
+      supabaseClient.channel('public:koneksi_tablet_monitor')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'koneksi_tablet' }, trigger).subscribe();
+      supabaseClient.channel('public:status_tablet_monitor')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_tablet' }, trigger).subscribe();
+      // Cadangan jika Realtime belum diaktifkan pada tabel
+      setInterval(() => { if (currentView === 'monitoringTablet' && !document.hidden) loadMonitoringTablet(); }, 15000);
+    });
   </script>
 </body>
 </html>
