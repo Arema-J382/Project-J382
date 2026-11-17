@@ -3255,7 +3255,7 @@
       const ada = {
         internet: data.some(t => mtAdaIsi(t.status_internet)),
         baterai: data.some(t => mtAdaIsi(t.status_baterai) && isFinite(Number(t.status_baterai))),
-        nama: semuaRows.some(r => r.nama),
+        nama: semuaRows.length > 0,
         durasi: semuaRows.some(r => r.dur),
         pinjam: semuaRows.some(r => mtFormatWaktu(r.wPinjam) || mtUrlAman(r.fPinjam)),
         kembali: semuaRows.some(r => mtFormatWaktu(r.wKembali) || mtUrlAman(r.fKembali)),
@@ -3316,7 +3316,10 @@
         // --- Baris peminjam: nama | durasi | waktu pinjam+foto | waktu kembali+foto | status ---
         it.rows.forEach((r, i) => {
           const ri = i + 1;
-          const garis = i > 0 ? ' border-t border-slate-100' : '';
+          const zebra = i % 2 === 0 ? ' bg-slate-50' : ' bg-sky-100/70';
+          const kolomRow = ['nama', 'durasi', 'pinjam', 'kembali', 'status'].filter(k => ada[k]);
+          const sudut = k => (k === kolomRow[0] ? ' rounded-l-xl' : '') + (k === kolomRow[kolomRow.length - 1] ? ' rounded-r-xl' : '');
+          const garis = k => zebra + sudut(k);
           const badgeStatus = s => {
             const cls = /^dipinjam/i.test(s) ? 'bg-amber-50 text-amber-700 border-amber-200'
               : (/sudah|kembali/i.test(s) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200');
@@ -3327,11 +3330,13 @@
             if (d.live) return '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold whitespace-nowrap"><span class="mt-live-dot"></span><span class="mt-live" data-start="' + mtEsc(d.start) + '">' + mtEsc(d.teks) + '</span></span>';
             return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-100 text-[11px] font-bold whitespace-nowrap"><i data-lucide="timer" class="w-3 h-3"></i>' + mtEsc(d.teks) + '</span>';
           };
-          if (ada.nama) html += '<div style="' + sel('nama', ri) + '" class="px-2 py-2 flex items-center text-xs font-semibold text-gray-900 min-w-0' + garis + '"><span class="truncate">' + mtEsc(r.nama) + '</span></div>';
-          if (ada.durasi) html += '<div style="' + sel('durasi', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + chipDurasi(r.dur) + '</div>';
-          if (ada.pinjam) html += '<div style="' + sel('pinjam', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + mtWaktuCell(r.wPinjam, r.fPinjam) + '</div>';
-          if (ada.kembali) html += '<div style="' + sel('kembali', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + mtWaktuCell(r.wKembali, r.fKembali) + '</div>';
-          if (ada.status) html += '<div style="' + sel('status', ri) + '" class="px-2 py-2 flex items-center' + garis + '">' + (r.status ? badgeStatus(r.status) : '') + '</div>';
+          if (ada.nama) html += '<div style="' + sel('nama', ri) + '" class="px-2 py-2 flex items-center gap-2 text-xs font-semibold text-gray-900 min-w-0' + garis('nama') + '">' +
+            '<span class="inline-flex items-center justify-center h-5 px-1.5 rounded-md text-[10px] font-extrabold text-white shrink-0 ' + (i % 2 === 0 ? 'bg-sky-600' : 'bg-indigo-500') + '">Ke-' + ri + '</span>' +
+            '<span class="truncate">' + mtEsc(r.nama) + '</span></div>';
+          if (ada.durasi) html += '<div style="' + sel('durasi', ri) + '" class="px-2 py-2 flex items-center' + garis('durasi') + '">' + chipDurasi(r.dur) + '</div>';
+          if (ada.pinjam) html += '<div style="' + sel('pinjam', ri) + '" class="px-2 py-2 flex items-center' + garis('pinjam') + '">' + mtWaktuCell(r.wPinjam, r.fPinjam) + '</div>';
+          if (ada.kembali) html += '<div style="' + sel('kembali', ri) + '" class="px-2 py-2 flex items-center' + garis('kembali') + '">' + mtWaktuCell(r.wKembali, r.fKembali) + '</div>';
+          if (ada.status) html += '<div style="' + sel('status', ri) + '" class="px-2 py-2 flex items-center' + garis('status') + '">' + (r.status ? badgeStatus(r.status) : '') + '</div>';
         });
 
         // --- Lonceng alarm ---
