@@ -5718,10 +5718,14 @@ Kolom: NIP | NAMA | KODE DEPT | TOTAL VALUE"
       });
 
       msData = Array.from(employees.values()).map(employee => {
-        const targetExists = msSources.targetByNip.has(employee.nip);
-        if (!targetExists) missingTargetCount++;
-        const target = msSources.targetByNip.get(employee.nip) || {};
-        const targetSales = msAngka(target.target_sales);
+        const target = msSources.targetByNip.get(employee.nip);
+        const rawTargetSales = target?.target_sales;
+        const hasTargetSales = rawTargetSales !== null && rawTargetSales !== undefined && msStr(rawTargetSales) !== '';
+        if (!hasTargetSales) {
+          missingTargetCount++;
+          return null; // NIP tanpa TARGET SALES tidak ditampilkan dan tidak ikut dikirim.
+        }
+        const targetSales = msAngka(rawTargetSales);
         const chairSales = msSources.chairByNip.get(employee.nip) || 0;
         const mtdFurniture = employee.mtd_furniture_detail + chairSales;
         const mtdAcc = employee.mtd_acc_detail - chairSales;
@@ -5761,7 +5765,7 @@ Kolom: NIP | NAMA | KODE DEPT | TOTAL VALUE"
           persentase_comser: pctComser,
           smtd
         };
-      });
+      }).filter(Boolean).sort((a, b) => b.persentase_sales - a.persentase_sales);
       msMissingTargetCount = missingTargetCount;
       msUnmappedDeptCodes = Array.from(unmappedDeptCodes);
       msRender();
@@ -5808,7 +5812,7 @@ Kolom: NIP | NAMA | KODE DEPT | TOTAL VALUE"
         if (msDetailRows) chips += chip(msNumber(msDetailRows) + ' baris transaksi diproses');
         if (msSkipped) chips += '<span class="ms-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a">' + msNumber(msSkipped) + ' baris NIP kosong/tidak valid dilewati</span>';
         if (msData.length) chips += chip(msNumber(msData.length) + ' karyawan unik · 1 baris per NIP');
-        if (msMissingTargetCount) chips += '<span class="ms-chip" style="background:#fff1f2;color:#be123c;border-color:#fecdd3">' + msNumber(msMissingTargetCount) + ' NIP tidak ditemukan di target_smt (target = 0)</span>';
+        if (msMissingTargetCount) chips += '<span class="ms-chip" style="background:#fff1f2;color:#be123c;border-color:#fecdd3">' + msNumber(msMissingTargetCount) + ' NIP tanpa TARGET SALES; baris dikeluarkan dari preview</span>';
         if (msUnmappedDeptCodes.length) chips += '<span class="ms-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a">Kode dept belum terpetakan: ' + msUnmappedDeptCodes.slice(0, 5).map(msEsc).join(', ') + (msUnmappedDeptCodes.length > 5 ? ', ...' : '') + '</span>';
         summary.innerHTML = chips;
       }
@@ -5824,7 +5828,7 @@ Kolom: NIP | NAMA | KODE DEPT | TOTAL VALUE"
         return;
       }
       if (!msData.length) {
-        body.innerHTML = '<tr><td colspan="23" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2"><div class="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-teal-300"></i></div><span class="italic text-xs">Belum ada data transaksi valid. Paste data Excel ke kotak di atas.</span></div></td></tr>';
+        body.innerHTML = '<tr><td colspan="23" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2"><div class="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-teal-300"></i></div><span class="italic text-xs">Belum ada data yang memenuhi syarat. Pastikan NIP tersedia di target_smt dan TARGET SALES terisi.</span></div></td></tr>';
         lucide.createIcons();
         return;
       }
