@@ -297,6 +297,46 @@
     #btnKfKirim:not(:disabled):hover { box-shadow: 0 14px 26px -12px rgba(234,88,12,.8); transform: translateY(-1px); }
     .kf-pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > INPUT PENJUALAN KURSI PIJAT ===== -->
+  <style>
+    @keyframes kpRowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes kpFloat { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-6px) rotate(-3deg); } }
+    @keyframes kpLive { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.65); } 70%,100% { box-shadow: 0 0 0 8px rgba(255,255,255,0); } }
+    @keyframes kpDrift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-14px,10px); } }
+    #viewInputKursiPijatSection input:focus, #viewInputKursiPijatSection textarea:focus { box-shadow: 0 0 0 4px rgba(225,29,72,.14) !important; border-color: #e11d48 !important; outline: none; }
+    .kp-hero { position: relative; overflow: hidden; background: linear-gradient(125deg, #e11d48 0%, #c026d3 52%, #6d28d9 100%); }
+    .kp-hero::before { content: ""; position: absolute; right: -40px; top: -60px; width: 210px; height: 210px; border-radius: 999px; background: rgba(255,255,255,.13); animation: kpDrift 9s ease-in-out infinite; }
+    .kp-hero::after { content: ""; position: absolute; right: 110px; bottom: -80px; width: 150px; height: 150px; border-radius: 999px; background: rgba(255,255,255,.1); animation: kpDrift 11s ease-in-out infinite reverse; }
+    .kp-hero-ico { animation: kpFloat 3.4s ease-in-out infinite; backdrop-filter: blur(6px); }
+    .kp-live { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .08em; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); }
+    .kp-live i { display: inline-block; width: 7px; height: 7px; border-radius: 999px; background: #86efac; animation: kpLive 1.8s ease-out infinite; }
+    .kp-step { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .05em; background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; transition: transform .2s ease, box-shadow .2s ease; }
+    .kp-step:hover { transform: translateY(-1px); box-shadow: 0 6px 14px -8px rgba(190,18,60,.6); }
+    .kp-step b { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 999px; background: linear-gradient(135deg, #e11d48, #c026d3); color: #fff; font-size: 9px; }
+    .kp-paste { transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+    .kp-paste:hover { background: rgba(255,241,242,.85); }
+    .kp-stat { border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; border: 1px solid; transition: transform .2s ease, box-shadow .2s ease; animation: kpRowIn .35s ease both; }
+    .kp-stat:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -14px rgba(15,23,42,.35); }
+    .kp-stat-ico { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.75); flex-shrink: 0; }
+    .kp-stat-val { font-size: 1.05rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kp-stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .7; margin-top: 3px; }
+    .kp-row { animation: kpRowIn .35s cubic-bezier(.22,.8,.3,1) both; }
+    #kpTableWrap { border-radius: 18px; box-shadow: 0 12px 30px -16px rgba(30,41,59,.25); }
+    #kpTableWrap table { border-collapse: separate; border-spacing: 0; }
+    #kpTableWrap thead th { white-space: nowrap; padding: .85rem 1rem; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; background: linear-gradient(90deg, #0f172a, #1e293b); color: #fff; position: sticky; top: 0; z-index: 10; }
+    #kpTableWrap tbody td { border-bottom: 1px solid #f1f5f9; padding: .6rem 1rem; white-space: nowrap; }
+    #kpTableWrap tbody tr:nth-child(even) td { background: #f8fafc; }
+    #kpTableWrap tbody tr:hover td { background: #fff1f2; }
+    #kpTableWrap tbody tr:last-child td { border-bottom: 0; }
+    #btnKpKirim { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    #btnKpKirim:not(:disabled):hover { box-shadow: 0 14px 26px -12px rgba(225,29,72,.8); transform: translateY(-1px); }
+    #btnKpKirim:not(:disabled):active { transform: translateY(0) scale(.98); }
+    .kp-pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; border: 1px solid; font-variant-numeric: tabular-nums; }
+    .kp-pill-violet { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+    .kp-pill-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+    .kp-ket { display: inline-block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+    @media (prefers-reduced-motion: reduce) { .kp-hero::before, .kp-hero::after, .kp-hero-ico, .kp-live i, .kp-stat, .kp-row { animation: none !important; } }
+  </style>
   <!-- ===== STYLE TAMBAHAN: UKURAN IKON SUB-MENU SERAGAM ===== -->
   <style>
     /* Semua ikon sub-menu (anchor di dalam nav sidebar) memakai ukuran yang sama dan tidak menyusut saat teks panjang membungkus baris */
@@ -463,6 +503,11 @@
             <a href="#" onclick="switchView('monitoringTablet')" id="menuMonitoringTablet" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="tablet-smartphone" class="w-4 h-4 text-sky-400"></i>
               <span>MONITORING TABLET</span>
+            </a>
+            <!-- MENU INPUT PENJUALAN KURSI PIJAT (tepat di bawah Monitoring Tablet) -->
+            <a href="#" onclick="switchView('inputKursiPijat')" id="menuInputKursiPijat" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="sofa" class="w-4 h-4 text-rose-400"></i>
+              <span>INPUT PENJUALAN KURSI PIJAT</span>
             </a>
             <!-- MENU INPUT TARGET SMT (di bawah Monitoring Tablet, di atas Input Schedule) -->
             <a href="#" onclick="switchView('inputTargetSmt')" id="menuInputTargetSmt" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
@@ -1097,6 +1142,61 @@
             <div id="mtList" class="space-y-3"></div>
           </div>
 
+          <!-- ===== INPUT PENJUALAN KURSI PIJAT SECTION (PORTAL KARYAWAN) ===== -->
+          <div id="viewInputKursiPijatSection" class="hidden flex-1 flex flex-col">
+            <div class="kp-hero rounded-2xl p-5 mb-5 text-white shadow-lg shadow-rose-500/20 flex items-center gap-4">
+              <div class="kp-hero-ico relative z-10 w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 ring-1 ring-white/30">
+                <i data-lucide="sofa" class="w-6 h-6"></i>
+              </div>
+              <div class="relative z-10 min-w-0">
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <h2 class="text-lg font-bold tracking-tight">INPUT PENJUALAN KURSI PIJAT</h2>
+                  <span class="kp-live"><i></i> REALTIME</span>
+                </div>
+                <p class="text-xs text-rose-50 mt-1 leading-relaxed">Tempel data penjualan kursi pijat dari Excel, periksa preview-nya, lalu kirim. Seluruh data lama di tabel <span class="font-mono font-bold">kursi_pijat</span> akan diganti (replace).</p>
+              </div>
+            </div>
+
+            <!-- PANDUAN URUTAN KOLOM -->
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              <span class="kp-step"><b>1</b> NIP</span>
+              <span class="kp-step"><b>2</b> NAMA</span>
+              <span class="kp-step"><b>3</b> RECEIPT</span>
+              <span class="kp-step"><b>4</b> SKU</span>
+              <span class="kp-step"><b>5</b> QTY</span>
+              <span class="kp-step"><b>6</b> KET 1</span>
+              <span class="kp-step"><b>7</b> KET 2</span>
+              <span class="kp-step"><b>8</b> TOTAL VALUE</span>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
+              <p class="text-xs text-gray-500">Klik kotak di bawah, lalu tekan <b class="text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 font-mono">Ctrl + V</b> untuk menempelkan data dari Excel secara otomatis.</p>
+              <div class="flex gap-2.5">
+                <button type="button" onclick="kpReset()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gray-500"></i> Reset Data
+                </button>
+                <button type="button" id="btnKpKirim" onclick="kpKirim()" class="bg-gradient-to-r from-rose-600 to-fuchsia-600 hover:from-rose-700 hover:to-fuchsia-700 text-white font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-rose-500/25 disabled:opacity-70 disabled:cursor-not-allowed">
+                  <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="kpTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">0</span> Baris ke Database
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <textarea id="kpPasteInput" oninput="kpHandlePaste()" spellcheck="false" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data penjualan kursi pijat dari Excel..."
+                class="kp-paste w-full h-24 p-3.5 border-2 border-dashed border-rose-300 bg-rose-50/30 rounded-xl text-xs font-mono transition"></textarea>
+            </div>
+
+            <div id="kpStats" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3"></div>
+            <div id="kpSummary" class="flex flex-wrap items-center gap-2 mb-3"></div>
+
+            <div id="kpTableWrap" class="flex-1 border border-gray-200 overflow-auto bg-white max-h-[460px] custom-scrollbar">
+              <table class="w-full text-left text-xs">
+                <thead id="kpTableHead"></thead>
+                <tbody id="kpTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- ===== INPUT TARGET SMT SECTION (PORTAL KARYAWAN) ===== -->
           <div id="viewInputTargetSmtSection" class="hidden flex-1 flex flex-col">
             <div class="tg-hero rounded-2xl p-5 mb-5 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-4">
@@ -1523,6 +1623,8 @@
       const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); 
       const menuMonitoringTablet = document.getElementById('menuMonitoringTablet');
       const menuInputSchedule = document.getElementById('menuInputSchedule');
+      const menuInputKursiPijat = document.getElementById('menuInputKursiPijat');
+      const viewInputKursiPijatSection = document.getElementById('viewInputKursiPijatSection');
       const menuInputTargetSmt = document.getElementById('menuInputTargetSmt');
       const viewInputTargetSmtSection = document.getElementById('viewInputTargetSmtSection');
       const menuKetFurniAcc = document.getElementById('menuKetFurniAcc');
@@ -1568,6 +1670,8 @@
       if (menuMonitoringTablet) menuMonitoringTablet.className = inactiveClass;
       if (viewMonitoringTabletSection) viewMonitoringTabletSection.classList.add('hidden');
       if (menuInputSchedule) menuInputSchedule.className = inactiveClass;
+      if (menuInputKursiPijat) menuInputKursiPijat.className = inactiveClass;
+      if (viewInputKursiPijatSection) viewInputKursiPijatSection.classList.add('hidden');
       if (menuInputTargetSmt) menuInputTargetSmt.className = inactiveClass;
       if (viewInputTargetSmtSection) viewInputTargetSmtSection.classList.add('hidden');
       if (menuKetFurniAcc) menuKetFurniAcc.className = inactiveClass;
@@ -1588,6 +1692,12 @@
         pageBadge.innerHTML = '<i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-600"></i> Ket Furni & Acc Sync';
         if (viewKetFurniAccSection) viewKetFurniAccSection.classList.remove('hidden');
         if (typeof kfOnShow === 'function') kfOnShow();
+      } else if (view === 'inputKursiPijat') {
+        if (menuInputKursiPijat) menuInputKursiPijat.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="sofa" class="w-3.5 h-3.5 text-rose-600"></i> Kursi Pijat Sync';
+        if (viewInputKursiPijatSection) viewInputKursiPijatSection.classList.remove('hidden');
+        if (typeof kpOnShow === 'function') kpOnShow();
       } else if (view === 'inputTargetSmt') {
         if (menuInputTargetSmt) menuInputTargetSmt.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
@@ -4078,6 +4188,221 @@
 
     document.addEventListener('DOMContentLoaded', () => { schInit(); schRender(); });
   </script>
+  <!-- ===== SCRIPT TAMBAHAN: PORTAL KARYAWAN > INPUT PENJUALAN KURSI PIJAT ===== -->
+  <script>
+    // Nama RPC & tabel Supabase tujuan (replace seluruh isi tabel kursi_pijat)
+    const KP_RPC = 'replace_kursi_pijat';
+    const KP_TABLE = 'kursi_pijat';
+    const KP_MAX_TAMPIL = 1500;   // batas baris yang digambar di preview (semua baris tetap dikirim)
+
+    let kpData = [];          // [{ nip, nama, receipt, sku, qty, ket_1, ket_2, total_value }]
+    let kpDilewati = 0;       // baris NIP kosong / tidak valid
+    let kpMengirim = false;
+    let kpDariPaste = false;  // true = ada data hasil paste yang belum dikirim (jangan ditimpa realtime)
+    let kpRtChannel = null, kpRtTimer = null;
+
+    const kpEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const kpFmt = n => Number(n || 0).toLocaleString('id-ID');
+
+    // Ubah teks angka dari Excel menjadi number (mendukung 50.000.000 / 50,000,000 / Rp 1.500,5)
+    function kpAngka(v) {
+      let s = String(v ?? '').trim().replace(/rp/ig, '').replace(/\s/g, '');
+      if (!s) return 0;
+      s = s.replace(/[^0-9.,-]/g, '');
+      const dot = (s.match(/\./g) || []).length, com = (s.match(/,/g) || []).length;
+      if (dot && com) {
+        if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+        else s = s.replace(/,/g, '');
+      } else if (com) {
+        if (com > 1 || /^-?\d{1,3}(,\d{3})+$/.test(s)) s = s.replace(/,/g, '');
+        else s = s.replace(',', '.');
+      } else if (dot) {
+        if (dot > 1 || /^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+      }
+      const n = Number(s);
+      return isFinite(n) ? n : 0;
+    }
+
+    function kpOnShow() { kpRender(); kpStartRealtime(); }
+
+    function kpHandlePaste() {
+      const text = document.getElementById('kpPasteInput').value;
+      if (!text.trim()) { kpData = []; kpDilewati = 0; kpDariPaste = false; kpRender(); return; }
+
+      const baris = text.replace(/\r/g, '').split('\n');
+      const hasil = [];
+      let dilewati = 0, pertama = true;
+
+      baris.forEach(line => {
+        if (!line.trim()) return;
+        const cols = line.split('\t').map(c => c.trim());
+        if (pertama) {
+          pertama = false;
+          const c0 = (cols[0] || '').toUpperCase(), c1 = (cols[1] || '').toUpperCase(), c2 = (cols[2] || '').toUpperCase();
+          if (c0 === 'NIP' || c1 === 'NAMA' || c2 === 'RECEIPT') return;   // baris header dilewati
+        }
+        // kolom nip di Supabase bertipe int8 -> hanya angka yang valid
+        if (!/^\d+$/.test(cols[0] || '') || /^0+$/.test(cols[0])) { dilewati++; return; }
+
+        const nip = Number.isSafeInteger(Number(cols[0])) ? Number(cols[0]) : cols[0];
+        hasil.push({
+          nip: String(nip),
+          nama: cols[1] || '-',
+          receipt: cols[2] || '',
+          sku: cols[3] || '',
+          qty: Math.round(kpAngka(cols[4])),      // kolom qty bertipe int8
+          ket_1: cols[5] || '',
+          ket_2: cols[6] || '',
+          total_value: kpAngka(cols[7])
+        });
+      });
+
+      kpData = hasil;
+      kpDilewati = dilewati;
+      kpDariPaste = hasil.length > 0;
+      kpRender();
+    }
+
+    function kpStat(icon, label, nilai, tone) {
+      return '<div class="kp-stat ' + tone + '"><div class="kp-stat-ico"><i data-lucide="' + icon + '" class="w-5 h-5"></i></div>' +
+        '<div class="min-w-0"><div class="kp-stat-val truncate">' + nilai + '</div><div class="kp-stat-lbl">' + label + '</div></div></div>';
+    }
+
+    function kpRender() {
+      const thead = document.getElementById('kpTableHead');
+      const tbody = document.getElementById('kpTableBody');
+      const total = document.getElementById('kpTotalBaris');
+      const stats = document.getElementById('kpStats');
+      const sum = document.getElementById('kpSummary');
+      if (!thead || !tbody) return;
+      if (total) total.textContent = kpData.length;
+
+      thead.innerHTML = '<tr><th class="text-center w-14">NO</th><th>NIP</th><th>NAMA</th><th>RECEIPT</th><th>SKU</th>' +
+        '<th class="text-right">QTY</th><th>KET 1</th><th>KET 2</th><th class="text-right">TOTAL VALUE</th></tr>';
+
+      // Kartu ringkasan
+      if (stats) {
+        const totQty = kpData.reduce((a, r) => a + (Number(r.qty) || 0), 0);
+        const totVal = kpData.reduce((a, r) => a + (Number(r.total_value) || 0), 0);
+        const karyawan = new Set(kpData.map(r => r.nip)).size;
+        stats.innerHTML = kpData.length ? (
+          kpStat('users', 'Jumlah Karyawan', kpFmt(karyawan), 'bg-slate-50 border-slate-200 text-slate-700') +
+          kpStat('receipt', 'Jumlah Baris', kpFmt(kpData.length), 'bg-sky-50 border-sky-100 text-sky-700') +
+          kpStat('package', 'Total Qty', kpFmt(totQty), 'bg-violet-50 border-violet-100 text-violet-700') +
+          kpStat('wallet', 'Total Value', kpFmt(totVal), 'bg-rose-50 border-rose-100 text-rose-700')
+        ) : '';
+      }
+      if (sum) {
+        const chip = (cls, txt) => '<span class="px-3 py-1 rounded-full text-[11px] font-bold border ' + cls + '">' + txt + '</span>';
+        sum.innerHTML = kpData.length
+          ? ((kpDilewati ? chip('bg-amber-50 text-amber-700 border-amber-200', kpDilewati + ' baris NIP kosong/tidak valid dilewati') : '') +
+             (kpData.length > KP_MAX_TAMPIL ? chip('bg-slate-50 text-slate-600 border-slate-200', 'Preview menampilkan ' + kpFmt(KP_MAX_TAMPIL) + ' baris pertama (semua ' + kpFmt(kpData.length) + ' baris tetap dikirim)') : ''))
+          : '';
+      }
+
+      if (!kpData.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2">' +
+          '<div class="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-rose-300"></i></div>' +
+          '<span class="italic text-xs">Belum ada data penjualan kursi pijat. Silakan paste data dari Excel ke kotak di atas.</span></div></td></tr>';
+        lucide.createIcons();
+        return;
+      }
+
+      const batas = Math.min(kpData.length, KP_MAX_TAMPIL);
+      let html = '';
+      for (let idx = 0; idx < batas; idx++) {
+        const r = kpData[idx];
+        html += '<tr class="kp-row" style="animation-delay:' + Math.min(idx, 20) * 20 + 'ms">' +
+          '<td class="text-center"><span class="xl-no">' + (idx + 1) + '</span></td>' +
+          '<td class="font-mono font-semibold text-rose-700">' + kpEsc(r.nip) + '</td>' +
+          '<td class="font-semibold text-gray-800">' + kpEsc(r.nama) + '</td>' +
+          '<td class="font-mono text-gray-700">' + kpEsc(r.receipt) + '</td>' +
+          '<td class="font-mono text-gray-700">' + kpEsc(r.sku) + '</td>' +
+          '<td class="text-right"><span class="kp-pill kp-pill-violet">' + kpFmt(r.qty) + '</span></td>' +
+          '<td class="text-gray-600"><span class="kp-ket" title="' + kpEsc(r.ket_1) + '">' + kpEsc(r.ket_1) + '</span></td>' +
+          '<td class="text-gray-600"><span class="kp-ket" title="' + kpEsc(r.ket_2) + '">' + kpEsc(r.ket_2) + '</span></td>' +
+          '<td class="text-right"><span class="kp-pill kp-pill-rose">' + kpFmt(r.total_value) + '</span></td></tr>';
+      }
+      tbody.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function kpReset() {
+      document.getElementById('kpPasteInput').value = '';
+      kpData = []; kpDilewati = 0; kpDariPaste = false;
+      kpRender();
+      const st = document.getElementById('statusMsg'); if (st) st.classList.add('hidden');
+    }
+
+    function kpTombolKirim(aktif) {
+      const btn = document.getElementById('btnKpKirim');
+      if (!btn) return;
+      btn.disabled = !aktif;
+      btn.innerHTML = aktif
+        ? '<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="kpTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">' + kpData.length + '</span> Baris ke Database'
+        : '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...';
+      lucide.createIcons();
+    }
+
+    // Kirim: REPLACE semua data tabel kursi_pijat melalui RPC replace_kursi_pijat
+    async function kpKirim() {
+      if (kpMengirim) return;
+      if (!kpData.length) { showToast('Belum ada data penjualan kursi pijat yang valid untuk dikirim!', 'error'); return; }
+
+      kpMengirim = true;
+      kpTombolKirim(false);
+      try {
+        const payload = kpData.map(r => ({
+          nip: r.nip,
+          nama: r.nama,
+          receipt: r.receipt,
+          sku: r.sku,
+          qty: r.qty,
+          ket_1: r.ket_1,
+          ket_2: r.ket_2,
+          total_value: r.total_value
+        }));
+        const { error } = await supabaseClient.rpc(KP_RPC, { new_data: payload });
+        if (error) throw error;
+        kpDariPaste = false;   // data sudah tersimpan di database
+        showToast('Sukses! ' + payload.length + ' baris data berhasil diperbarui (replace) ke tabel ' + KP_TABLE + '!', 'success');
+      } catch (ex) {
+        console.error('Gagal kirim penjualan kursi pijat:', ex);
+        showToast('Gagal memproses data: ' + (ex.message || ex), 'error');
+      } finally {
+        kpMengirim = false;
+        kpTombolKirim(true);
+      }
+    }
+
+    // ===== REALTIME: preview ikut diperbarui saat tabel kursi_pijat berubah (hanya jika tidak ada data paste yang belum dikirim) =====
+    async function kpMuatDariDb() {
+      if (kpDariPaste || kpMengirim || currentView !== 'inputKursiPijat') return;
+      const cfg = (typeof PV_CFG !== 'undefined') ? PV_CFG.inputKursiPijat : null;
+      if (!cfg) return;
+      try {
+        const rows = await pvFetchAll(cfg.table, cfg.cols, cfg.key);
+        if (kpDariPaste || kpMengirim || currentView !== 'inputKursiPijat') return;   // pengguna paste saat memuat
+        cfg.apply(rows);
+        cfg.render();
+        pvChip('inputKursiPijat', rows.length ? 'ok' : 'kosong', rows.length);
+      } catch (e) {
+        console.warn('Realtime kursi_pijat: gagal memuat ulang preview:', e.message || e);
+      }
+    }
+    function kpStartRealtime() {
+      if (kpRtChannel || typeof supabaseClient === 'undefined') return;
+      kpRtChannel = supabaseClient
+        .channel('public:kursi_pijat')
+        .on('postgres_changes', { event: '*', schema: 'public', table: KP_TABLE }, () => {
+          clearTimeout(kpRtTimer);
+          kpRtTimer = setTimeout(kpMuatDariDb, 1500);   // replace massal memicu banyak event -> digabung jadi 1x muat ulang
+        })
+        .subscribe();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { kpRender(); });
+  </script>
   <!-- ===== SCRIPT TAMBAHAN: PORTAL KARYAWAN > INPUT TARGET SMT ===== -->
   <script>
     // Nama RPC & tabel Supabase tujuan (replace seluruh isi tabel target_smt)
@@ -4472,6 +4797,12 @@
         isEmpty: () => mtdFurniproData.length === 0,
         apply: rows => { mtdFurniproData = rows.map(r => ({ nip_mtdfp: pvStr(r.nip_mtdfp), nama_mtdfp: pvStr(r.nama_mtdfp) || 'NONAME', qty_mtdfp: pvNum(r.qty_mtdfp), total_mtdfp: pvNum(r.total_mtdfp) })); },
         render: () => renderTableRows()
+      },
+      inputKursiPijat: {
+        table: 'kursi_pijat', cols: 'nip,nama,receipt,sku,qty,ket_1,ket_2,total_value', key: 'nip', summary: 'kpSummary',
+        isEmpty: () => kpData.length === 0,
+        apply: rows => { kpData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || '-', receipt: pvStr(r.receipt), sku: pvStr(r.sku), qty: pvNum(r.qty), ket_1: pvStr(r.ket_1), ket_2: pvStr(r.ket_2), total_value: pvNum(r.total_value) })); kpDilewati = 0; kpDariPaste = false; },
+        render: () => kpRender()
       },
       inputTargetSmt: {
         table: 'target_smt', cols: 'nip,nama,target_sales,target_fp,target_comser', key: 'nip', summary: 'tgSummary',
