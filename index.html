@@ -1686,6 +1686,7 @@
         viewExcelSection.classList.remove('hidden');
         renderTableRows();
       }
+      if (typeof autoLoadPreview === 'function') autoLoadPreview(view);
       lucide.createIcons();
     }
 
@@ -4370,6 +4371,210 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => { kfRender(); });
+  </script>
+  <!-- ===== SCRIPT TAMBAHAN: PREVIEW OTOMATIS DATA TERAKHIR DARI SUPABASE (SAAT SUB-MENU PERTAMA KALI DIBUKA) ===== -->
+  <script>
+    // Nama tabel untuk menu yang inputnya berupa kolom isian (bukan paste Excel).
+    // Jika nama tabel di database Anda berbeda, cukup ubah dua konstanta ini.
+    const PV_TARGET_TABLE = 'target_today';
+    const PV_RUNNING_TABLE = 'running_text';
+
+    const pvDone = {};   // view yang sudah berhasil memuat data terakhir (hanya dimuat sekali)
+    const pvBusy = {};   // view yang sedang memuat
+
+    // Ambil seluruh baris tabel (halaman 1000 baris). Urutan: id -> kolom kunci -> tanpa urutan.
+    async function pvFetchAll(table, cols, key) {
+      let lastErr = null;
+      const urutan = ['id'];
+      if (key) urutan.push(key);
+      urutan.push(null);
+      for (const ord of urutan) {
+        for (const sel of (cols && cols !== '*' ? [cols, '*'] : ['*'])) {
+          const out = [];
+          let ok = true;
+          for (let from = 0; from < 50000; from += 1000) {
+            let q = supabaseClient.from(table).select(sel).range(from, from + 999);
+            if (ord) q = q.order(ord, { ascending: true });
+            const { data, error } = await q;
+            if (error) { lastErr = error; ok = false; break; }
+            out.push(...(data || []));
+            if (!data || data.length < 1000) break;
+          }
+          if (ok) return out;
+        }
+      }
+      throw lastErr || new Error('Gagal membaca tabel ' + table);
+    }
+
+    const pvStr = v => String(v ?? '').trim();
+    const pvNum = v => Number(v) || 0;
+
+    const PV_CFG = {
+      karyawan: {
+        table: 'data_karyawan', cols: 'nip_kar,nama_kar', key: 'nip_kar', summary: 'excelSummary',
+        isEmpty: () => karyawanData.length === 0,
+        apply: rows => { karyawanData = rows.map(r => ({ nip_kar: pvNum(r.nip_kar), nama_kar: pvStr(r.nama_kar) || '-' })); },
+        render: () => renderTableRows()
+      },
+      sales: {
+        table: 'laporan_sales', cols: 'nip,nama,dept,total', key: 'nip', summary: 'excelSummary',
+        isEmpty: () => salesData.length === 0,
+        apply: rows => { salesData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || 'NONAME', dept: pvStr(r.dept) || '-', total: pvNum(r.total) })); },
+        render: () => renderTableRows()
+      },
+      mtdSales: {
+        table: 'mtd_sales', cols: 'nip,nama,dept,total', key: 'nip', summary: 'excelSummary',
+        isEmpty: () => mtdSalesData.length === 0,
+        apply: rows => { mtdSalesData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || 'NONAME', dept: pvStr(r.dept) || '-', total: pvNum(r.total) })); },
+        render: () => renderTableRows()
+      },
+      comser: {
+        table: 'daily_comser', cols: 'nip_cnc,nama_cnc,qty_cnc,total_cnc', key: 'nip_cnc', summary: 'excelSummary',
+        isEmpty: () => comserData.length === 0,
+        apply: rows => { comserData = rows.map(r => ({ nip_cnc: pvStr(r.nip_cnc), nama_cnc: pvStr(r.nama_cnc) || 'NONAME', qty_cnc: pvNum(r.qty_cnc), total_cnc: pvNum(r.total_cnc) })); },
+        render: () => renderTableRows()
+      },
+      mtdComser: {
+        table: 'mtd_comser', cols: 'nip_mtdcnc,nama_mtdcnc,qty_mtdcnc,total_mtdcnc', key: 'nip_mtdcnc', summary: 'excelSummary',
+        isEmpty: () => mtdComserData.length === 0,
+        apply: rows => { mtdComserData = rows.map(r => ({ nip_mtdcnc: pvStr(r.nip_mtdcnc), nama_mtdcnc: pvStr(r.nama_mtdcnc) || 'NONAME', qty_mtdcnc: pvNum(r.qty_mtdcnc), total_mtdcnc: pvNum(r.total_mtdcnc) })); },
+        render: () => renderTableRows()
+      },
+      departemen: {
+        table: 'laporan_departemen', cols: 'kode_dept,nama_dept,total_sku,total_qty,exclude_ppn,include_ppn', key: 'kode_dept', summary: 'excelSummary',
+        isEmpty: () => departemenData.length === 0,
+        apply: rows => { departemenData = rows.map(r => ({ kode_dept: pvStr(r.kode_dept), nama_dept: pvStr(r.nama_dept) || '-', total_sku: pvNum(r.total_sku), total_qty: pvNum(r.total_qty), exclude_ppn: pvNum(r.exclude_ppn), include_ppn: pvNum(r.include_ppn) })); },
+        render: () => renderTableRows()
+      },
+      furnipro: {
+        table: 'daily_furnipro', cols: 'nip_fp,nama_fp,qty_fp,total_fp', key: 'nip_fp', summary: 'excelSummary',
+        isEmpty: () => furniproData.length === 0,
+        apply: rows => { furniproData = rows.map(r => ({ nip_fp: pvStr(r.nip_fp), nama_fp: pvStr(r.nama_fp) || 'NONAME', qty_fp: pvNum(r.qty_fp), total_fp: pvNum(r.total_fp) })); },
+        render: () => renderTableRows()
+      },
+      mtdFurnipro: {
+        table: 'mtd_fp', cols: 'nip_mtdfp,nama_mtdfp,qty_mtdfp,total_mtdfp', key: 'nip_mtdfp', summary: 'excelSummary',
+        isEmpty: () => mtdFurniproData.length === 0,
+        apply: rows => { mtdFurniproData = rows.map(r => ({ nip_mtdfp: pvStr(r.nip_mtdfp), nama_mtdfp: pvStr(r.nama_mtdfp) || 'NONAME', qty_mtdfp: pvNum(r.qty_mtdfp), total_mtdfp: pvNum(r.total_mtdfp) })); },
+        render: () => renderTableRows()
+      },
+      inputTargetSmt: {
+        table: 'target_smt', cols: 'nip,nama,target_sales,target_fp,target_comser', key: 'nip', summary: 'tgSummary',
+        isEmpty: () => tgData.length === 0,
+        apply: rows => { tgData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || '-', target_sales: pvNum(r.target_sales), target_fp: pvNum(r.target_fp), target_comser: pvNum(r.target_comser) })); tgDilewati = 0; tgDuplikat = 0; },
+        render: () => tgRender()
+      },
+      ketFurniAcc: {
+        table: 'ket_furni_acc', cols: 'kode_dept,keterangan', key: 'kode_dept', summary: 'kfSummary',
+        isEmpty: () => kfData.length === 0,
+        apply: rows => { kfData = rows.map(r => ({ kode_dept: pvStr(r.kode_dept), keterangan: pvStr(r.keterangan) })); kfDilewati = 0; kfDuplikat = 0; },
+        render: () => kfRender()
+      },
+      inputSchedule: {
+        table: 'schedule', cols: '*', key: 'nip', summary: 'schSummary',
+        periode: '',
+        isEmpty: () => schData.length === 0,
+        apply: function (rows) {
+          let max = 0;
+          rows.forEach(r => {
+            for (let i = SCH_MAX_TGL; i >= 1; i--) { if (pvStr(r['tgl_' + i]) !== '') { if (i > max) max = i; break; } }
+          });
+          schJumlahTgl = max;
+          schData = rows.map(r => {
+            const tgl = [];
+            for (let i = 1; i <= max; i++) tgl.push(pvStr(r['tgl_' + i]));
+            return { nip: pvStr(r.nip), nama: pvStr(r.nama), jabatan: pvStr(r.jabatan), tgl };
+          });
+          schDilewati = 0;
+          const p = rows.find(r => pvStr(r.bulan) || pvStr(r.tahun));
+          this.periode = p ? (pvStr(p.bulan) + ' ' + pvStr(p.tahun)).trim() : '';
+        },
+        render: () => schRender(),
+        extra: function () { return this.periode ? 'Periode data tersimpan: ' + schEsc(this.periode) : ''; }
+      }
+    };
+
+    function pvChip(view, state, jumlah) {
+      const cfg = PV_CFG[view];
+      const el = cfg ? document.getElementById(cfg.summary) : null;
+      if (!el) return;
+      el.querySelectorAll('.pv-chip').forEach(c => c.remove());
+      let html = '';
+      if (state === 'loading') {
+        html = '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Memuat data terakhir dari database...</span>';
+      } else if (state === 'ok') {
+        html = jumlah > 0
+          ? '<span class="pv-chip xl-chip xl-chip-blue"><i data-lucide="database" class="w-3.5 h-3.5"></i> Data terakhir dari database (' + Number(jumlah).toLocaleString('id-ID') + ' baris)</span>'
+          : '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="database" class="w-3.5 h-3.5"></i> Tabel di database masih kosong</span>';
+        const ekstra = cfg.extra ? cfg.extra() : '';
+        if (jumlah > 0 && ekstra) html += '<span class="pv-chip xl-chip xl-chip-emerald"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> ' + ekstra + '</span>';
+      } else if (state === 'err') {
+        html = '<span class="pv-chip xl-chip" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Gagal memuat data terakhir dari database</span>';
+      }
+      el.insertAdjacentHTML('beforeend', html);
+      lucide.createIcons();
+    }
+
+    // Menu Input Target Today: isi kolom dengan data terakhir (jika tabel & kolom ditemukan)
+    async function pvLoadTarget() {
+      try {
+        const { data, error } = await supabaseClient.from(PV_TARGET_TABLE).select('*').limit(1);
+        if (error) throw error;
+        pvDone.target = true;
+        if (!data || !data.length) return;
+        const r = data[0];
+        const ambil = p => { const k = Object.keys(r).find(x => x.toLowerCase().includes(p)); return k ? r[k] : null; };
+        const isi = (id, v, rupiah) => {
+          const el = document.getElementById(id);
+          if (!el || el.value.trim() || v === null || v === undefined) return;
+          el.value = String(Math.round(Number(v) || 0));
+          if (rupiah && typeof formatRupiah === 'function') formatRupiah(el);
+        };
+        isi('inputTargetSales', ambil('sales'), true);
+        isi('inputTargetFp', ambil('fp'), false);
+        isi('inputTargetComser', ambil('comser'), true);
+      } catch (e) { console.warn('Preview Target Today tidak dimuat:', e.message || e); }
+    }
+
+    // Menu Input Running Text: isi kotak teks dengan running text terakhir
+    async function pvLoadRunningText() {
+      try {
+        const { data, error } = await supabaseClient.from(PV_RUNNING_TABLE).select('*').limit(1);
+        if (error) throw error;
+        pvDone.runningText = true;
+        if (!data || !data.length) return;
+        const r = data[0];
+        const k = Object.keys(r).find(x => x.toLowerCase() === 'run_text') || Object.keys(r).find(x => x.toLowerCase().includes('text'));
+        const el = document.getElementById('inputRunningTextValue');
+        if (el && k && !el.value.trim() && r[k]) el.value = String(r[k]);
+      } catch (e) { console.warn('Preview Running Text tidak dimuat:', e.message || e); }
+    }
+
+    // Dipanggil dari switchView(): memuat data terakhir hanya saat sub-menu PERTAMA KALI dibuka
+    async function autoLoadPreview(view) {
+      if (pvDone[view] || pvBusy[view]) return;
+      if (view === 'target') { pvBusy[view] = true; await pvLoadTarget(); pvBusy[view] = false; return; }
+      if (view === 'runningText') { pvBusy[view] = true; await pvLoadRunningText(); pvBusy[view] = false; return; }
+
+      const cfg = PV_CFG[view];
+      if (!cfg) return;
+      pvBusy[view] = true;
+      pvChip(view, 'loading');
+      try {
+        const rows = await pvFetchAll(cfg.table, cfg.cols, cfg.key);
+        pvDone[view] = true;
+        // Jangan menimpa data yang sudah di-paste pengguna selama proses memuat
+        const dipakai = cfg.isEmpty();
+        if (dipakai && rows.length) cfg.apply(rows);
+        if (currentView === view && dipakai) { cfg.render(); pvChip(view, 'ok', rows.length); }
+        else if (currentView === view) document.getElementById(cfg.summary).querySelectorAll('.pv-chip').forEach(c => c.remove());
+      } catch (e) {
+        console.warn('Preview data terakhir (' + view + ') gagal dimuat:', e.message || e);
+        if (currentView === view) pvChip(view, 'err');
+      } finally {
+        pvBusy[view] = false;
+      }
+    }
   </script>
 </body>
 </html>
