@@ -355,6 +355,19 @@
     #targetPreviewInfo:empty { display: none; }
     @media (prefers-reduced-motion: reduce) { .pv-chip, #previewTableBody tr.pv-row, .pv-flash { animation: none !important; } }
   </style>
+  <!-- ===== POLESAN TAMBAHAN (tampilan & animasi saja) ===== -->
+  <style id="hm-polish">
+    button:not(:disabled) { transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease, opacity .2s ease; }
+    button:not(:disabled):active { transform: scale(.97); }
+    :focus-visible { outline: 3px solid rgba(99,102,241,.4); outline-offset: 2px; }
+    input:focus, textarea:focus, select:focus { transition: box-shadow .2s ease, border-color .2s ease; }
+    @keyframes hmGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.5); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } }
+    .mt-rt-dot.animate-pulse { animation: hmGlow 1.8s ease-in-out infinite; }
+    img[id^="preview"] { transition: opacity .3s ease; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
@@ -857,7 +870,7 @@
                   <label class="flex items-center gap-2 text-[11px] font-bold text-violet-700 tracking-wider">
                     <i data-lucide="headphones" class="w-3.5 h-3.5"></i> PREVIEW AUDIO HASIL
                   </label>
-                  <audio id="audioPlayerPesanSiaran" controls class="w-full"></audio>
+                  <audio id="audioPlayerPesanSiaran" controls preload="none" class="w-full"></audio>
                 </div>
 
                 <!-- TOMBOL -->
@@ -1460,6 +1473,128 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // =====================================================================
+    // ===== MODE HEMAT SUPABASE (menekan Logs Ingest & Cached Egress) =====
+    // Fungsi aplikasi TIDAK berubah. Yang dikurangi hanya request/traffic berulang:
+    //  1) Realtime hanya aktif untuk menu yang sedang dibuka (dan berhenti saat tab lama disembunyikan)
+    //  2) Muat ulang data digabung (debounce) & hanya tabel yang berubah yang diambil ulang
+    //  3) Cache singkat untuk preview "data terakhir" (otomatis dibatalkan saat ada penulisan data)
+    //  4) Gambar storage (Twibbon/Foto Sales) hanya diunduh sekali per sesi (cache blob) -> Cached Egress turun
+    //  5) Pengetahuan tentang urutan kolom/jalur baca disimpan -> tidak ada lagi request gagal berulang (log error)
+    // =====================================================================
+    const HM = {
+      TTL_PREVIEW: 120000,
+      ts: {},
+      _t: {},
+      fresh(k, ttl) { return !!HM.ts[k] && (Date.now() - HM.ts[k]) < (ttl || HM.TTL_PREVIEW); },
+      mark(k) { HM.ts[k] = Date.now(); },
+      bust() { HM.ts = {}; },
+      get(k) { try { const v = localStorage.getItem('hm:' + k); return v === null ? undefined : JSON.parse(v); } catch (e) { return undefined; } },
+      set(k, v) { try { localStorage.setItem('hm:' + k, JSON.stringify(v)); } catch (e) {} },
+      debounce(k, fn, ms) { clearTimeout(HM._t[k]); HM._t[k] = setTimeout(fn, ms); },
+      refreshCurrent() {
+        switch (currentView) {
+          case 'monitoringTablet': mtMarkAll(); loadMonitoringTablet(); break;
+          case 'pengaturanTv': loadDataSettinganTv(); break;
+          case 'pengaturanSounds': loadSongsData(); break;
+          case 'inputKursiPijat': if (typeof kpMuatDariDb === 'function') kpMuatDariDb(); break;
+        }
+      }
+    };
+
+    // Semua penulisan data (rpc / insert / update / upsert / delete) membatalkan cache preview agar data selalu segar setelah Kirim
+    (function () {
+      const rpc0 = supabaseClient.rpc.bind(supabaseClient);
+      supabaseClient.rpc = function (...a) { HM.bust(); return rpc0(...a); };
+      const from0 = supabaseClient.from.bind(supabaseClient);
+      supabaseClient.from = function (t) {
+        const b = from0(t);
+        ['insert', 'update', 'upsert', 'delete'].forEach(m => {
+          const f = b[m];
+          if (typeof f === 'function') b[m] = function (...x) { HM.bust(); return f.apply(this, x); };
+        });
+        return b;
+      };
+    })();
+
+    // Pengelola Realtime: satu channel per menu, dibuka saat menu aktif, ditutup saat pindah menu / logout / tab lama disembunyikan
+    const RT = {
+      chans: {}, sleeping: false, hiddenAt: 0, sleepTimer: null,
+      panelOpen() { const p = document.getElementById('adminPanel'); return !!p && !p.classList.contains('hidden'); },
+      open(key, bindings, onStatus) {
+        if (RT.chans[key] || !RT.panelOpen() || RT.sleeping) return;
+        let ch = supabaseClient.channel('hm:' + key);
+        bindings.forEach(b => { ch = ch.on('postgres_changes', { event: '*', schema: 'public', table: b.table }, b.cb); });
+        RT.chans[key] = { ch, onStatus };
+        ch.subscribe(status => { if (onStatus) onStatus(status); });
+      },
+      close(key) {
+        const c = RT.chans[key]; if (!c) return;
+        delete RT.chans[key];
+        try { supabaseClient.removeChannel(c.ch); } catch (e) {}
+        if (c.onStatus) c.onStatus('CLOSED');
+      },
+      closeAll(keep) { Object.keys(RT.chans).forEach(k => { if (k !== keep) RT.close(k); }); },
+      syncView(view) {
+        if (!RT.panelOpen() || RT.sleeping) { RT.closeAll(); return; }
+        RT.closeAll(view);
+        const starter = RT.starters[view];
+        if (starter) starter();
+      },
+      starters: {
+        pengaturanTv: () => hmStartRtTv(),
+        pengaturanSounds: () => hmStartRtSounds(),
+        monitoringTablet: () => { if (typeof mtStartRealtime === 'function') mtStartRealtime(); },
+        inputKursiPijat: () => { if (typeof kpStartRealtime === 'function') kpStartRealtime(); }
+      }
+    };
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        RT.hiddenAt = Date.now();
+        clearTimeout(RT.sleepTimer);
+        RT.sleepTimer = setTimeout(() => { RT.sleeping = true; RT.closeAll(); }, 60000);   // tab disembunyikan > 1 menit: putuskan Realtime
+      } else {
+        clearTimeout(RT.sleepTimer);
+        const lama = Date.now() - RT.hiddenAt;
+        const tadiTidur = RT.sleeping;
+        RT.sleeping = false;
+        if (!RT.panelOpen()) return;
+        if (tadiTidur) RT.syncView(currentView);
+        if (lama > 20000) HM.refreshCurrent();                                              // sinkron ulang 1x setelah kembali
+      }
+    });
+
+    // Cache gambar storage: setiap URL gambar hanya diunduh sekali per sesi (preview + html2canvas memakai blob yang sama)
+    const HM_IMG = new Map();
+    function hmImg(url) {
+      const hit = HM_IMG.get(url);
+      if (hit) return hit;
+      const p = fetch(url, { cache: 'force-cache' })
+        .then(r => r.ok ? r.blob() : null)
+        .then(b => b ? URL.createObjectURL(b) : null)
+        .catch(() => { HM_IMG.delete(url); return url; });
+      HM_IMG.set(url, p);
+      p.then(v => { if (v === null) setTimeout(() => HM_IMG.delete(url), 60000); });   // gambar belum ada: boleh dicek lagi setelah 1 menit
+      return p;
+    }
+    function hmSetImg(img, url) {
+      if (img.dataset.hmUrl === url && img.getAttribute('src')) return Promise.resolve();
+      img.dataset.hmUrl = url;
+      return hmImg(url).then(src => {
+        if (img.dataset.hmUrl !== url) return;
+        img.src = src || url;
+        return img.decode ? img.decode().catch(() => {}) : undefined;
+      });
+    }
+    function hmSetBg(el, url) {
+      if (el.dataset.hmUrl === url) return Promise.resolve();
+      el.dataset.hmUrl = url;
+      return hmImg(url).then(src => {
+        if (el.dataset.hmUrl !== url) return;
+        el.style.backgroundImage = src ? "url('" + src + "')" : 'none';
+      });
+    }
+
     // ===== UI NOTIFIKASI DI BAGIAN BAWAH LAYAR (tampilan saja) =====
     let toastTimer = null;
     function showToast(message, type) {
@@ -1549,45 +1684,22 @@
         showAdminPanel();
       }
 
-      setupRealtimeSubscriptions();
+      // HEMAT: Realtime tidak lagi dibuka global saat halaman dimuat; dibuka per menu lewat RT.syncView()
     });
 
-    function setupRealtimeSubscriptions() {
-      supabaseClient
-        .channel('public:data_settingan_tv')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'data_settingan_tv' }, payload => {
-          if (currentView === 'pengaturanTv') {
-            loadDataSettinganTv();
-          }
-        })
-        .subscribe();
+    function hmStartRtTv() {
+      RT.open('pengaturanTv', [
+        { table: 'data_settingan_tv', cb: () => HM.debounce('tvData', () => { if (currentView === 'pengaturanTv') loadDataSettinganTv(); }, 800) },
+        { table: 'setting_tv', cb: () => HM.debounce('tvConn', () => { if (currentView === 'pengaturanTv') loadConnectedTvStatus(); }, 800) }
+      ]);
+    }
 
-      supabaseClient
-        .channel('public:setting_tv')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'setting_tv' }, payload => {
-          if (currentView === 'pengaturanTv') {
-            loadConnectedTvStatus();
-          }
-        })
-        .subscribe();
-
-      supabaseClient
-        .channel('public:status_backsound')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_backsound' }, payload => {
-          if (currentView === 'pengaturanSounds') {
-            loadSongsData();
-          }
-        })
-        .subscribe();
-
-      supabaseClient
-        .channel('public:status_soundtwibbon')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_soundtwibbon' }, payload => {
-          if (currentView === 'pengaturanSounds') {
-            loadSongsData();
-          }
-        })
-        .subscribe();
+    function hmStartRtSounds() {
+      const cb = () => HM.debounce('songs', () => { if (currentView === 'pengaturanSounds') loadSongsData(); }, 800);
+      RT.open('pengaturanSounds', [
+        { table: 'status_backsound', cb },
+        { table: 'status_soundtwibbon', cb }
+      ]);
     }
 
     function formatRupiah(element) {
@@ -1716,6 +1828,7 @@
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="tablet-smartphone" class="w-3.5 h-3.5 text-sky-600"></i> Monitoring Tablet';
         if (viewMonitoringTabletSection) viewMonitoringTabletSection.classList.remove('hidden');
+        mtMarkAll();
         loadMonitoringTablet();
       } else if (view === 'pengaturanTv') {
         if (menuPengaturanTv) menuPengaturanTv.className = activeClass;
@@ -1810,6 +1923,7 @@
         renderTableRows();
       }
       if (typeof autoLoadPreview === 'function') autoLoadPreview(view);
+      RT.syncView(view);
       lucide.createIcons();
     }
 
@@ -1828,18 +1942,25 @@
     }
 
     async function loadDataSettinganTv() {
-      await loadConnectedTvStatus();
-      const { data, error } = await supabaseClient
-        .from('data_settingan_tv')
-        .select('*')
-        .order('id', { ascending: true });
+      // HEMAT: dua query berjalan paralel dan daftar dirender 1x (sebelumnya berurutan + render ganda)
+      const [tvRes, dataRes] = await Promise.all([
+        supabaseClient.from('setting_tv').select('*'),
+        supabaseClient.from('data_settingan_tv').select('*').order('id', { ascending: true })
+      ]);
 
-      if (error) {
-        console.error('Gagal memuat data_settingan_tv:', error);
+      if (!tvRes.error && tvRes.data && tvRes.data.length > 0) {
+        activeConnectedTvId = tvRes.data[0].id_tv || tvRes.data[0].id || null;
+      } else {
+        activeConnectedTvId = null;
+      }
+
+      if (dataRes.error) {
+        console.error('Gagal memuat data_settingan_tv:', dataRes.error);
+        renderTvSettingList();
         return;
       }
 
-      dataSettinganTvList = data || [];
+      dataSettinganTvList = dataRes.data || [];
       renderTvSettingList();
     }
 
@@ -2024,24 +2145,30 @@
     }
 
     // --- PENGATURAN SOUNDS ---
-    async function loadSongsData() {
+    // HEMAT: daftar file storage di-cache; event Realtime / toggle status hanya mengambil 2 tabel status (kecil),
+    // daftar file diambil ulang hanya saat upload/hapus, atau jika cache lebih tua dari 2 menit.
+    let songFilesCache = null;   // { ts, back: [...], sales: [...] }
+    async function loadSongsData(paksaFile) {
       try {
-        const { data: activeBacksound } = await supabaseClient.from('status_backsound').select('*');
-        let backsoundActiveMap = {};
-        if (activeBacksound) { 
-          activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; }); 
-        }
-        const { data: filesBacksound } = await supabaseClient.storage.from('BACKSOUND').list();
-        renderSongList('BACKSOUND', filesBacksound || [], backsoundActiveMap['BACKSOUND'] || null);
+        const perluFile = paksaFile === true || !songFilesCache || (Date.now() - songFilesCache.ts) > 120000;
+        const [aBack, aSales, fBack, fSales] = await Promise.all([
+          supabaseClient.from('status_backsound').select('bucket_name,nama_lagu'),
+          supabaseClient.from('status_soundtwibbon').select('nama_lagutw').eq('bucket_nametw', 'SOUND SALES'),
+          perluFile ? supabaseClient.storage.from('BACKSOUND').list() : null,
+          perluFile ? supabaseClient.storage.from('SOUND SALES').list() : null
+        ]);
+        if (perluFile) songFilesCache = { ts: Date.now(), back: (fBack && fBack.data) || [], sales: (fSales && fSales.data) || [] };
 
-        const { data: activeSoundSales } = await supabaseClient
-          .from('status_soundtwibbon')
-          .select('*')
-          .eq('bucket_nametw', 'SOUND SALES');
-        
+        const activeBacksound = aBack && aBack.data;
+        let backsoundActiveMap = {};
+        if (activeBacksound) {
+          activeBacksound.forEach(s => { backsoundActiveMap[s.bucket_name] = s.nama_lagu; });
+        }
+        renderSongList('BACKSOUND', songFilesCache.back, backsoundActiveMap['BACKSOUND'] || null);
+
+        const activeSoundSales = aSales && aSales.data;
         let soundSalesActiveSong = (activeSoundSales && activeSoundSales.length > 0) ? activeSoundSales[0].nama_lagutw : null;
-        const { data: filesSoundSales } = await supabaseClient.storage.from('SOUND SALES').list();
-        renderSongList('SOUND SALES', filesSoundSales || [], soundSalesActiveSong);
+        renderSongList('SOUND SALES', songFilesCache.sales, soundSalesActiveSong);
       } catch (err) {
         console.error("Gagal memuat data songs:", err);
       }
@@ -2129,7 +2256,7 @@
       statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Sukses! Lagu "${fileName}" berhasil ditambahkan ke bucket "${bucketName}".`;
       statusMsg.classList.remove('hidden');
       fileInput.value = '';
-      loadSongsData();
+      loadSongsData(true);
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
 
@@ -2189,18 +2316,35 @@
         statusMsg.className = 'mb-4 p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm flex items-center gap-2';
         statusMsg.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Lagu "${fileName}" berhasil dihapus.`;
         statusMsg.classList.remove('hidden');
-        loadSongsData();
+        loadSongsData(true);
         setTimeout(() => statusMsg.classList.add('hidden'), 4000);
       }
     }
 
     // --- TWIBBON SALES & POPUP INTEGRATION ---
-    async function handleNipInput() {
+    // HEMAT: input NIP di-debounce (sebelumnya 1 query + 1 request gambar untuk SETIAP ketikan) + cache nama per NIP
+    let nipPending = false, nipStable = '', nipTimer = null;
+    const nipNamaCache = new Map();   // nip -> { nama, t }
+    function handleNipInput() {
       const nipVal = document.getElementById('twibbonNip').value.trim();
       const namaInput = document.getElementById('twibbonNama');
-
+      clearTimeout(nipTimer);
       if (!nipVal) {
+        nipPending = false;
+        nipStable = '';
         namaInput.value = '';
+        updateTwibbonPreview();
+        return;
+      }
+      nipPending = true;
+      nipTimer = setTimeout(() => { nipPending = false; nipStable = nipVal; hmCariNama(nipVal); }, 500);
+    }
+
+    async function hmCariNama(nipVal) {
+      const namaInput = document.getElementById('twibbonNama');
+      const hit = nipNamaCache.get(nipVal);
+      if (hit && (Date.now() - hit.t) < 300000) {
+        namaInput.value = hit.nama;
         updateTwibbonPreview();
         return;
       }
@@ -2214,12 +2358,16 @@
         .eq('nip_kar', queryVal)
         .maybeSingle();
 
+      if (document.getElementById('twibbonNip').value.trim() !== nipVal) return;   // input sudah berubah lagi
+
       if (error) {
         namaInput.value = 'Error koneksi database';
       } else if (data && data.nama_kar) {
         namaInput.value = data.nama_kar;
+        nipNamaCache.set(nipVal, { nama: data.nama_kar, t: Date.now() });
       } else {
         namaInput.value = 'NIP tidak ditemukan';
+        nipNamaCache.set(nipVal, { nama: 'NIP tidak ditemukan', t: Date.now() });
       }
       updateTwibbonPreview();
     }
@@ -2237,13 +2385,16 @@
       const qtyFp = document.getElementById('twibbonQtyFp').value;
       const valComser = document.getElementById('twibbonValueComser').value;
 
-      document.getElementById('previewTwibbonImage').src = `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`;
+      // HEMAT: gambar dimuat lewat cache blob (1x unduh per URL); foto memakai NIP yang sudah "stabil" (bukan ketikan setengah jadi)
+      if (!nipPending) nipStable = nip;
+      const pTw = hmSetImg(document.getElementById('previewTwibbonImage'), `${SUPABASE_URL}/storage/v1/object/public/TWIBBON/${twibbonType}.png`);
+      let pFoto = Promise.resolve();
 
       const photoBg = document.getElementById('previewPhotoBg');
       const placeholderText = document.getElementById('photoPlaceholderText');
 
-      if (nip) {
-        photoBg.style.backgroundImage = `url('${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nip}.jpg')`;
+      if (nip && nipStable) {
+        pFoto = hmSetBg(photoBg, `${SUPABASE_URL}/storage/v1/object/public/FOTO SALES/${nipStable}.jpg`);
         photoBg.classList.remove('hidden');
         placeholderText.classList.add('hidden');
       } else {
@@ -2257,6 +2408,7 @@
       applyTextStyling('previewSalesText', valSales, 'sizeSales', 'colorSales', 'ySales', 'xSales');
       applyTextStyling('previewQtyText', qtyFp ? ('FP : ' + qtyFp) : '', 'sizeQty', 'colorQty', 'yQty', 'xQty');
       applyTextStyling('previewComserText', valComser ? ('COMSER : ' + valComser) : '', 'sizeComser', 'colorComser', 'yComser', 'xComser');
+      return Promise.all([pTw, pFoto]);
     }
 
     function applyTextStyling(elementId, textContent, sizeId, colorId, yId, xId) {
@@ -2307,6 +2459,8 @@
           console.error('Gagal mengirim data ke popup_twibbon:', insertError);
         }
 
+        nipPending = false; nipStable = nip;
+        await updateTwibbonPreview();   // pastikan gambar (blob cache) sudah terpasang sebelum dirender
         const canvas = await html2canvas(previewBox, { scale: 4, useCORS: true, allowTaint: false, backgroundColor: '#ffffff' });
         const imageURL = canvas.toDataURL('image/jpeg', 0.95);
         const twibbonType = document.getElementById('twibbonType').value;
@@ -2401,14 +2555,16 @@
     }
 
     async function loadPesanSiaranInitialData() {
+      if (HM.fresh('siaran', 60000)) return;   // HEMAT: tidak memuat ulang jika baru saja dimuat
       try {
         const { data, error } = await supabaseClient
           .from('tts_pesan')
-          .select('*')
+          .select('api_key,text_pesan')
           .order('id', { ascending: false })
           .limit(1);
 
         if (!error && data && data.length > 0) {
+          HM.mark('siaran');
           const row = data[0];
           apiKeyTersimpan = (row.api_key || '').trim();
           if (row.api_key) {
@@ -2747,7 +2903,7 @@
             // Upload audio file ke Supabase Storage (bucket "tts_siaran")
             const { error: uploadError } = await supabaseClient.storage
               .from('tts_siaran')
-              .upload(fileName, audioBlob, { cacheControl: '3600', upsert: true });
+              .upload(fileName, audioBlob, { cacheControl: '31536000', upsert: true });
 
             if (!uploadError) {
               const { data: publicUrlData } = supabaseClient.storage
@@ -2876,6 +3032,8 @@
     }
 
     async function handleLogout() {
+      RT.closeAll();
+      HM.bust();
       await supabaseClient.auth.signOut();
       document.getElementById('adminPanel').classList.add('hidden');
       document.getElementById('loginSection').classList.remove('hidden');
@@ -2886,6 +3044,7 @@
       document.getElementById('loginSection').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       lucide.createIcons();
+      RT.syncView(currentView);   // HEMAT: Realtime baru dibuka setelah login, hanya untuk menu aktif
       // Setelah login / sesi dipulihkan: muat data terakhir dari Supabase untuk sub-menu yang sedang terbuka
       if (typeof autoLoadPreview === 'function') autoLoadPreview(currentView);
     }
@@ -3496,6 +3655,11 @@
     let mtLastSig = '';
     let mtLastLoad = 0;
     const mtRealtimeOk = { kon: false, sts: false };
+    // HEMAT: cache terpisah per tabel + penanda "perlu diambil ulang" (event koneksi_tablet tidak lagi memuat status_tablet, dan sebaliknya)
+    let mtLastTry = 0, mtFail = 0;
+    const mtDirty = { kon: true, sts: true };
+    const mtCache = { kon: null, sts: null };
+    function mtMarkAll() { mtDirty.kon = true; mtDirty.sts = true; }
     const mtTerpilih = new Set();      // kode_sts tablet yang dipilih
     const mtBellState = {};            // kode_sts -> 'sending' | 'sent'
 
@@ -3555,12 +3719,18 @@
       el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ' +
         (ok ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200');
       el.innerHTML = '<span class="mt-rt-dot ' + (ok ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500') + '"></span>' +
-        (ok ? 'Realtime aktif' : 'Auto-refresh 5 detik');
+        (ok ? 'Realtime aktif' : 'Auto-refresh 30 detik');
     }
 
     async function loadMonitoringTablet(paksa) {
       if (monitoringLoading) { monitoringPending = true; return; }
       monitoringLoading = true;
+      const perlu = {
+        kon: paksa === true || mtDirty.kon || !mtCache.kon,
+        sts: paksa === true || mtDirty.sts || !mtCache.sts
+      };
+      mtDirty.kon = false; mtDirty.sts = false;
+      mtLastTry = Date.now();
 
       const list = document.getElementById('mtList');
       const btn = document.getElementById('mtBtnRefresh');
@@ -3577,26 +3747,29 @@
         const akhir = new Date(mulaiHari.getTime() + 86400000).toISOString();
 
         const [kon, sts] = await Promise.all([
-          supabaseClient.from('koneksi_tablet')
+          perlu.kon ? supabaseClient.from('koneksi_tablet')
             .select('id, nama_tab_sts, kode_sts, status_internet, status_baterai')
-            .order('nama_tab_sts', { ascending: true }),
-          supabaseClient.from('status_tablet')
+            .order('nama_tab_sts', { ascending: true }) : null,
+          perlu.sts ? supabaseClient.from('status_tablet')
             .select('id, nama_tablet, nama, status, tgl, waktu_pinjam, waktu_kembali, url, url_kembali')
             .or('tgl.eq.' + hari + ',and(waktu_pinjam.gte.' + awal + ',waktu_pinjam.lt.' + akhir + '),and(waktu_kembali.gte.' + awal + ',waktu_kembali.lt.' + akhir + ')')
             .order('waktu_pinjam', { ascending: true })
-            .limit(1000)
+            .limit(1000) : null
         ]);
-        if (kon.error) throw kon.error;
-        if (sts.error) throw sts.error;
+        if (kon && kon.error) throw kon.error;
+        if (sts && sts.error) throw sts.error;
+        if (kon) mtCache.kon = kon.data || [];
+        if (sts) mtCache.sts = sts.data || [];
+        mtFail = 0;
 
         const peminjamPerTablet = {};
-        (sts.data || []).forEach(p => {
+        (mtCache.sts || []).forEach(p => {
           const key = String(p.nama_tablet || '').trim().toUpperCase();
           if (!key) return;
           (peminjamPerTablet[key] = peminjamPerTablet[key] || []).push(p);
         });
 
-        monitoringTabletList = (kon.data || []).map(t => ({
+        monitoringTabletList = (mtCache.kon || []).map(t => ({
           ...t,
           peminjam: peminjamPerTablet[String(t.nama_tab_sts || '').trim().toUpperCase()] || []
         })).sort(mtUrutNamaTablet);
@@ -3617,6 +3790,9 @@
           renderMonitoringTablet();
         }
       } catch (err) {
+        mtFail++;
+        if (perlu.kon) mtDirty.kon = true;
+        if (perlu.sts) mtDirty.sts = true;
         console.error('Gagal memuat Monitoring Tablet:', err);
         if (list && !list.querySelector('.mt-card')) list.innerHTML = '<div class="text-center py-14 text-red-500 text-xs font-semibold">Gagal memuat data tablet. Periksa koneksi atau RLS policy tabel koneksi_tablet &amp; status_tablet.</div>';
         if (!document.querySelector('#mtList .mt-card')) showToast('Gagal memuat data Monitoring Tablet.', 'error');
@@ -3933,30 +4109,40 @@
     }
 
     // ===== REALTIME + AUTO REFRESH + TIMER BERJALAN (hanya aktif saat menu Monitoring Tablet dibuka) =====
+    // HEMAT: satu channel untuk dua tabel, dibuka hanya saat menu ini aktif (lihat RT di atas).
+    // Event digabung (min. jeda 1,5-4 detik) dan hanya tabel yang berubah yang diambil ulang.
+    // Pengaman berkala: 5 menit saat Realtime aktif (sebelumnya 30 detik); 30 detik saat Realtime tidak tersambung (sebelumnya 5 detik).
+    function mtOnEvent(jenis) {
+      if (currentView !== 'monitoringTablet') return;
+      mtDirty[jenis] = true;
+      if (monitoringDebounce) return;   // sudah terjadwal -> gabungkan
+      const jeda = Math.max(1500, 4000 - (Date.now() - mtLastTry));
+      monitoringDebounce = setTimeout(() => {
+        monitoringDebounce = null;
+        if (currentView === 'monitoringTablet') loadMonitoringTablet();
+      }, jeda);
+    }
+    function mtStartRealtime() {
+      RT.open('monitoringTablet', [
+        { table: 'koneksi_tablet', cb: () => mtOnEvent('kon') },
+        { table: 'status_tablet', cb: () => mtOnEvent('sts') }
+      ], status => {
+        const ok = (status === 'SUBSCRIBED');
+        mtRealtimeOk.kon = ok; mtRealtimeOk.sts = ok;
+        mtUpdateRealtimeBadge();
+      });
+    }
     document.addEventListener('DOMContentLoaded', () => {
-      const trigger = () => {
-        if (currentView !== 'monitoringTablet') return;
-        clearTimeout(monitoringDebounce);
-        monitoringDebounce = setTimeout(loadMonitoringTablet, 250);
-      };
-      supabaseClient.channel('public:koneksi_tablet_monitor')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'koneksi_tablet' }, trigger)
-        .subscribe(status => { mtRealtimeOk.kon = (status === 'SUBSCRIBED'); mtUpdateRealtimeBadge(); });
-      supabaseClient.channel('public:status_tablet_monitor')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'status_tablet' }, trigger)
-        .subscribe(status => { mtRealtimeOk.sts = (status === 'SUBSCRIBED'); mtUpdateRealtimeBadge(); });
-
-      // Cadangan: jika Realtime belum aktif, data dimuat ulang tiap 5 detik (jika aktif, pengaman tiap 30 detik)
       setInterval(() => {
         if (currentView !== 'monitoringTablet' || document.hidden) return;
-        const batas = (mtRealtimeOk.kon && mtRealtimeOk.sts) ? 30000 : 5000;
-        if (Date.now() - mtLastLoad >= batas) loadMonitoringTablet();
-      }, 2000);
-      document.addEventListener('visibilitychange', () => { if (!document.hidden && currentView === 'monitoringTablet') loadMonitoringTablet(); });
+        const ok = mtRealtimeOk.kon && mtRealtimeOk.sts;
+        const batas = (ok ? 300000 : 30000) * (1 + Math.min(mtFail, 4));   // gagal beruntun -> jeda makin panjang
+        if (Date.now() - mtLastTry >= batas) { mtMarkAll(); loadMonitoringTablet(); }
+      }, 10000);
 
-      // Durasi pinjam berjalan (detik demi detik)
+      // Durasi pinjam berjalan (detik demi detik) - hanya DOM lokal, tanpa request
       setInterval(() => {
-        if (currentView !== 'monitoringTablet') return;
+        if (currentView !== 'monitoringTablet' || document.hidden) return;
         document.querySelectorAll('#mtList .mt-live').forEach(el => {
           const ms = Date.now() - new Date(el.dataset.start).getTime();
           if (!isNaN(ms)) el.textContent = mtFormatDetik(ms / 1000);
@@ -4395,14 +4581,14 @@
       }
     }
     function kpStartRealtime() {
-      if (kpRtChannel || typeof supabaseClient === 'undefined') return;
-      kpRtChannel = supabaseClient
-        .channel('public:kursi_pijat')
-        .on('postgres_changes', { event: '*', schema: 'public', table: KP_TABLE }, () => {
+      if (typeof supabaseClient === 'undefined') return;
+      RT.open('inputKursiPijat', [{
+        table: KP_TABLE,
+        cb: () => {
           clearTimeout(kpRtTimer);
           kpRtTimer = setTimeout(kpMuatDariDb, 1500);   // replace massal memicu banyak event -> digabung jadi 1x muat ulang
-        })
-        .subscribe();
+        }
+      }]);
     }
 
     document.addEventListener('DOMContentLoaded', () => { kpRender(); });
@@ -4731,8 +4917,13 @@
       const urutan = ['id'];
       if (key) urutan.push(key);
       urutan.push(null);
+      // HEMAT: kombinasi urutan/kolom yang pernah berhasil dicoba lebih dulu (tidak ada lagi request gagal berulang)
+      const belajar = HM.get('fetch:' + table);
+      if (belajar && urutan.includes(belajar.o)) { urutan.splice(urutan.indexOf(belajar.o), 1); urutan.unshift(belajar.o); }
       for (const ord of urutan) {
-        for (const sel of (cols && cols !== '*' ? [cols, '*'] : ['*'])) {
+        let daftarSel = (cols && cols !== '*') ? [cols, '*'] : ['*'];
+        if (belajar && ord === belajar.o && daftarSel.includes(belajar.s)) daftarSel = [belajar.s].concat(daftarSel.filter(x => x !== belajar.s));
+        for (const sel of daftarSel) {
           const out = [];
           let ok = true;
           for (let from = 0; from < 50000; from += 1000) {
@@ -4743,7 +4934,7 @@
             out.push(...(data || []));
             if (!data || data.length < 1000) break;
           }
-          if (ok) return out;
+          if (ok) { HM.set('fetch:' + table, { o: ord, s: sel }); return out; }
         }
       }
       throw lastErr || new Error('Gagal membaca tabel ' + table);
@@ -4925,14 +5116,16 @@
     // jika masih kosong atau belum diubah pengguna sejak terakhir diisi otomatis.
     async function pvLoadTarget() {
       if (pvPanelTersembunyi()) return;
+      if (HM.fresh('pv:target')) return;   // HEMAT: target baru dimuat < 2 menit lalu & belum ada penulisan data
       if (pvBusy.target) { pvUlang.target = true; return; }
       pvBusy.target = true;
       const info = document.getElementById('targetPreviewInfo');
       const tulisInfo = h => { if (info) { info.innerHTML = h; lucide.createIcons(); } };
       tulisInfo('<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Memuat target terakhir dari database...</span>');
       try {
-        const { rows } = await pvBacaTabel(PV_TARGET_TABLE, 'id');
+        const { rows } = await pvBacaTerakhir(PV_TARGET_TABLE, 'id');
         const r = rows.length ? rows[rows.length - 1] : null;
+        if (r) HM.mark('pv:target');
         if (!r) {
           tulisInfo('<span class="pv-chip xl-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a"><i data-lucide="database" class="w-3.5 h-3.5"></i> Tabel &quot;' + pvEsc(PV_TARGET_TABLE) + '&quot; kosong, atau belum ada policy SELECT (RLS) yang mengizinkan data dibaca</span>');
           return;
@@ -4994,6 +5187,7 @@
       sales: () => salesData, mtdSales: () => mtdSalesData, departemen: () => departemenData,
       furnipro: () => furniproData, comser: () => comserData, mtdComser: () => mtdComserData, mtdFurnipro: () => mtdFurniproData
     };
+    const pvChipLast = {};   // HEMAT: status chip terakhir tiap menu (dipakai saat data dari cache)
     const pvSig = {};     // tanda data hasil muat terakhir dari database (untuk mendeteksi data paste pengguna)
     const pvUlang = {};   // permintaan muat ulang yang datang saat proses muat sedang berjalan
     const pvOrdCache = {};
@@ -5011,7 +5205,8 @@
     // Baca seluruh baris tabel (halaman 1000 baris) memakai klien tertentu
     async function pvAmbilSemua(client, table, key) {
       const urut = [];
-      if (pvOrdCache[table] !== undefined) urut.push(pvOrdCache[table]);
+      const ordBelajar = (pvOrdCache[table] !== undefined) ? pvOrdCache[table] : (() => { const g = HM.get('pvord:' + table); return g ? g.v : undefined; })();
+      if (ordBelajar !== undefined) urut.push(ordBelajar);
       ['id', key].forEach(o => { if (!urut.includes(o)) urut.push(o); });
       let lastErr = null;
       let probeSudah = false;
@@ -5040,7 +5235,7 @@
           out.push(...(data || []));
           if (!data || data.length < 1000) break;
         }
-        if (ok) { pvOrdCache[table] = ord; return out; }
+        if (ok) { pvOrdCache[table] = ord; HM.set('pvord:' + table, { v: ord }); return out; }
         if (pvStopCoba(lastErr)) break;
       }
       throw lastErr || new Error('Gagal membaca tabel ' + table);
@@ -5049,16 +5244,34 @@
     // Coba sesi login lebih dulu, lalu klien anon. Mengembalikan baris pertama yang berisi data.
     async function pvBacaTabel(table, key) {
       const jalur = [supabaseClient, pvAnonClient];
+      const urutJalur = (HM.get('src:' + table) === 1) ? [1, 0] : [0, 1];   // HEMAT: jalur yang terbukti berhasil dicoba lebih dulu
       let err = null, berhasil = false;
-      for (let i = 0; i < jalur.length; i++) {
+      for (const i of urutJalur) {
         try {
           const rows = await pvAmbilSemua(jalur[i], table, key);
           berhasil = true;
-          if (rows.length) return { rows, sumber: i === 0 ? 'login' : 'anon' };
+          if (rows.length) { HM.set('src:' + table, i); return { rows, sumber: i === 0 ? 'login' : 'anon' }; }
         } catch (e) { err = e; }
       }
       if (berhasil) return { rows: [], sumber: null };
       throw err || new Error('Gagal membaca tabel ' + table);
+    }
+
+    // HEMAT: menu Target Today hanya memakai baris TERAKHIR -> cukup ambil 1 baris terbaru (bukan seluruh tabel)
+    async function pvBacaTerakhir(table, key) {
+      if (HM.get('last:' + table) !== false) {
+        let ada = false;
+        for (const client of [supabaseClient, pvAnonClient]) {
+          try {
+            const { data, error } = await client.from(table).select('*').order('id', { ascending: false }).limit(1);
+            if (error) { if (!pvStopCoba(error)) HM.set('last:' + table, false); continue; }
+            ada = true;
+            if (data && data.length) return { rows: data, sumber: client === supabaseClient ? 'login' : 'anon' };
+          } catch (e) { /* lanjut ke jalur berikut */ }
+        }
+        if (ada) return { rows: [], sumber: null };
+      }
+      return pvBacaTabel(table, key);   // jalur lengkap seperti semula
     }
 
     // Samakan nama kolom hasil baca dengan nama kolom baku (tidak peka huruf besar/kecil, ada cadangan nama dasar)
@@ -5134,6 +5347,11 @@
       const cfg = PV_CFG[view];
       if (!cfg || pvPanelTersembunyi()) return;
       if (pvBusy[view]) { pvUlang[view] = true; return; }
+      // HEMAT: data baru dimuat < 2 menit lalu, belum ada penulisan data, dan tidak ada data paste -> pakai data yang sudah ada
+      if (HM.fresh('pv:' + view) && pvChipLast[view] && pvSig[view] === pvSigData(view)) {
+        if (currentView === view) { pvAnimasiBaris(); pvChip(view, pvChipLast[view].s, pvChipLast[view].n); }
+        return;
+      }
       const sigAwal = pvSigData(view);
       const kosong = cfg.isEmpty();
       if (!kosong && pvSig[view] !== sigAwal) return;   // ada data paste yang belum dikirim: jangan ditimpa
@@ -5148,6 +5366,8 @@
         const cocok = !hasil.rows.length || pvPetaLengkap(hasil.rows, cfg.cols);
         if (cocok) cfg.apply(pvNormalisasi(hasil.rows, cfg.cols));
         pvSig[view] = pvSigData(view);
+        if (cocok) { HM.mark('pv:' + view); pvChipLast[view] = { s: hasil.rows.length ? 'ok' : 'kosong', n: hasil.rows.length }; }
+        else { delete HM.ts['pv:' + view]; delete pvChipLast[view]; }
         if (currentView === view) {
           if (cocok) cfg.render(); else pvRenderGenerik(hasil.rows);
           pvAnimasiBaris();
