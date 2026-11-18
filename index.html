@@ -196,6 +196,32 @@
     .mt-head { background: linear-gradient(90deg, #0f172a, #1e293b); }
     .mt-rt-dot { display: inline-block; width: 7px; height: 7px; border-radius: 999px; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > INPUT SCHEDULE ===== -->
+  <style>
+    @keyframes schRowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes schShine { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+    #viewInputScheduleSection input:focus, #viewInputScheduleSection select:focus, #viewInputScheduleSection textarea:focus { box-shadow: 0 0 0 4px rgba(14,165,233,.15) !important; border-color: #0ea5e9 !important; outline: none; }
+    .sch-hero { background: linear-gradient(135deg, #0ea5e9 0%, #4f46e5 100%); }
+    .sch-field { transition: transform .2s ease, box-shadow .2s ease; }
+    .sch-field:hover { transform: translateY(-1px); }
+    .sch-paste { transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+    .sch-paste:hover { background: rgba(240,249,255,.8); }
+    .sch-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .05em; border: 1px solid; white-space: nowrap; }
+    .sch-pagi  { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+    .sch-siang { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+    .sch-off   { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+    .sch-cuti  { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+    .sch-lain  { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .sch-row { animation: schRowIn .35s cubic-bezier(.22,.8,.3,1) both; }
+    #schTableWrap { border-radius: 18px; box-shadow: 0 12px 30px -16px rgba(30,41,59,.25); }
+    #schTableWrap table { border-collapse: separate; border-spacing: 0; }
+    #schTableWrap thead th { white-space: nowrap; padding: .85rem 1rem; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; background: linear-gradient(90deg, #0f172a, #1e293b); color: #fff; position: sticky; top: 0; z-index: 10; }
+    #schTableWrap tbody td { border-bottom: 1px solid #f1f5f9; padding: .6rem 1rem; white-space: nowrap; }
+    #schTableWrap tbody tr:hover td { background: #f0f9ff; }
+    #schTableWrap tbody tr:last-child td { border-bottom: 0; }
+    #btnSchKirim:not(:disabled):hover { box-shadow: 0 14px 26px -12px rgba(14,165,233,.8); transform: translateY(-1px); }
+    #btnSchKirim { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
@@ -344,6 +370,11 @@
             <a href="#" onclick="switchView('monitoringTablet')" id="menuMonitoringTablet" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="tablet-smartphone" class="w-4 h-4 text-sky-400"></i>
               <span>MONITORING TABLET</span>
+            </a>
+            <!-- MENU INPUT SCHEDULE (di bawah Monitoring Tablet) -->
+            <a href="#" onclick="switchView('inputSchedule')" id="menuInputSchedule" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-400"></i>
+              <span>INPUT SCHEDULE</span>
             </a>
           </div>
         </div>
@@ -626,7 +657,7 @@
                       <i data-lucide="eye" class="w-4 h-4"></i>
                     </button>
                   </div>
-                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5"><i data-lucide="info" class="w-3 h-3"></i> API Key tersimpan otomatis ke database setelah Anda menekan tombol simpan. Mengganti API Key wajib verifikasi password login.</p>
+                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5"><i data-lucide="info" class="w-3 h-3"></i> API Key tersimpan otomatis ke database setelah Anda menekan tombol simpan. Mengganti API Key wajib verifikasi password.</p>
                 </div>
 
                 <!-- VOICE ID -->
@@ -962,6 +993,73 @@
             <div id="mtList" class="space-y-3"></div>
           </div>
 
+          <!-- ===== INPUT SCHEDULE SECTION (PORTAL KARYAWAN) ===== -->
+          <div id="viewInputScheduleSection" class="hidden flex-1 flex flex-col">
+            <div class="sch-hero rounded-2xl p-5 mb-5 text-white shadow-lg shadow-sky-500/20 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 ring-1 ring-white/30">
+                <i data-lucide="calendar-days" class="w-6 h-6"></i>
+              </div>
+              <div class="min-w-0">
+                <h2 class="text-lg font-bold tracking-tight">INPUT SCHEDULE</h2>
+                <p class="text-xs text-sky-100 mt-1 leading-relaxed">Tempel jadwal kerja karyawan dari Excel, periksa preview-nya, lalu kirim ke database.</p>
+              </div>
+            </div>
+
+            <!-- PERIODE: BULAN & TAHUN -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 max-w-2xl">
+              <div class="sch-field">
+                <label for="schBulan" class="flex items-center gap-1.5 text-xs font-bold text-slate-700 tracking-wider mb-1.5">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-sky-600"></i> BULAN
+                </label>
+                <select id="schBulan" onchange="schBulanDiubah()" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white cursor-pointer transition"></select>
+              </div>
+              <div class="sch-field">
+                <label for="schTahun" class="flex items-center justify-between gap-1.5 text-xs font-bold text-slate-700 tracking-wider mb-1.5">
+                  <span class="flex items-center gap-1.5"><i data-lucide="calendar-range" class="w-3.5 h-3.5 text-sky-600"></i> TAHUN</span>
+                  <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Terkunci</span>
+                </label>
+                <input type="text" id="schTahun" readonly tabindex="-1" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 cursor-not-allowed select-none">
+              </div>
+            </div>
+
+            <!-- LEGENDA KONVERSI -->
+            <div class="flex flex-wrap items-center gap-2 mb-4 text-[11px] text-slate-500">
+              <span class="font-semibold">Konversi otomatis:</span>
+              <span><span class="sch-badge sch-pagi">P</span> → PAGI</span>
+              <span><span class="sch-badge sch-siang">X</span> → SIANG</span>
+              <span><span class="sch-badge sch-off">O</span> → OFF</span>
+              <span><span class="sch-badge sch-cuti">AL</span> → CUTI</span>
+              <span class="text-slate-400">(nilai lain dipertahankan)</span>
+            </div>
+
+            <!-- KOLOM PASTE + TOMBOL -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
+              <p class="text-xs text-gray-500">Urutan kolom: <b class="text-sky-700">NIP, NAMA, JABATAN, TGL 1, TGL 2, ...</b> lalu tekan <b class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 font-mono">Ctrl + V</b>.</p>
+              <div class="flex gap-2.5">
+                <button type="button" onclick="schReset()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gray-500"></i> Reset Data
+                </button>
+                <button type="button" id="btnSchKirim" onclick="schKirim()" class="bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-sky-500/25 disabled:opacity-70 disabled:cursor-not-allowed">
+                  <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="schTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">0</span> Baris ke Database
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <textarea id="schPasteInput" oninput="schHandlePaste()" spellcheck="false" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data schedule dari Excel..."
+                class="sch-paste w-full h-24 p-3.5 border-2 border-dashed border-sky-300 bg-sky-50/30 rounded-xl text-xs font-mono transition"></textarea>
+            </div>
+
+            <div id="schSummary" class="flex flex-wrap items-center gap-2 mb-3"></div>
+
+            <div id="schTableWrap" class="flex-1 border border-gray-200 overflow-auto bg-white max-h-[460px] custom-scrollbar">
+              <table class="w-full text-left text-xs">
+                <thead id="schTableHead"></thead>
+                <tbody id="schTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
           <div id="viewExcelSection" class="flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <div class="flex items-center gap-3">
@@ -1037,13 +1135,13 @@
         <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
         <div>
           <h3 class="text-sm font-bold">Verifikasi Password</h3>
-          <p class="text-[11px] text-violet-100">Perubahan API Key memerlukan password login Anda.</p>
+          <p class="text-[11px] text-violet-100">Perubahan API Key memerlukan password khusus.</p>
         </div>
       </div>
       <form onsubmit="submitVerifApiKey(event)" class="p-5 space-y-3" autocomplete="off">
         <div id="verifApiKeyError" class="hidden p-2.5 rounded-lg text-xs font-medium bg-red-50 text-red-700 border border-red-200"></div>
-        <label for="inputVerifApiKeyPassword" class="block text-xs font-bold text-slate-700 tracking-wider">PASSWORD LOGIN</label>
-        <input type="password" id="inputVerifApiKeyPassword" autocomplete="new-password" placeholder="Masukkan password login"
+        <label for="inputVerifApiKeyPassword" class="block text-xs font-bold text-slate-700 tracking-wider">PASSWORD PERUBAHAN API KEY</label>
+        <input type="password" id="inputVerifApiKeyPassword" autocomplete="new-password" placeholder="Masukkan password"
           class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-violet-600 focus:ring-4 focus:ring-violet-100 bg-white transition">
         <p class="text-[11px] text-slate-400">Jika dibatalkan atau password salah, API Key akan dikembalikan seperti semula.</p>
         <div class="flex gap-2 pt-1">
@@ -1126,6 +1224,15 @@
     let dataSettinganTvList = [];
     let activeConnectedTvId = null;
     let debounceTimer = null;
+    // =====================================================================
+    // PASSWORD PERUBAHAN API KEY (TV DASHBOARD > PESAN SIARAN)
+    // ---------------------------------------------------------------------
+    // Password default: "kingemyu"
+    // >>> Untuk mengganti password di kemudian hari, cukup ubah teks di
+    //     bawah ini (di antara tanda kutip), lalu simpan & deploy ulang. <<<
+    // =====================================================================
+    const PASSWORD_GANTI_API_KEY = 'kingemyu';
+
     // --- State verifikasi penggantian API Key (Pesan Siaran) ---
     let apiKeyTersimpan = '';        // nilai API Key terakhir yang sah (sebelum diganti)
     let verifApiKeyPromise = null;   // promise verifikasi yang sedang berjalan (mencegah modal ganda)
@@ -1214,6 +1321,8 @@
       const menuMtdSales = document.getElementById('menuMtdSales');
       const menuMtdFurnipro = document.getElementById('menuMtdFurnipro'); 
       const menuMonitoringTablet = document.getElementById('menuMonitoringTablet');
+      const menuInputSchedule = document.getElementById('menuInputSchedule');
+      const viewInputScheduleSection = document.getElementById('viewInputScheduleSection');
       const viewMonitoringTabletSection = document.getElementById('viewMonitoringTabletSection');
       const pageTitle = document.getElementById('pageTitle');
       const pageBadge = document.getElementById('pageBadge');
@@ -1249,6 +1358,8 @@
       if (menuMtdFurnipro) menuMtdFurnipro.className = inactiveClass;
       if (menuMonitoringTablet) menuMonitoringTablet.className = inactiveClass;
       if (viewMonitoringTabletSection) viewMonitoringTabletSection.classList.add('hidden');
+      if (menuInputSchedule) menuInputSchedule.className = inactiveClass;
+      if (viewInputScheduleSection) viewInputScheduleSection.classList.add('hidden');
 
       if (viewPengaturanTvSection) viewPengaturanTvSection.classList.add('hidden');
       if (viewPengaturanSoundsSection) viewPengaturanSoundsSection.classList.add('hidden');
@@ -1258,7 +1369,13 @@
       if (viewTwibbonSalesSection) viewTwibbonSalesSection.classList.add('hidden');
       viewExcelSection.classList.add('hidden');
 
-      if (view === 'monitoringTablet') {
+      if (view === 'inputSchedule') {
+        if (menuInputSchedule) menuInputSchedule.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="calendar-days" class="w-3.5 h-3.5 text-sky-600"></i> Input Schedule';
+        if (viewInputScheduleSection) viewInputScheduleSection.classList.remove('hidden');
+        if (typeof schOnShow === 'function') schOnShow();
+      } else if (view === 'monitoringTablet') {
         if (menuMonitoringTablet) menuMonitoringTablet.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
         pageBadge.innerHTML = '<i data-lucide="tablet-smartphone" class="w-3.5 h-3.5 text-sky-600"></i> Monitoring Tablet';
@@ -2078,19 +2195,11 @@
       btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memeriksa...';
       lucide.createIcons();
 
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        const email = session && session.user ? session.user.email : null;
-        if (!email) throw new Error('Sesi login tidak ditemukan.');
-
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
-        if (error) {
-          selesaiVerifApiKey(false, 'Password salah. API Key dikembalikan seperti semula.');
-        } else {
-          selesaiVerifApiKey(true);
-        }
-      } catch (ex) {
-        selesaiVerifApiKey(false, 'Verifikasi gagal: ' + ex.message + ' API Key dikembalikan seperti semula.');
+      // Bandingkan dengan password khusus (PASSWORD_GANTI_API_KEY), bukan password login Supabase
+      if (pwd === PASSWORD_GANTI_API_KEY) {
+        selesaiVerifApiKey(true);
+      } else {
+        selesaiVerifApiKey(false, 'Password salah. API Key dikembalikan seperti semula.');
       }
     }
 
@@ -2994,6 +3103,10 @@
     const mtCariByKode = kode => monitoringTabletList.find(t => mtKodeTablet(t) === kode);
     const mtUrlAman = u => mtAdaIsi(u) && /^(https?:\/\/|data:image\/)/i.test(String(u).trim());
 
+    // Urutkan berdasarkan NAMA TABLET (A-Z, angka diurutkan secara natural: TAB 2 sebelum TAB 10)
+    const mtUrutNamaTablet = (a, b) =>
+      String(a.nama_tab_sts || '').trim().localeCompare(String(b.nama_tab_sts || '').trim(), 'id', { numeric: true, sensitivity: 'base' });
+
     // Tanggal hari ini (zona WIB) format YYYY-MM-DD, cocok dengan kolom "tgl" bertipe date
     function mtTanggalHariIni() {
       return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });
@@ -3084,7 +3197,7 @@
         monitoringTabletList = (kon.data || []).map(t => ({
           ...t,
           peminjam: peminjamPerTablet[String(t.nama_tab_sts || '').trim().toUpperCase()] || []
-        }));
+        })).sort(mtUrutNamaTablet);
 
         // buang pilihan tablet yang sudah tidak ada
         const kodeAda = new Set(monitoringTabletList.map(mtKodeTablet));
@@ -3448,6 +3561,231 @@
         });
       }, 1000);
     });
+  </script>
+  <!-- ===== SCRIPT TAMBAHAN: PORTAL KARYAWAN > INPUT SCHEDULE ===== -->
+  <script>
+    // Nama tabel Supabase tujuan
+    const SCH_TABLE = 'schedule';
+    // Jumlah maksimal kolom tanggal (tgl_1 s/d tgl_31)
+    const SCH_MAX_TGL = 31;
+    const SCH_NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    // Ketentuan konversi nilai tanggal (selain ini dipertahankan sesuai data awal)
+    const SCH_KONVERSI = { 'P': 'PAGI', 'X': 'SIANG', 'O': 'OFF', 'AL': 'CUTI' };
+
+    let schData = [];          // [{ nip, nama, jabatan, tgl: [...] }]
+    let schJumlahTgl = 0;
+    let schDilewati = 0;
+    let schMengirim = false;
+    let schBulanDisentuh = false;
+
+    const schEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    // Bulan & tahun saat ini (zona WIB)
+    function schSekarang() {
+      const [y, m] = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }).split('-').map(Number);
+      return { tahun: y, bulan: m - 1 };
+    }
+
+    function schInit() {
+      const sel = document.getElementById('schBulan');
+      if (!sel) return;
+      if (!sel.options.length) {
+        sel.innerHTML = SCH_NAMA_BULAN.map(n => '<option value="' + n + '">' + n + '</option>').join('');
+      }
+      const now = schSekarang();
+      if (!schBulanDisentuh) sel.value = SCH_NAMA_BULAN[now.bulan];
+      document.getElementById('schTahun').value = String(now.tahun);   // terkunci otomatis = tahun saat ini
+    }
+
+    function schOnShow() { schInit(); schRender(); }
+    function schBulanDiubah() { schBulanDisentuh = true; schRenderSummary(); }
+
+    function schKonversi(v) {
+      const s = String(v ?? '').trim();
+      const k = SCH_KONVERSI[s.toUpperCase()];
+      return k !== undefined ? k : s;
+    }
+
+    function schHandlePaste() {
+      const text = document.getElementById('schPasteInput').value;
+      if (!text.trim()) { schData = []; schJumlahTgl = 0; schDilewati = 0; schRender(); return; }
+
+      const baris = text.replace(/\r/g, '').split('\n');
+      const hasil = [];
+      let dilewati = 0, pertama = true, maxTgl = 0;
+
+      baris.forEach(line => {
+        if (!line.trim()) return;
+        const cols = line.split('\t').map(c => c.trim());
+
+        // jumlah kolom tanggal = posisi kolom terisi terakhir - 3 (NIP, NAMA, JABATAN)
+        let terakhir = -1;
+        cols.forEach((c, i) => { if (c !== '') terakhir = i; });
+        maxTgl = Math.max(maxTgl, terakhir + 1 - 3);
+
+        const c0 = (cols[0] || '').toUpperCase(), c1 = (cols[1] || '').toUpperCase();
+        if (pertama) {
+          pertama = false;
+          if (c0 === 'NIP' || c1 === 'NAMA') return;   // baris header dilewati
+        }
+        // kolom nip di Supabase bertipe int8 -> hanya angka yang valid
+        if (!/^\d+$/.test(cols[0]) || /^0+$/.test(cols[0])) { dilewati++; return; }
+
+        hasil.push({ nip: cols[0], nama: cols[1] || '', jabatan: cols[2] || '', mentah: cols.slice(3) });
+      });
+
+      schJumlahTgl = Math.max(0, Math.min(SCH_MAX_TGL, maxTgl));
+      schData = hasil.map(r => {
+        const tgl = [];
+        for (let i = 0; i < schJumlahTgl; i++) tgl.push(schKonversi(r.mentah[i]));
+        return { nip: r.nip, nama: r.nama, jabatan: r.jabatan, tgl };
+      });
+      schDilewati = dilewati;
+      schRender();
+    }
+
+    function schBadge(v) {
+      if (v === '') return '<span class="text-slate-300">-</span>';
+      const cls = { PAGI: 'sch-pagi', SIANG: 'sch-siang', OFF: 'sch-off', CUTI: 'sch-cuti' }[v] || 'sch-lain';
+      return '<span class="sch-badge ' + cls + '">' + schEsc(v) + '</span>';
+    }
+
+    function schRenderSummary() {
+      const el = document.getElementById('schSummary');
+      if (!el) return;
+      if (!schData.length) { el.innerHTML = ''; return; }
+      const bulan = document.getElementById('schBulan').value, tahun = document.getElementById('schTahun').value;
+      const chip = (cls, txt) => '<span class="px-3 py-1 rounded-full text-[11px] font-bold border ' + cls + '">' + txt + '</span>';
+      el.innerHTML =
+        chip('bg-sky-50 text-sky-700 border-sky-200', 'Periode: ' + schEsc(bulan) + ' ' + schEsc(tahun)) +
+        chip('bg-emerald-50 text-emerald-700 border-emerald-200', schData.length + ' karyawan') +
+        chip('bg-indigo-50 text-indigo-700 border-indigo-200', schJumlahTgl + ' kolom tanggal') +
+        (schDilewati ? chip('bg-amber-50 text-amber-700 border-amber-200', schDilewati + ' baris NIP kosong/tidak valid dilewati') : '');
+    }
+
+    function schRender() {
+      const thead = document.getElementById('schTableHead');
+      const tbody = document.getElementById('schTableBody');
+      const total = document.getElementById('schTotalBaris');
+      if (!thead || !tbody) return;
+      total.textContent = schData.length;
+      schRenderSummary();
+
+      let head = '<tr><th class="text-center w-14">NO</th><th>NIP</th><th>NAMA</th><th>JABATAN</th>';
+      for (let i = 1; i <= schJumlahTgl; i++) head += '<th class="text-center">TGL ' + i + '</th>';
+      thead.innerHTML = head + '</tr>';
+
+      if (!schData.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2">' +
+          '<div class="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-slate-300"></i></div>' +
+          '<span class="italic text-xs">Belum ada data schedule. Silakan paste data dari Excel ke kotak di atas.</span></div></td></tr>';
+        lucide.createIcons();
+        return;
+      }
+
+      let html = '';
+      schData.forEach((r, idx) => {
+        html += '<tr class="sch-row" style="animation-delay:' + Math.min(idx, 20) * 20 + 'ms">' +
+          '<td class="text-center"><span class="xl-no">' + (idx + 1) + '</span></td>' +
+          '<td class="font-mono font-semibold text-sky-700">' + schEsc(r.nip) + '</td>' +
+          '<td class="font-semibold text-gray-800">' + schEsc(r.nama) + '</td>' +
+          '<td class="text-gray-600">' + schEsc(r.jabatan) + '</td>' +
+          r.tgl.map(v => '<td class="text-center">' + schBadge(v) + '</td>').join('') + '</tr>';
+      });
+      tbody.innerHTML = html;
+    }
+
+    function schReset() {
+      document.getElementById('schPasteInput').value = '';
+      schData = []; schJumlahTgl = 0; schDilewati = 0;
+      schRender();
+      const st = document.getElementById('statusMsg'); if (st) st.classList.add('hidden');
+    }
+
+    function schTombolKirim(aktif) {
+      const btn = document.getElementById('btnSchKirim');
+      if (!btn) return;
+      btn.disabled = !aktif;
+      btn.innerHTML = aktif
+        ? '<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="schTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">' + schData.length + '</span> Baris ke Database'
+        : '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengirim Schedule...';
+      lucide.createIcons();
+    }
+
+    function schNotif(pesan, tipe) {
+      showToast(pesan, tipe);
+      const main = document.querySelector('main');
+      if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Hapus SEMUA baris tabel schedule (filter "nip null ATAU bukan null" = seluruh baris, tidak tergantung nama kolom id)
+    const schHapusSemua = () => supabaseClient.from(SCH_TABLE).delete().or('nip.is.null,nip.not.is.null').select();
+
+    async function schInsertBatch(rows) {
+      for (let i = 0; i < rows.length; i += 500) {
+        const { error } = await supabaseClient.from(SCH_TABLE).insert(rows.slice(i, i + 500));
+        if (error) return error;
+      }
+      return null;
+    }
+
+    async function schKirim() {
+      if (schMengirim) return;
+      if (!schData.length) { schNotif('Belum ada data schedule yang valid untuk dikirim!', 'error'); return; }
+
+      const bulan = document.getElementById('schBulan').value;
+      const tahun = Number(document.getElementById('schTahun').value);
+
+      // Susun data: bulan, tahun, nip, nama, jabatan, tgl_1 ... tgl_N
+      const payload = schData.map(r => {
+        const o = { bulan, tahun, nip: r.nip, nama: r.nama, jabatan: r.jabatan };
+        r.tgl.forEach((v, i) => { o['tgl_' + (i + 1)] = v; });
+        return o;
+      });
+
+      schMengirim = true;
+      schTombolKirim(false);
+      let cadangan = [];
+      let sudahHapus = false;
+
+      try {
+        // 0) Cadangkan data lama (untuk pemulihan jika pengiriman gagal)
+        const bk = await supabaseClient.from(SCH_TABLE).select('*');
+        if (bk.error) throw new Error('Gagal membaca data lama: ' + bk.error.message);
+        cadangan = bk.data || [];
+
+        // 1) Hapus semua data lama
+        const del = await schHapusSemua();
+        if (del.error) throw new Error('Gagal menghapus data lama: ' + del.error.message);
+        if (cadangan.length > 0 && (del.data || []).length === 0) {
+          throw new Error('Data lama tidak dapat dihapus (periksa RLS policy DELETE pada tabel ' + SCH_TABLE + ').');
+        }
+        sudahHapus = true;
+
+        // 2) Kirim data baru
+        const errIns = await schInsertBatch(payload);
+        if (errIns) {
+          // Pulihkan data lama agar tabel tidak kosong
+          let pesanPulih = '';
+          try {
+            await schHapusSemua();
+            const errPulih = cadangan.length ? await schInsertBatch(cadangan.map(({ id, ...sisa }) => sisa)) : null;
+            pesanPulih = errPulih ? ' Data lama GAGAL dipulihkan.' : ' Data lama sudah dipulihkan.';
+          } catch (e2) { pesanPulih = ' Data lama GAGAL dipulihkan.'; }
+          throw new Error(errIns.message + '.' + pesanPulih);
+        }
+
+        schNotif('Sukses! ' + payload.length + ' baris schedule ' + bulan + ' ' + tahun + ' berhasil dikirim ke tabel ' + SCH_TABLE + '.', 'success');
+      } catch (ex) {
+        console.error('Gagal kirim schedule:', ex);
+        schNotif('Gagal mengirim schedule: ' + (ex.message || ex), 'error');
+      } finally {
+        schMengirim = false;
+        schTombolKirim(true);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { schInit(); schRender(); });
   </script>
 </body>
 </html>
