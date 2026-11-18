@@ -4604,7 +4604,9 @@
         }
         const ambil = p => {
           const ks = Object.keys(r);
-          const k = ks.find(x => x.toLowerCase() === 'target_' + p) || ks.find(x => x.toLowerCase().includes(p));
+          let k = ks.find(x => x.toLowerCase() === 'target_' + p) || ks.find(x => x.toLowerCase().includes(p));
+          // Kolom target sales pada tabel target_today bernama "target" (tanpa akhiran _sales)
+          if (!k && p === 'sales') k = ks.find(x => x.toLowerCase() === 'target');
           return k ? r[k] : null;
         };
         const isi = (id, v, rupiah) => {
