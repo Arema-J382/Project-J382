@@ -304,6 +304,17 @@
     aside nav a > span { min-width: 0; line-height: 1.3; }
     aside nav a { align-items: center; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: PREVIEW DATA TERAKHIR DARI DATABASE (animasi) ===== -->
+  <style>
+    @keyframes pvChipIn { from { opacity: 0; transform: translateY(-4px) scale(.96); } to { opacity: 1; transform: none; } }
+    @keyframes pvRowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @keyframes pvFlash { 0% { box-shadow: 0 0 0 0 rgba(59,130,246,.55); background-color: #eff6ff; } 100% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+    .pv-chip { animation: pvChipIn .35s cubic-bezier(.22,.8,.3,1) both; }
+    #previewTableBody tr.pv-row { animation: pvRowIn .32s cubic-bezier(.22,.8,.3,1) both; }
+    .pv-flash { animation: pvFlash 1.1s ease-out 1; }
+    #targetPreviewInfo:empty { display: none; }
+    @media (prefers-reduced-motion: reduce) { .pv-chip, #previewTableBody tr.pv-row, .pv-flash { animation: none !important; } }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
@@ -642,6 +653,7 @@
                   <i data-lucide="target" class="w-5 h-5 text-emerald-600"></i> Input Target Today
                 </h2>
                 <p class="text-xs text-gray-500 mt-1">Masukkan nominal target penjualan, target FP, dan target comser untuk hari ini ke dalam sistem.</p>
+                <div id="targetPreviewInfo" class="flex flex-wrap items-center gap-2 mt-3"></div>
               </div>
 
               <div class="space-y-4">
@@ -2763,6 +2775,8 @@
       document.getElementById('loginSection').classList.add('hidden');
       document.getElementById('adminPanel').classList.remove('hidden');
       lucide.createIcons();
+      // Setelah login / sesi dipulihkan: muat data terakhir dari Supabase untuk sub-menu yang sedang terbuka
+      if (typeof autoLoadPreview === 'function') autoLoadPreview(currentView);
     }
 
     function toggleMenu(id) {
@@ -4504,9 +4518,11 @@
       let html = '';
       if (state === 'loading') {
         html = '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Memuat data terakhir dari database...</span>';
+      } else if (state === 'kosong') {
+        html = '<span class="pv-chip xl-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a"><i data-lucide="database" class="w-3.5 h-3.5"></i> Tabel &quot;' + pvEsc(cfg.table) + '&quot; kosong, atau belum ada policy SELECT (RLS) yang mengizinkan data dibaca</span>';
       } else if (state === 'ok') {
         html = jumlah > 0
-          ? '<span class="pv-chip xl-chip xl-chip-blue"><i data-lucide="database" class="w-3.5 h-3.5"></i> Data terakhir dari database (' + Number(jumlah).toLocaleString('id-ID') + ' baris)</span>'
+          ? '<span class="pv-chip xl-chip xl-chip-blue"><i data-lucide="database" class="w-3.5 h-3.5"></i> Data terakhir dari database (' + Number(jumlah).toLocaleString('id-ID') + ' baris) &middot; ' + pvJam() + '</span>'
           : '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="database" class="w-3.5 h-3.5"></i> Tabel di database masih kosong</span>';
         const ekstra = cfg.extra ? cfg.extra() : '';
         if (jumlah > 0 && ekstra) html += '<span class="pv-chip xl-chip xl-chip-emerald"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> ' + ekstra + '</span>';
@@ -4569,24 +4585,54 @@
     }
 
     // Menu Input Target Today: isi kolom dengan data terakhir (jika tabel & kolom ditemukan)
+    // PERBAIKAN: membaca tabel "target_today" (nama tabel sesuai rujukan) setiap menu dibuka,
+    // lewat sesi login lalu cadangan klien anon (lihat pvBacaTabel). Kolom isian hanya ditimpa
+    // jika masih kosong atau belum diubah pengguna sejak terakhir diisi otomatis.
     async function pvLoadTarget() {
+      if (pvPanelTersembunyi()) return;
+      if (pvBusy.target) { pvUlang.target = true; return; }
+      pvBusy.target = true;
+      const info = document.getElementById('targetPreviewInfo');
+      const tulisInfo = h => { if (info) { info.innerHTML = h; lucide.createIcons(); } };
+      tulisInfo('<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Memuat target terakhir dari database...</span>');
       try {
-        const kand = [PV_TARGET_TABLE, 'target_hari_ini', 'target_harian', 'today_target', 'target'];
-        const pred = c => c.some(x => x.includes('sales')) && c.some(x => x.includes('fp')) && c.some(x => x.includes('comser')) && !c.includes('nip');
-        const { nama, row: r } = await pvCariBaris(kand, pred);
-        if (nama) pvDone.target = true;
-        if (!r) { if (!nama) console.warn('Preview Target Today: tabel tidak ditemukan. Atur PV_TARGET_TABLE.'); return; }
-        const ambil = p => { const k = Object.keys(r).find(x => x.toLowerCase().includes(p)); return k ? r[k] : null; };
+        const { rows } = await pvBacaTabel(PV_TARGET_TABLE, 'id');
+        const r = rows.length ? rows[rows.length - 1] : null;
+        if (!r) {
+          tulisInfo('<span class="pv-chip xl-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a"><i data-lucide="database" class="w-3.5 h-3.5"></i> Tabel &quot;' + pvEsc(PV_TARGET_TABLE) + '&quot; kosong, atau belum ada policy SELECT (RLS) yang mengizinkan data dibaca</span>');
+          return;
+        }
+        const ambil = p => {
+          const ks = Object.keys(r);
+          const k = ks.find(x => x.toLowerCase() === 'target_' + p) || ks.find(x => x.toLowerCase().includes(p));
+          return k ? r[k] : null;
+        };
         const isi = (id, v, rupiah) => {
           const el = document.getElementById(id);
-          if (!el || el.value.trim() || v === null || v === undefined) return;
+          if (!el || v === null || v === undefined || v === '') return;
+          const bolehTimpa = !el.value.trim() || el.value === el.dataset.pvIsi;
+          if (!bolehTimpa) return;
           el.value = String(Math.round(Number(v) || 0));
           if (rupiah && typeof formatRupiah === 'function') formatRupiah(el);
+          el.dataset.pvIsi = el.value;
+          el.classList.remove('pv-flash'); void el.offsetWidth; el.classList.add('pv-flash');
         };
-        isi('inputTargetSales', ambil('sales'), true);
-        isi('inputTargetFp', ambil('fp'), false);
-        isi('inputTargetComser', ambil('comser'), true);
-      } catch (e) { console.warn('Preview Target Today tidak dimuat:', e.message || e); }
+        const vSales = ambil('sales'), vFp = ambil('fp'), vComser = ambil('comser');
+        isi('inputTargetSales', vSales, true);
+        isi('inputTargetFp', vFp, false);
+        isi('inputTargetComser', vComser, true);
+        const f = n => Number(n || 0).toLocaleString('id-ID');
+        tulisInfo('<span class="pv-chip xl-chip xl-chip-blue"><i data-lucide="database" class="w-3.5 h-3.5"></i> Target terakhir dari database &middot; ' + pvJam() + '</span>' +
+          '<span class="pv-chip xl-chip xl-chip-emerald"><i data-lucide="circle-dollar-sign" class="w-3.5 h-3.5"></i> Sales ' + f(vSales) + '</span>' +
+          '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> FP ' + f(vFp) + '</span>' +
+          '<span class="pv-chip xl-chip xl-chip-slate"><i data-lucide="air-vent" class="w-3.5 h-3.5"></i> Comser ' + f(vComser) + '</span>');
+      } catch (e) {
+        console.warn('Preview Target Today tidak dimuat:', e.message || e);
+        tulisInfo('<span class="pv-chip xl-chip" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Gagal memuat tabel &quot;' + pvEsc(PV_TARGET_TABLE) + '&quot;: ' + pvEsc(String((e && e.message) || e).slice(0, 90)) + '</span>');
+      } finally {
+        pvBusy.target = false;
+        if (pvUlang.target) { pvUlang.target = false; setTimeout(pvLoadTarget, 0); }
+      }
     }
 
     // Menu Input Running Text: isi kotak teks dengan running text terakhir
@@ -4603,10 +4649,134 @@
       } catch (e) { console.warn('Preview Running Text tidak dimuat:', e.message || e); }
     }
 
-    // Dipanggil dari switchView(): memuat data terakhir hanya saat sub-menu PERTAMA KALI dibuka
+    // ===== PERBAIKAN PREVIEW: Daily Sales, Departemen, Furnipro, Comser, MTD Sales, MTD Furnipro, MTD Comser =====
+    // Penyebab sebelumnya: (1) menu bawaan dimuat sebelum login lalu ditandai "selesai" walau hasilnya kosong (RLS),
+    // (2) hanya dimuat sekali per sesi, (3) pembacaan hanya lewat sesi login. Sekarang: dimuat setiap menu dibuka
+    // (kecuali ada data paste yang belum dikirim), dengan cadangan klien anon, dan kolom dipetakan otomatis.
+    const PV_FIX_VIEW = {
+      sales: () => salesData, mtdSales: () => mtdSalesData, departemen: () => departemenData,
+      furnipro: () => furniproData, comser: () => comserData, mtdComser: () => mtdComserData, mtdFurnipro: () => mtdFurniproData
+    };
+    const pvSig = {};     // tanda data hasil muat terakhir dari database (untuk mendeteksi data paste pengguna)
+    const pvUlang = {};   // permintaan muat ulang yang datang saat proses muat sedang berjalan
+    const pvOrdCache = {};
+    const pvSigData = v => { try { return JSON.stringify(PV_FIX_VIEW[v]()); } catch (e) { return ''; } };
+    const pvPanelTersembunyi = () => { const p = document.getElementById('adminPanel'); return !p || p.classList.contains('hidden'); };
+    const pvJam = () => new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const pvStopCoba = e => pvTidakAda(e) || /42501|permission denied|JWT|PGRST30/i.test(e ? (String(e.code || '') + ' ' + String(e.message || '')) : '');
+
+    // Klien anonim tanpa sesi login: cadangan jika policy SELECT tabel hanya untuk role anon (seperti TV Dashboard)
+    const pvAnonClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'pv-anon-reader' }
+    });
+
+    // Baca seluruh baris tabel (halaman 1000 baris) memakai klien tertentu
+    async function pvAmbilSemua(client, table, key) {
+      const urut = [];
+      if (pvOrdCache[table] !== undefined) urut.push(pvOrdCache[table]);
+      ['id', key, null].forEach(o => { if (!urut.includes(o)) urut.push(o); });
+      let lastErr = null;
+      for (const ord of urut) {
+        const out = [];
+        let ok = true;
+        for (let from = 0; from < 100000; from += 1000) {
+          let q = client.from(table).select('*').range(from, from + 999);
+          if (ord) q = q.order(ord, { ascending: true });
+          const { data, error } = await q;
+          if (error) { lastErr = error; ok = false; break; }
+          out.push(...(data || []));
+          if (!data || data.length < 1000) break;
+        }
+        if (ok) { pvOrdCache[table] = ord; return out; }
+        if (pvStopCoba(lastErr)) break;
+      }
+      throw lastErr || new Error('Gagal membaca tabel ' + table);
+    }
+
+    // Coba sesi login lebih dulu, lalu klien anon. Mengembalikan baris pertama yang berisi data.
+    async function pvBacaTabel(table, key) {
+      const jalur = [supabaseClient, pvAnonClient];
+      let err = null, berhasil = false;
+      for (let i = 0; i < jalur.length; i++) {
+        try {
+          const rows = await pvAmbilSemua(jalur[i], table, key);
+          berhasil = true;
+          if (rows.length) return { rows, sumber: i === 0 ? 'login' : 'anon' };
+        } catch (e) { err = e; }
+      }
+      if (berhasil) return { rows: [], sumber: null };
+      throw err || new Error('Gagal membaca tabel ' + table);
+    }
+
+    // Samakan nama kolom hasil baca dengan nama kolom baku (tidak peka huruf besar/kecil, ada cadangan nama dasar)
+    function pvNormalisasi(rows, cols) {
+      if (!rows.length) return rows;
+      const kolom = cols.split(',').map(s => s.trim());
+      const kunci = Object.keys(rows[0]);
+      const lower = kunci.map(k => k.toLowerCase());
+      const dipakai = new Set();
+      const peta = {};
+      kolom.forEach(c => { const i = lower.indexOf(c); if (i >= 0) { peta[c] = kunci[i]; dipakai.add(i); } });
+      kolom.forEach(c => {
+        if (peta[c]) return;
+        const base = c.split('_')[0];
+        let i = lower.indexOf(base);
+        if (i < 0 || dipakai.has(i)) {
+          const kand = lower.map((k, idx) => idx).filter(idx => lower[idx].startsWith(base + '_') && !dipakai.has(idx) && !kolom.includes(lower[idx]));
+          i = kand.length === 1 ? kand[0] : -1;
+        }
+        if (i >= 0 && !dipakai.has(i)) { peta[c] = kunci[i]; dipakai.add(i); }
+      });
+      return rows.map(r => { const o = {}; kolom.forEach(c => { o[c] = peta[c] ? r[peta[c]] : undefined; }); return o; });
+    }
+
+    // Tampilan memuat: baris kerangka berkilau di dalam tabel
+    function pvSkeleton() {
+      const tbody = document.getElementById('previewTableBody');
+      if (!tbody) return;
+      const kolom = document.querySelectorAll('#previewTableHead th').length || 5;
+      let h = '';
+      for (let i = 0; i < 6; i++) h += '<tr><td colspan="' + kolom + '" class="px-4 py-2.5"><div class="mt-skeleton h-7 rounded-lg" style="animation-delay:' + (i * 80) + 'ms"></div></td></tr>';
+      tbody.innerHTML = h;
+    }
+    function pvAnimasiBaris() {
+      document.querySelectorAll('#previewTableBody tr').forEach((tr, i) => { if (i < 30) { tr.classList.add('pv-row'); tr.style.animationDelay = (i * 16) + 'ms'; } });
+    }
+
+    async function pvMuatTerbaru(view) {
+      const cfg = PV_CFG[view];
+      if (!cfg || pvPanelTersembunyi()) return;
+      if (pvBusy[view]) { pvUlang[view] = true; return; }
+      const sigAwal = pvSigData(view);
+      const kosong = cfg.isEmpty();
+      if (!kosong && pvSig[view] !== sigAwal) return;   // ada data paste yang belum dikirim: jangan ditimpa
+      pvBusy[view] = true;
+      if (kosong && currentView === view) pvSkeleton();
+      pvChip(view, 'loading');
+      try {
+        const hasil = await pvBacaTabel(cfg.table, cfg.key);
+        if (pvSigData(view) !== sigAwal) return;        // pengguna paste saat memuat: batalkan
+        cfg.apply(pvNormalisasi(hasil.rows, cfg.cols));
+        pvSig[view] = pvSigData(view);
+        if (currentView === view) {
+          cfg.render();
+          pvAnimasiBaris();
+          pvChip(view, hasil.rows.length ? 'ok' : 'kosong', hasil.rows.length);
+        }
+      } catch (e) {
+        console.warn('Preview data terakhir (' + view + ') gagal dimuat:', e.message || e);
+        if (currentView === view) { cfg.render(); pvChip(view, 'err', (e && e.message) || String(e)); }
+      } finally {
+        pvBusy[view] = false;
+        if (pvUlang[view]) { pvUlang[view] = false; setTimeout(() => pvMuatTerbaru(view), 0); }
+      }
+    }
+
+    // Dipanggil dari switchView(): 8 sub-menu yang diperbaiki dimuat setiap dibuka; sub-menu lain tetap seperti semula
     async function autoLoadPreview(view) {
+      if (view === 'target') { await pvLoadTarget(); return; }
+      if (PV_FIX_VIEW[view]) { await pvMuatTerbaru(view); return; }
       if (pvDone[view] || pvBusy[view]) return;
-      if (view === 'target') { pvBusy[view] = true; await pvLoadTarget(); pvBusy[view] = false; return; }
       if (view === 'runningText') { pvBusy[view] = true; await pvLoadRunningText(); pvBusy[view] = false; return; }
 
       const cfg = PV_CFG[view];
