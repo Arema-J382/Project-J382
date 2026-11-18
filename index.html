@@ -4739,6 +4739,30 @@
       for (let i = 0; i < 6; i++) h += '<tr><td colspan="' + kolom + '" class="px-4 py-2.5"><div class="mt-skeleton h-7 rounded-lg" style="animation-delay:' + (i * 80) + 'ms"></div></td></tr>';
       tbody.innerHTML = h;
     }
+    // Tampilkan isi tabel database apa adanya (semua kolom) pada tabel preview
+    function pvRenderGenerik(rows) {
+      const thead = document.getElementById('previewTableHead');
+      const tbody = document.getElementById('previewTableBody');
+      if (!thead || !tbody) return;
+      const kolom = Object.keys(rows[0] || {});
+      thead.innerHTML = '<tr><th class="' + XL_TH + ' w-16 text-center">NO</th>' +
+        kolom.map(k => '<th class="' + XL_TH + '">' + pvEsc(k.replace(/_/g, ' ').toUpperCase()) + '</th>').join('') + '</tr>';
+      const batas = Math.min(rows.length, 3000);
+      let h = '';
+      for (let i = 0; i < batas; i++) {
+        h += '<tr class="hover:bg-blue-50/50 transition"><td class="px-4 py-2.5 text-center"><span class="xl-no">' + (i + 1) + '</span></td>' +
+          kolom.map(k => {
+            const v = rows[i][k];
+            const teks = v === null || v === undefined ? '' : (typeof v === 'number' ? v.toLocaleString('id-ID') : String(v));
+            return '<td class="px-4 py-2.5' + (typeof v === 'number' ? ' text-right font-mono font-bold text-gray-900' : ' text-gray-800') + '">' + pvEsc(teks) + '</td>';
+          }).join('') + '</tr>';
+      }
+      tbody.innerHTML = h || '<tr><td colspan="' + (kolom.length + 1) + '" class="text-center py-12 text-gray-400 italic text-xs">Tabel kosong.</td></tr>';
+      const ring = document.getElementById('excelSummary');
+      if (ring) ring.innerHTML = '<span class="xl-chip xl-chip-slate"><i data-lucide="list" class="w-3.5 h-3.5"></i> ' + rows.length.toLocaleString('id-ID') + ' Baris</span>' +
+        (rows.length > batas ? '<span class="xl-chip xl-chip-slate">Menampilkan ' + batas.toLocaleString('id-ID') + ' baris pertama</span>' : '');
+      lucide.createIcons();
+    }
     function pvAnimasiBaris() {
       document.querySelectorAll('#previewTableBody tr').forEach((tr, i) => { if (i < 30) { tr.classList.add('pv-row'); tr.style.animationDelay = (i * 16) + 'ms'; } });
     }
@@ -4756,10 +4780,14 @@
       try {
         const hasil = await pvBacaTabel(cfg.table, cfg.key);
         if (pvSigData(view) !== sigAwal) return;        // pengguna paste saat memuat: batalkan
-        cfg.apply(pvNormalisasi(hasil.rows, cfg.cols));
+        // Jika semua kolom baku ada di tabel -> tampil dengan format tabel biasa.
+        // Jika nama kolom tabel berbeda -> tampilkan isi tabel apa adanya (semua kolom) agar data tetap terlihat.
+        const kolomTabel = hasil.rows.length ? Object.keys(hasil.rows[0]).map(k => k.toLowerCase()) : [];
+        const cocok = !hasil.rows.length || cfg.cols.split(',').every(c => kolomTabel.includes(c.trim()));
+        if (cocok) cfg.apply(pvNormalisasi(hasil.rows, cfg.cols));
         pvSig[view] = pvSigData(view);
         if (currentView === view) {
-          cfg.render();
+          if (cocok) cfg.render(); else pvRenderGenerik(hasil.rows);
           pvAnimasiBaris();
           pvChip(view, hasil.rows.length ? 'ok' : 'kosong', hasil.rows.length);
         }
