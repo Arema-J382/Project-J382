@@ -4663,7 +4663,8 @@
     const pvSigData = v => { try { return JSON.stringify(PV_FIX_VIEW[v]()); } catch (e) { return ''; } };
     const pvPanelTersembunyi = () => { const p = document.getElementById('adminPanel'); return !p || p.classList.contains('hidden'); };
     const pvJam = () => new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const pvStopCoba = e => pvTidakAda(e) || /42501|permission denied|JWT|PGRST30/i.test(e ? (String(e.code || '') + ' ' + String(e.message || '')) : '');
+    // Berhenti mencoba urutan lain HANYA jika tabel tidak ada / tidak berizin (bukan jika sekadar kolom pengurut tidak ada)
+    const pvStopCoba = e => /PGRST205|42P01|Could not find the table|relation .* does not exist|42501|permission denied|JWT|PGRST30/i.test(e ? (String(e.code || '') + ' ' + String(e.message || '')) : '');
 
     // Klien anonim tanpa sesi login: cadangan jika policy SELECT tabel hanya untuk role anon (seperti TV Dashboard)
     const pvAnonClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -4674,9 +4675,24 @@
     async function pvAmbilSemua(client, table, key) {
       const urut = [];
       if (pvOrdCache[table] !== undefined) urut.push(pvOrdCache[table]);
-      ['id', key, null].forEach(o => { if (!urut.includes(o)) urut.push(o); });
+      ['id', key].forEach(o => { if (!urut.includes(o)) urut.push(o); });
       let lastErr = null;
-      for (const ord of urut) {
+      let probeSudah = false;
+      for (let n = 0; n <= urut.length; n++) {
+        let ord;
+        if (n < urut.length) ord = urut[n];
+        else {
+          // Semua kolom tebakan gagal: ambil nama kolom pertama dari isi tabel sebagai pengurut, lalu tanpa urutan
+          if (!probeSudah) {
+            probeSudah = true;
+            const p = await client.from(table).select('*').limit(1);
+            const k0 = (!p.error && p.data && p.data[0]) ? Object.keys(p.data[0])[0] : null;
+            if (k0 && !urut.includes(k0)) urut.push(k0);
+            if (!urut.includes(null)) urut.push(null);
+            if (n >= urut.length) break;
+            ord = urut[n];
+          } else break;
+        }
         const out = [];
         let ok = true;
         for (let from = 0; from < 100000; from += 1000) {
@@ -4709,24 +4725,34 @@
     }
 
     // Samakan nama kolom hasil baca dengan nama kolom baku (tidak peka huruf besar/kecil, ada cadangan nama dasar)
-    function pvNormalisasi(rows, cols) {
-      if (!rows.length) return rows;
+    // Peta kolom baku -> kolom nyata. Contoh mtd_sales: nip->mtd_nip, nama->mtd_nama, dept->mtd_alldept, total->mtd_total
+    function pvPeta(rows, cols) {
       const kolom = cols.split(',').map(s => s.trim());
+      const peta = {};
+      if (!rows.length) return peta;
       const kunci = Object.keys(rows[0]);
       const lower = kunci.map(k => k.toLowerCase());
       const dipakai = new Set();
-      const peta = {};
+      // 1) nama persis
       kolom.forEach(c => { const i = lower.indexOf(c); if (i >= 0) { peta[c] = kunci[i]; dipakai.add(i); } });
+      // 2) nama mirip (awalan/akhiran berbeda); hanya dipakai bila kandidatnya tepat satu
       kolom.forEach(c => {
         if (peta[c]) return;
         const base = c.split('_')[0];
-        let i = lower.indexOf(base);
-        if (i < 0 || dipakai.has(i)) {
-          const kand = lower.map((k, idx) => idx).filter(idx => lower[idx].startsWith(base + '_') && !dipakai.has(idx) && !kolom.includes(lower[idx]));
-          i = kand.length === 1 ? kand[0] : -1;
-        }
-        if (i >= 0 && !dipakai.has(i)) { peta[c] = kunci[i]; dipakai.add(i); }
+        const kand = [];
+        lower.forEach((k, idx) => {
+          if (dipakai.has(idx) || kolom.includes(k)) return;
+          if (k === base || k.endsWith('_' + base) || k.startsWith(base + '_') || k.endsWith(base)) kand.push(idx);
+        });
+        if (kand.length === 1) { peta[c] = kunci[kand[0]]; dipakai.add(kand[0]); }
       });
+      return peta;
+    }
+    const pvPetaLengkap = (rows, cols) => { const p = pvPeta(rows, cols); return cols.split(',').every(c => !!p[c.trim()]); };
+    function pvNormalisasi(rows, cols) {
+      if (!rows.length) return rows;
+      const kolom = cols.split(',').map(s => s.trim());
+      const peta = pvPeta(rows, cols);
       return rows.map(r => { const o = {}; kolom.forEach(c => { o[c] = peta[c] ? r[peta[c]] : undefined; }); return o; });
     }
 
@@ -4782,8 +4808,7 @@
         if (pvSigData(view) !== sigAwal) return;        // pengguna paste saat memuat: batalkan
         // Jika semua kolom baku ada di tabel -> tampil dengan format tabel biasa.
         // Jika nama kolom tabel berbeda -> tampilkan isi tabel apa adanya (semua kolom) agar data tetap terlihat.
-        const kolomTabel = hasil.rows.length ? Object.keys(hasil.rows[0]).map(k => k.toLowerCase()) : [];
-        const cocok = !hasil.rows.length || cfg.cols.split(',').every(c => kolomTabel.includes(c.trim()));
+        const cocok = !hasil.rows.length || pvPetaLengkap(hasil.rows, cfg.cols);
         if (cocok) cfg.apply(pvNormalisasi(hasil.rows, cfg.cols));
         pvSig[view] = pvSigData(view);
         if (currentView === view) {
