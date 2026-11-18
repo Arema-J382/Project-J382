@@ -154,6 +154,17 @@
     #excelTableWrap tbody tr:last-child td { border-bottom: 0 !important; }
     .xl-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; border-radius: 999px; background: #f1f5f9; color: #64748b; font-size: 11px; font-weight: 700; }
     .xl-pill { display: inline-block; padding: 3px 12px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 11px; font-weight: 700; }
+    /* ===== TOMBOL START ON DAY ===== */
+    @keyframes sodPulse { 0% { box-shadow: 0 0 0 0 rgba(244,63,94,.45); } 70%,100% { box-shadow: 0 0 0 12px rgba(244,63,94,0); } }
+    @keyframes sodIn { from { opacity: 0; transform: translateX(10px) scale(.95); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @keyframes sodSpin { to { transform: rotate(360deg); } }
+    #btnStartOnDay { background-image: linear-gradient(90deg, #f43f5e, #ea580c) !important; color: #fff; box-shadow: 0 10px 22px -10px rgba(244,63,94,.75); }
+    #btnStartOnDay:not(.hidden) { animation: sodIn .35s cubic-bezier(.22,.8,.3,1) both; }
+    #btnStartOnDay:not(:disabled):hover { box-shadow: 0 14px 26px -10px rgba(234,88,12,.8) !important; animation: sodPulse 1.4s ease-out infinite; }
+    #btnStartOnDay:not(:disabled):hover svg { transform: rotate(-20deg) scale(1.15); }
+    #btnStartOnDay svg { transition: transform .25s ease; }
+    #btnStartOnDay .sod-spin { animation: sodSpin .8s linear infinite; }
+    #btnStartOnDay.hidden { display: none !important; }
   </style>
   <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > MONITORING TABLET ===== -->
   <style>
@@ -1070,6 +1081,9 @@
                 </div>
               </div>
               <div class="flex gap-2.5">
+                <button id="btnStartOnDay" type="button" onclick="startOnDay()" title="Hapus semua data tabel di database untuk memulai hari ini dengan lembaran baru" class="hidden font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                  <i data-lucide="sunrise" class="w-4 h-4"></i> START ON DAY
+                </button>
                 <button onclick="resetData()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm transition">
                   <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gray-500"></i> Reset Data
                 </button>
@@ -1338,6 +1352,10 @@
 
       document.getElementById('statusMsg').classList.add('hidden');
       document.getElementById('excelPasteInput').value = '';
+
+      // Tombol START ON DAY hanya tampil di Daily Sales, Daily Departemen, Daily Furnipro, Daily Comser
+      const btnStartOnDay = document.getElementById('btnStartOnDay');
+      if (btnStartOnDay) btnStartOnDay.classList.toggle('hidden', !START_ON_DAY_CONFIG[view]);
 
       const activeClass = "block p-2.5 rounded-lg bg-slate-800 text-xs text-blue-300 font-semibold flex items-center gap-2.5 transition shadow-sm border-l-2 border-blue-500";
       const inactiveClass = "block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white flex items-center gap-2.5 transition";
@@ -2957,6 +2975,69 @@
       tbody.innerHTML = html;
       totalBarisSpan.innerText = activeData.length;
       lucide.createIcons();
+    }
+
+    // ===== START ON DAY: hapus semua data tabel harian di Supabase =====
+    const START_ON_DAY_CONFIG = {
+      sales:      { table: 'laporan_sales',      rpc: 'replace_laporan_sales',      kolom: 'nip',       label: 'Daily Sales' },
+      departemen: { table: 'laporan_departemen', rpc: 'replace_laporan_departemen', kolom: 'kode_dept', label: 'Daily Departemen' },
+      furnipro:   { table: 'daily_furnipro',     rpc: 'replace_daily_furnipro',     kolom: 'nip_fp',    label: 'Daily Furnipro' },
+      comser:     { table: 'daily_comser',       rpc: 'replace_daily_comser',       kolom: 'nip_cnc',   label: 'Daily Comser' }
+    };
+    let startOnDayBerjalan = false;
+
+    async function startOnDay() {
+      const cfg = START_ON_DAY_CONFIG[currentView];
+      if (!cfg || startOnDayBerjalan) return;
+
+      const ok = await konfirmasiBawah(`START ON DAY ${cfg.label}: SEMUA data pada tabel "${cfg.table}" di database akan dihapus permanen untuk memulai hari ini dengan lembaran baru. Lanjutkan?`);
+      if (!ok) return;
+
+      const viewSaatIni = currentView;
+      const btn = document.getElementById('btnStartOnDay');
+      startOnDayBerjalan = true;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 sod-spin"></i> Menghapus...';
+        lucide.createIcons();
+      }
+
+      try {
+        // Cara 1: RPC replace_* dengan data kosong (konsisten dengan tombol Kirim, aman terhadap RLS)
+        let berhasil = false;
+        const r1 = await supabaseClient.rpc(cfg.rpc, { new_data: [] });
+        if (!r1.error) berhasil = true;
+
+        // Cara 2 (cadangan): hapus langsung semua baris tabel
+        if (!berhasil) {
+          const r2 = await supabaseClient.from(cfg.table).delete().or(`${cfg.kolom}.is.null,${cfg.kolom}.not.is.null`);
+          if (r2.error) throw new Error(r2.error.message);
+        }
+
+        // Verifikasi: pastikan tabel benar-benar kosong
+        const cek = await supabaseClient.from(cfg.table).select('*', { count: 'exact', head: true });
+        if (!cek.error && (cek.count || 0) > 0) {
+          const r3 = await supabaseClient.from(cfg.table).delete().or(`${cfg.kolom}.is.null,${cfg.kolom}.not.is.null`);
+          const cek2 = await supabaseClient.from(cfg.table).select('*', { count: 'exact', head: true });
+          if (r3.error || (!cek2.error && (cek2.count || 0) > 0)) {
+            throw new Error(`Data tabel ${cfg.table} tidak dapat dihapus (periksa RLS policy DELETE atau fungsi ${cfg.rpc}).`);
+          }
+        }
+
+        // Kosongkan juga tabel preview di layar bila masih di menu yang sama
+        if (currentView === viewSaatIni) resetData();
+        showToast(`Sukses! START ON DAY ${cfg.label}: semua data tabel ${cfg.table} berhasil dihapus. Lembaran baru siap digunakan.`, 'success');
+      } catch (err) {
+        console.error('Gagal START ON DAY:', err);
+        showToast('Gagal menjalankan START ON DAY: ' + (err.message || err), 'error');
+      } finally {
+        startOnDayBerjalan = false;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="sunrise" class="w-4 h-4"></i> START ON DAY';
+          lucide.createIcons();
+        }
+      }
     }
 
     function resetData() {
