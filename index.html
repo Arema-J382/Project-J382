@@ -297,6 +297,13 @@
     #btnKfKirim:not(:disabled):hover { box-shadow: 0 14px 26px -12px rgba(234,88,12,.8); transform: translateY(-1px); }
     .kf-pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: UKURAN IKON SUB-MENU SERAGAM ===== -->
+  <style>
+    /* Semua ikon sub-menu (anchor di dalam nav sidebar) memakai ukuran yang sama dan tidak menyusut saat teks panjang membungkus baris */
+    aside nav a > svg, aside nav a > i[data-lucide] { width: 1rem !important; height: 1rem !important; min-width: 1rem; min-height: 1rem; flex: 0 0 1rem; }
+    aside nav a > span { min-width: 0; line-height: 1.3; }
+    aside nav a { align-items: center; }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans h-screen overflow-hidden flex">
 
