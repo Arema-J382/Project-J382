@@ -1163,10 +1163,11 @@
               <span class="kp-step"><b>2</b> NAMA</span>
               <span class="kp-step"><b>3</b> RECEIPT</span>
               <span class="kp-step"><b>4</b> SKU</span>
-              <span class="kp-step"><b>5</b> QTY</span>
-              <span class="kp-step"><b>6</b> KET 1</span>
-              <span class="kp-step"><b>7</b> KET 2</span>
-              <span class="kp-step"><b>8</b> TOTAL VALUE</span>
+              <span class="kp-step"><b>5</b> DESC NAME</span>
+              <span class="kp-step"><b>6</b> QTY</span>
+              <span class="kp-step"><b>7</b> KET 1</span>
+              <span class="kp-step"><b>8</b> KET 2</span>
+              <span class="kp-step"><b>9</b> TOTAL VALUE</span>
             </div>
 
             <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
@@ -4195,7 +4196,7 @@
     const KP_TABLE = 'kursi_pijat';
     const KP_MAX_TAMPIL = 1500;   // batas baris yang digambar di preview (semua baris tetap dikirim)
 
-    let kpData = [];          // [{ nip, nama, receipt, sku, qty, ket_1, ket_2, total_value }]
+    let kpData = [];          // [{ nip, nama, receipt, sku, desc_name, qty, ket_1, ket_2, total_value }]
     let kpDilewati = 0;       // baris NIP kosong / tidak valid
     let kpMengirim = false;
     let kpDariPaste = false;  // true = ada data hasil paste yang belum dikirim (jangan ditimpa realtime)
@@ -4239,7 +4240,7 @@
         if (pertama) {
           pertama = false;
           const c0 = (cols[0] || '').toUpperCase(), c1 = (cols[1] || '').toUpperCase(), c2 = (cols[2] || '').toUpperCase();
-          if (c0 === 'NIP' || c1 === 'NAMA' || c2 === 'RECEIPT') return;   // baris header dilewati
+          if (c0 === 'NIP' || c1 === 'NAMA' || c2 === 'RECEIPT' || (cols[4] || '').toUpperCase() === 'DESC_NAME') return;   // baris header dilewati
         }
         // kolom nip di Supabase bertipe int8 -> hanya angka yang valid
         if (!/^\d+$/.test(cols[0] || '') || /^0+$/.test(cols[0])) { dilewati++; return; }
@@ -4250,10 +4251,11 @@
           nama: cols[1] || '-',
           receipt: cols[2] || '',
           sku: cols[3] || '',
-          qty: Math.round(kpAngka(cols[4])),      // kolom qty bertipe int8
-          ket_1: cols[5] || '',
-          ket_2: cols[6] || '',
-          total_value: kpAngka(cols[7])
+          desc_name: cols[4] || '',
+          qty: Math.round(kpAngka(cols[5])),      // kolom qty bertipe int8
+          ket_1: cols[6] || '',
+          ket_2: cols[7] || '',
+          total_value: kpAngka(cols[8])
         });
       });
 
@@ -4277,7 +4279,7 @@
       if (!thead || !tbody) return;
       if (total) total.textContent = kpData.length;
 
-      thead.innerHTML = '<tr><th class="text-center w-14">NO</th><th>NIP</th><th>NAMA</th><th>RECEIPT</th><th>SKU</th>' +
+      thead.innerHTML = '<tr><th class="text-center w-14">NO</th><th>NIP</th><th>NAMA</th><th>RECEIPT</th><th>SKU</th><th>DESC NAME</th>' +
         '<th class="text-right">QTY</th><th>KET 1</th><th>KET 2</th><th class="text-right">TOTAL VALUE</th></tr>';
 
       // Kartu ringkasan
@@ -4301,7 +4303,7 @@
       }
 
       if (!kpData.length) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2">' +
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2">' +
           '<div class="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-rose-300"></i></div>' +
           '<span class="italic text-xs">Belum ada data penjualan kursi pijat. Silakan paste data dari Excel ke kotak di atas.</span></div></td></tr>';
         lucide.createIcons();
@@ -4318,6 +4320,7 @@
           '<td class="font-semibold text-gray-800">' + kpEsc(r.nama) + '</td>' +
           '<td class="font-mono text-gray-700">' + kpEsc(r.receipt) + '</td>' +
           '<td class="font-mono text-gray-700">' + kpEsc(r.sku) + '</td>' +
+          '<td class="text-gray-700"><span class="kp-ket" title="' + kpEsc(r.desc_name) + '">' + kpEsc(r.desc_name) + '</span></td>' +
           '<td class="text-right"><span class="kp-pill kp-pill-violet">' + kpFmt(r.qty) + '</span></td>' +
           '<td class="text-gray-600"><span class="kp-ket" title="' + kpEsc(r.ket_1) + '">' + kpEsc(r.ket_1) + '</span></td>' +
           '<td class="text-gray-600"><span class="kp-ket" title="' + kpEsc(r.ket_2) + '">' + kpEsc(r.ket_2) + '</span></td>' +
@@ -4357,6 +4360,7 @@
           nama: r.nama,
           receipt: r.receipt,
           sku: r.sku,
+          desc_name: r.desc_name,
           qty: r.qty,
           ket_1: r.ket_1,
           ket_2: r.ket_2,
@@ -4799,9 +4803,9 @@
         render: () => renderTableRows()
       },
       inputKursiPijat: {
-        table: 'kursi_pijat', cols: 'nip,nama,receipt,sku,qty,ket_1,ket_2,total_value', key: 'nip', summary: 'kpSummary',
+        table: 'kursi_pijat', cols: 'nip,nama,receipt,sku,desc_name,qty,ket_1,ket_2,total_value', key: 'nip', summary: 'kpSummary',
         isEmpty: () => kpData.length === 0,
-        apply: rows => { kpData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || '-', receipt: pvStr(r.receipt), sku: pvStr(r.sku), qty: pvNum(r.qty), ket_1: pvStr(r.ket_1), ket_2: pvStr(r.ket_2), total_value: pvNum(r.total_value) })); kpDilewati = 0; kpDariPaste = false; },
+        apply: rows => { kpData = rows.map(r => ({ nip: pvStr(r.nip), nama: pvStr(r.nama) || '-', receipt: pvStr(r.receipt), sku: pvStr(r.sku), desc_name: pvStr(r.desc_name), qty: pvNum(r.qty), ket_1: pvStr(r.ket_1), ket_2: pvStr(r.ket_2), total_value: pvNum(r.total_value) })); kpDilewati = 0; kpDariPaste = false; },
         render: () => kpRender()
       },
       inputTargetSmt: {
