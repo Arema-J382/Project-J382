@@ -4406,6 +4406,7 @@
       throw lastErr || new Error('Gagal membaca tabel ' + table);
     }
 
+    const pvEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const pvStr = v => String(v ?? '').trim();
     const pvNum = v => Number(v) || 0;
 
@@ -4473,6 +4474,7 @@
       inputSchedule: {
         table: 'schedule', cols: '*', key: 'nip', summary: 'schSummary',
         periode: '',
+        need: ['bulan', 'tahun', 'nip', 'nama', 'jabatan', 'tgl_1'],
         isEmpty: () => schData.length === 0,
         apply: function (rows) {
           let max = 0;
@@ -4509,20 +4511,71 @@
         const ekstra = cfg.extra ? cfg.extra() : '';
         if (jumlah > 0 && ekstra) html += '<span class="pv-chip xl-chip xl-chip-emerald"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> ' + ekstra + '</span>';
       } else if (state === 'err') {
-        html = '<span class="pv-chip xl-chip" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Gagal memuat data terakhir dari database</span>';
+        html = '<span class="pv-chip xl-chip" style="background:#fef2f2;color:#b91c1c;border-color:#fecaca"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Gagal memuat data terakhir dari tabel &quot;' + pvEsc(cfg.table) + '&quot;' + (jumlah ? ': ' + pvEsc(String(jumlah).slice(0, 90)) : '') + '</span>';
       }
       el.insertAdjacentHTML('beforeend', html);
       lucide.createIcons();
     }
 
+    // ===== PENEMUAN OTOMATIS TABEL =====
+    // Jika nama tabel pada konfigurasi tidak cocok dengan database, tabel dicari otomatis berdasarkan
+    // KOLOM yang dikirim tombol Kirim (daftar tabel & kolom dibaca dari skema REST Supabase).
+    let pvSchemaCache;   // undefined = belum dicoba, null = skema tidak tersedia
+    async function pvSchema() {
+      if (pvSchemaCache !== undefined) return pvSchemaCache;
+      try {
+        const res = await fetch(SUPABASE_URL + '/rest/v1/', { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY } });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const j = await res.json();
+        const defs = j.definitions || (j.components && j.components.schemas) || null;
+        if (!defs) throw new Error('skema tidak tersedia');
+        const peta = {};
+        Object.keys(defs).forEach(t => { peta[t] = Object.keys((defs[t] && defs[t].properties) || {}).map(x => x.toLowerCase()); });
+        pvSchemaCache = peta;
+      } catch (e) {
+        console.warn('Skema Supabase tidak dapat dibaca untuk penemuan tabel otomatis:', e.message || e);
+        pvSchemaCache = null;
+      }
+      return pvSchemaCache;
+    }
+    const pvTerklaim = () => Object.values(PV_CFG).map(c => c.table);
+    async function pvTemukanTabel(pred, kecuali) {
+      const peta = await pvSchema();
+      if (!peta) return null;
+      const kand = Object.keys(peta).filter(t => !(kecuali || []).includes(t) && pred(peta[t]));
+      return kand.length ? kand[0] : null;
+    }
+    const pvTidakAda = e => /PGRST205|42P01|schema cache|does not exist|Could not find the table/i.test(e ? (String(e.code || '') + ' ' + String(e.message || '')) : '');
+
+    // Cari 1 baris dari salah satu tabel kandidat (dicocokkan dengan kolomnya); jika tidak ada, temukan lewat skema
+    async function pvCariBaris(kandidat, pred) {
+      let nama = null;
+      for (const t of kandidat) {
+        const { data, error } = await supabaseClient.from(t).select('*').limit(1);
+        if (error) continue;
+        const row = (data && data[0]) || null;
+        if (row) {
+          if (!pred(Object.keys(row).map(k => k.toLowerCase()))) continue;   // tabel ada tetapi kolomnya tidak cocok
+          return { nama: t, row };
+        }
+        if (!nama) nama = t;   // tabel ada tetapi kosong
+      }
+      const alt = await pvTemukanTabel(pred, pvTerklaim());
+      if (alt) {
+        const { data, error } = await supabaseClient.from(alt).select('*').limit(1);
+        if (!error) return { nama: alt, row: (data && data[0]) || null };
+      }
+      return { nama, row: null };
+    }
+
     // Menu Input Target Today: isi kolom dengan data terakhir (jika tabel & kolom ditemukan)
     async function pvLoadTarget() {
       try {
-        const { data, error } = await supabaseClient.from(PV_TARGET_TABLE).select('*').limit(1);
-        if (error) throw error;
-        pvDone.target = true;
-        if (!data || !data.length) return;
-        const r = data[0];
+        const kand = [PV_TARGET_TABLE, 'target_hari_ini', 'target_harian', 'today_target', 'target'];
+        const pred = c => c.some(x => x.includes('sales')) && c.some(x => x.includes('fp')) && c.some(x => x.includes('comser')) && !c.includes('nip');
+        const { nama, row: r } = await pvCariBaris(kand, pred);
+        if (nama) pvDone.target = true;
+        if (!r) { if (!nama) console.warn('Preview Target Today: tabel tidak ditemukan. Atur PV_TARGET_TABLE.'); return; }
         const ambil = p => { const k = Object.keys(r).find(x => x.toLowerCase().includes(p)); return k ? r[k] : null; };
         const isi = (id, v, rupiah) => {
           const el = document.getElementById(id);
@@ -4539,12 +4592,12 @@
     // Menu Input Running Text: isi kotak teks dengan running text terakhir
     async function pvLoadRunningText() {
       try {
-        const { data, error } = await supabaseClient.from(PV_RUNNING_TABLE).select('*').limit(1);
-        if (error) throw error;
-        pvDone.runningText = true;
-        if (!data || !data.length) return;
-        const r = data[0];
-        const k = Object.keys(r).find(x => x.toLowerCase() === 'run_text') || Object.keys(r).find(x => x.toLowerCase().includes('text'));
+        const kand = [PV_RUNNING_TABLE, 'runningtext', 'running_texts', 'teks_berjalan', 'text_running'];
+        const pred = c => c.includes('run_text');
+        const { nama, row: r } = await pvCariBaris(kand, pred);
+        if (nama) pvDone.runningText = true;
+        if (!r) { if (!nama) console.warn('Preview Running Text: tabel tidak ditemukan. Atur PV_RUNNING_TABLE.'); return; }
+        const k = Object.keys(r).find(x => x.toLowerCase() === 'run_text');
         const el = document.getElementById('inputRunningTextValue');
         if (el && k && !el.value.trim() && r[k]) el.value = String(r[k]);
       } catch (e) { console.warn('Preview Running Text tidak dimuat:', e.message || e); }
@@ -4561,7 +4614,19 @@
       pvBusy[view] = true;
       pvChip(view, 'loading');
       try {
-        const rows = await pvFetchAll(cfg.table, cfg.cols, cfg.key);
+        let rows;
+        try {
+          rows = await pvFetchAll(cfg.table, cfg.cols, cfg.key);
+        } catch (e1) {
+          if (!pvTidakAda(e1)) throw e1;
+          // Nama tabel tidak ada di database: cari tabel lain yang punya kolom sama seperti yang dikirim tombol Kirim
+          const butuh = (cfg.need || cfg.cols.split(',')).map(x => x.toLowerCase());
+          const alt = await pvTemukanTabel(c => butuh.every(x => c.includes(x)), pvTerklaim());
+          if (!alt) throw e1;
+          console.warn('Tabel "' + cfg.table + '" tidak ditemukan, memakai tabel "' + alt + '" (kolom cocok).');
+          cfg.table = alt;
+          rows = await pvFetchAll(cfg.table, cfg.cols, cfg.key);
+        }
         pvDone[view] = true;
         // Jangan menimpa data yang sudah di-paste pengguna selama proses memuat
         const dipakai = cfg.isEmpty();
@@ -4570,7 +4635,7 @@
         else if (currentView === view) document.getElementById(cfg.summary).querySelectorAll('.pv-chip').forEach(c => c.remove());
       } catch (e) {
         console.warn('Preview data terakhir (' + view + ') gagal dimuat:', e.message || e);
-        if (currentView === view) pvChip(view, 'err');
+        if (currentView === view) pvChip(view, 'err', (e && e.message) || String(e));
       } finally {
         pvBusy[view] = false;
       }
