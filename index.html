@@ -267,6 +267,41 @@
     .tg-pill-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
     .tg-pill-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
   </style>
+  <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > INPUT MONTHLY SALE BY DETAIL ===== -->
+  <style>
+    @keyframes msRowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes msFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes msSheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+    #viewInputMonthlySaleByDetailSection textarea:focus { box-shadow: 0 0 0 4px rgba(20,184,166,.16) !important; border-color: #14b8a6 !important; outline: none; }
+    .ms-hero { position: relative; overflow: hidden; background: linear-gradient(125deg, #0f766e 0%, #0891b2 52%, #4f46e5 100%); }
+    .ms-hero::before { content: ""; position: absolute; right: -40px; top: -60px; width: 210px; height: 210px; border-radius: 999px; background: rgba(255,255,255,.13); }
+    .ms-hero::after { content: ""; position: absolute; right: 110px; bottom: -80px; width: 150px; height: 150px; border-radius: 999px; background: rgba(255,255,255,.1); }
+    .ms-hero-ico { animation: msFloat 3.4s ease-in-out infinite; }
+    .ms-step { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .05em; background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+    .ms-step b { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 999px; background: #0d9488; color: #fff; font-size: 9px; }
+    .ms-paste { transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+    .ms-paste:hover { background: rgba(240,253,250,.9); }
+    .ms-stat { border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; border: 1px solid; transition: transform .2s ease, box-shadow .2s ease; animation: msRowIn .35s ease both; }
+    .ms-stat:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -14px rgba(15,23,42,.35); }
+    .ms-stat-ico { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.8); flex-shrink: 0; }
+    .ms-stat-val { font-size: 1.05rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .ms-stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .7; margin-top: 3px; }
+    #msTableWrap { border-radius: 18px; box-shadow: 0 12px 30px -16px rgba(30,41,59,.25); }
+    #msTableWrap table { border-collapse: separate; border-spacing: 0; }
+    #msTableWrap thead th { white-space: nowrap; padding: .8rem .75rem; font-size: .64rem; letter-spacing: .04em; text-transform: uppercase; background: linear-gradient(90deg, #0f172a, #1e293b); color: #fff; position: sticky; top: 0; z-index: 10; }
+    #msTableWrap tbody td { border-bottom: 1px solid #f1f5f9; padding: .58rem .75rem; white-space: nowrap; }
+    #msTableWrap tbody tr:nth-child(even) td { background: #f8fafc; }
+    #msTableWrap tbody tr:hover td { background: #f0fdfa; }
+    #msTableWrap tbody tr:last-child td { border-bottom: 0; }
+    .ms-row { animation: msRowIn .32s cubic-bezier(.22,.8,.3,1) both; }
+    .ms-num { display: inline-block; padding: 3px 8px; border-radius: 8px; background: #f1f5f9; color: #334155; font-variant-numeric: tabular-nums; }
+    .ms-good { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 10px; font-weight: 800; }
+    .ms-bad { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; font-size: 10px; font-weight: 800; }
+    .ms-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 999px; border: 1px solid #ccfbf1; background: #f0fdfa; color: #0f766e; font-size: 10px; font-weight: 800; }
+    #btnMsKirim { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    #btnMsKirim:not(:disabled):hover { box-shadow: 0 14px 26px -12px rgba(13,148,136,.8); transform: translateY(-1px); }
+    @media (prefers-reduced-motion: reduce) { .ms-hero-ico, .ms-stat, .ms-row { animation: none !important; } }
+  </style>
   <!-- ===== STYLE TAMBAHAN: PORTAL KARYAWAN > UPDATE KETERANGAN FURNI & ACC ===== -->
   <style>
     @keyframes kfRowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -516,6 +551,11 @@
             <a href="#" onclick="switchView('monitoringTablet')" id="menuMonitoringTablet" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
               <i data-lucide="tablet-smartphone" class="w-4 h-4 text-sky-400"></i>
               <span>MONITORING TABLET</span>
+            </a>
+            <!-- MENU INPUT MONTHLY SALE BY DETAIL (di bawah Monitoring Tablet) -->
+            <a href="#" onclick="switchView('inputMonthlySaleByDetail')" id="menuInputMonthlySaleByDetail" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
+              <i data-lucide="chart-no-axes-combined" class="w-4 h-4 text-teal-400"></i>
+              <span>INPUT MONTHLY SALE BY DETAIL</span>
             </a>
             <!-- MENU INPUT PENJUALAN KURSI PIJAT (tepat di bawah Monitoring Tablet) -->
             <a href="#" onclick="switchView('inputKursiPijat')" id="menuInputKursiPijat" class="block p-2.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2.5 transition">
@@ -1260,6 +1300,59 @@
             </div>
           </div>
 
+          <!-- ===== INPUT MONTHLY SALE BY DETAIL SECTION (PORTAL KARYAWAN) ===== -->
+          <div id="viewInputMonthlySaleByDetailSection" class="hidden flex-1 flex flex-col min-h-0">
+            <div class="ms-hero rounded-2xl p-5 mb-5 text-white shadow-lg flex items-center gap-4">
+              <div class="ms-hero-ico relative z-10 w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 ring-1 ring-white/30">
+                <i data-lucide="chart-no-axes-combined" class="w-6 h-6"></i>
+              </div>
+              <div class="relative z-10 min-w-0">
+                <h2 class="text-lg font-bold tracking-tight text-white">INPUT MONTHLY SALE BY DETAIL</h2>
+                <p class="text-xs text-teal-50 mt-1 leading-relaxed">Paste transaksi detail, periksa hasil agregasi per NIP, lalu kirim. Seluruh data lama pada tabel <span class="font-mono font-bold">ach_smt</span> akan diganti secara atomik.</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              <span class="ms-step"><b>1</b> NIP</span>
+              <span class="ms-step"><b>2</b> NAMA</span>
+              <span class="ms-step"><b>3</b> KODE DEPT</span>
+              <span class="ms-step"><b>4</b> TOTAL VALUE</span>
+              <span class="text-[10px] text-slate-500 ml-1">Urutan kolom paste dari Excel</span>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-3">
+              <p class="text-xs text-gray-500">Paste data Excel dengan urutan <b>NIP, NAMA, KODE DEPT, TOTAL VALUE</b>. Baris transaksi otomatis dijumlahkan per NIP.</p>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="msRefreshSources()" class="bg-white hover:bg-teal-50 text-teal-700 font-semibold px-3.5 py-2.5 rounded-xl text-xs border border-teal-200 flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Referensi
+                </button>
+                <button type="button" onclick="msReset()" class="bg-white hover:bg-gray-50 text-gray-700 font-semibold px-3.5 py-2.5 rounded-xl text-xs border border-gray-300 flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-gray-500"></i> Reset Data
+                </button>
+                <button type="button" id="btnMsKirim" onclick="msKirim()" class="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-teal-500/25 disabled:opacity-70 disabled:cursor-not-allowed">
+                  <i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="msTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">0</span> Baris ke Database
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <textarea id="msPasteInput" oninput="msHandlePaste()" spellcheck="false" placeholder="Klik di sini lalu tekan Ctrl + V untuk paste data dari Excel...
+Kolom: NIP | NAMA | KODE DEPT | TOTAL VALUE"
+                class="ms-paste w-full h-28 p-3.5 border-2 border-dashed border-teal-300 bg-teal-50/30 rounded-xl text-xs font-mono transition"></textarea>
+            </div>
+
+            <div id="msStats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-3"></div>
+            <div id="msSummary" class="flex flex-wrap items-center gap-2 mb-3" aria-live="polite"></div>
+
+            <div id="msTableWrap" class="flex-1 border border-gray-200 overflow-auto bg-white max-h-[560px] custom-scrollbar">
+              <table class="w-full text-left text-xs min-w-[2200px]">
+                <thead id="msTableHead"></thead>
+                <tbody id="msTableBody"></tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-2">Catatan: nilai persentase disimpan sebagai rasio (contoh 0,80 = 80,00%). Kolom ke-12 menggunakan nama MTD ACC karena rumus yang diminta adalah perhitungan kategori ACC.</p>
+          </div>
+
           <!-- ===== UPDATE KETERANGAN FURNI & ACC SECTION (PORTAL KARYAWAN) ===== -->
           <div id="viewKetFurniAccSection" class="hidden flex-1 flex flex-col">
             <div class="kf-hero rounded-2xl p-5 mb-5 text-white shadow-lg shadow-orange-500/20 flex items-center gap-4">
@@ -1498,6 +1591,7 @@
           case 'pengaturanTv': loadDataSettinganTv(); break;
           case 'pengaturanSounds': loadSongsData(); break;
           case 'inputKursiPijat': if (typeof kpMuatDariDb === 'function') kpMuatDariDb(); break;
+          case 'inputMonthlySaleByDetail': if (typeof msLoadSources === 'function') msLoadSources(true); break;
         }
       }
     };
@@ -1740,6 +1834,8 @@
       const viewInputKursiPijatSection = document.getElementById('viewInputKursiPijatSection');
       const menuInputTargetSmt = document.getElementById('menuInputTargetSmt');
       const viewInputTargetSmtSection = document.getElementById('viewInputTargetSmtSection');
+      const menuInputMonthlySaleByDetail = document.getElementById('menuInputMonthlySaleByDetail');
+      const viewInputMonthlySaleByDetailSection = document.getElementById('viewInputMonthlySaleByDetailSection');
       const menuKetFurniAcc = document.getElementById('menuKetFurniAcc');
       const viewKetFurniAccSection = document.getElementById('viewKetFurniAccSection');
       const viewInputScheduleSection = document.getElementById('viewInputScheduleSection');
@@ -1787,6 +1883,8 @@
       if (viewInputKursiPijatSection) viewInputKursiPijatSection.classList.add('hidden');
       if (menuInputTargetSmt) menuInputTargetSmt.className = inactiveClass;
       if (viewInputTargetSmtSection) viewInputTargetSmtSection.classList.add('hidden');
+      if (menuInputMonthlySaleByDetail) menuInputMonthlySaleByDetail.className = inactiveClass;
+      if (viewInputMonthlySaleByDetailSection) viewInputMonthlySaleByDetailSection.classList.add('hidden');
       if (menuKetFurniAcc) menuKetFurniAcc.className = inactiveClass;
       if (viewKetFurniAccSection) viewKetFurniAccSection.classList.add('hidden');
       if (viewInputScheduleSection) viewInputScheduleSection.classList.add('hidden');
@@ -1817,6 +1915,12 @@
         pageBadge.innerHTML = '<i data-lucide="crosshair" class="w-3.5 h-3.5 text-emerald-600"></i> Target SMT Sync';
         if (viewInputTargetSmtSection) viewInputTargetSmtSection.classList.remove('hidden');
         if (typeof tgOnShow === 'function') tgOnShow();
+      } else if (view === 'inputMonthlySaleByDetail') {
+        if (menuInputMonthlySaleByDetail) menuInputMonthlySaleByDetail.className = activeClass;
+        pageTitle.innerText = "INFORMA MOG MALANG (J382)";
+        pageBadge.innerHTML = '<i data-lucide="chart-no-axes-combined" class="w-3.5 h-3.5 text-teal-600"></i> Monthly Sale by Detail';
+        if (viewInputMonthlySaleByDetailSection) viewInputMonthlySaleByDetailSection.classList.remove('hidden');
+        if (typeof msOnShow === 'function') msOnShow();
       } else if (view === 'inputSchedule') {
         if (menuInputSchedule) menuInputSchedule.className = activeClass;
         pageTitle.innerText = "INFORMA MOG MALANG (J382)";
@@ -5421,5 +5525,454 @@
       }
     }
   </script>
+  <!-- ===== SCRIPT TAMBAHAN: PORTAL KARYAWAN > INPUT MONTHLY SALE BY DETAIL ===== -->
+  <script>
+    const MS_RPC = 'replace_ach_smt';
+    const MS_TABLE = 'ach_smt';
+    const MS_SOURCE_TTL = 120000;
+    const MS_PAGE_SIZE = 1000;
+    const MS_HEADERS = [
+      'NIP', 'NAMA', 'TARGET SALES', 'MTD SALES', 'PERSENTASE SALES', 'KEKURANGAN SALES',
+      'TARGET FURNITURE', 'MTD FURNITURE', 'PERSENTASE FURNITURE', 'KEKURANGAN FURNITURE',
+      'TARGET ACC', 'MTD ACC', 'PERSENTASE ACC', 'KEKURANGAN ACC', 'KETERANGAN 80:20',
+      'TARGET FP', 'MTD FP', 'PERSENTASE FP', 'TARGET COMSER', 'MTD COMSER',
+      'PERSENTASE COMSER', 'SMTD'
+    ];
+
+    let msRawRows = [];
+    let msData = [];
+    let msSkipped = 0;
+    let msDetailRows = 0;
+    let msMissingTargetCount = 0;
+    let msUnmappedDeptCodes = [];
+    let msSources = null;
+    let msSourcesAt = 0;
+    let msSourcePromise = null;
+    let msSourceError = '';
+    let msSending = false;
+
+    const msEsc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const msStr = value => String(value ?? '').trim();
+    const msKey = value => msStr(value);
+    const msNipValid = value => /^\d+$/.test(msKey(value)) && !/^0+$/.test(msKey(value));
+    const msAngka = value => {
+      let s = String(value ?? '').trim().replace(/rp/ig, '').replace(/\s/g, '');
+      if (!s) return 0;
+      s = s.replace(/[^0-9.,-]/g, '');
+      const dots = (s.match(/\./g) || []).length;
+      const commas = (s.match(/,/g) || []).length;
+      if (dots && commas) {
+        if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+        else s = s.replace(/,/g, '');
+      } else if (commas) {
+        if (commas > 1 || /^-?\d{1,3}(,\d{3})+$/.test(s)) s = s.replace(/,/g, '');
+        else s = s.replace(',', '.');
+      } else if (dots && (dots > 1 || /^-?\d{1,3}(\.\d{3})+$/.test(s))) {
+        s = s.replace(/\./g, '');
+      }
+      const n = Number(s);
+      return Number.isFinite(n) ? n : 0;
+    };
+    const msNumber = value => Number(value || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 });
+    const msPercent = value => new Intl.NumberFormat('id-ID', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value) || 0);
+    const msRatio = (value, target) => target > 0 ? Math.round((value / target) * 1000000) / 1000000 : 0;
+
+    // Satu kali per menu buka: hanya kolom yang benar-benar diperlukan yang dibaca.
+    // Jika satu tabel lebih dari 1.000 baris, request dilanjutkan per halaman.
+    async function msFetchTable(client, table, columns, orderColumn) {
+      const rows = [];
+      for (let from = 0; from < 100000; from += MS_PAGE_SIZE) {
+        let query = client.from(table).select(columns).range(from, from + MS_PAGE_SIZE - 1);
+        if (orderColumn) query = query.order(orderColumn, { ascending: true });
+        const { data, error } = await query;
+        if (error) throw error;
+        rows.push(...(data || []));
+        if (!data || data.length < MS_PAGE_SIZE) break;
+      }
+      return rows;
+    }
+
+    async function msReadTable(table, columns, orderColumn) {
+      const clients = [supabaseClient];
+      if (typeof pvAnonClient !== 'undefined' && pvAnonClient) clients.push(pvAnonClient);
+      let lastError = null;
+      let hadSuccess = false;
+      for (const client of clients) {
+        try {
+          const rows = await msFetchTable(client, table, columns, orderColumn);
+          hadSuccess = true;
+          if (rows.length) return rows;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      if (hadSuccess) return [];
+      throw lastError || new Error('Tidak dapat membaca tabel ' + table);
+    }
+
+    function msMakeSources(rows) {
+      const targetByNip = new Map();
+      (rows.target || []).forEach(row => {
+        const nip = msKey(row.nip);
+        if (nip) targetByNip.set(nip, row);
+      });
+
+      const deptByCode = new Map();
+      (rows.departments || []).forEach(row => {
+        const code = msKey(row.kode_dept).toUpperCase();
+        if (code) deptByCode.set(code, msKey(row.keterangan).toUpperCase());
+      });
+
+      const chairByNip = new Map();
+      (rows.chairs || []).forEach(row => {
+        const nip = msKey(row.nip);
+        if (nip) chairByNip.set(nip, (chairByNip.get(nip) || 0) + msAngka(row.total_value));
+      });
+
+      const fpByNip = new Map();
+      (rows.fp || []).forEach(row => {
+        const nip = msKey(row.nip_mtdfp);
+        if (nip) fpByNip.set(nip, (fpByNip.get(nip) || 0) + msAngka(row.qty_mtdfp));
+      });
+
+      const comserByNip = new Map();
+      (rows.comser || []).forEach(row => {
+        const nip = msKey(row.nip_mtdcnc);
+        if (nip) comserByNip.set(nip, (comserByNip.get(nip) || 0) + msAngka(row.total_mtdcnc));
+      });
+
+      return { targetByNip, deptByCode, chairByNip, fpByNip, comserByNip };
+    }
+
+    async function msLoadSources(force = false) {
+      if (msSourcePromise) return msSourcePromise;
+      if (!force && msSources && Date.now() - msSourcesAt < MS_SOURCE_TTL) {
+        msBuildPreview();
+        return msSources;
+      }
+
+      msSourceError = '';
+      msRender();
+      const load = Promise.all([
+        msReadTable('target_smt', 'nip,nama,target_sales,target_fp,target_comser', 'nip'),
+        msReadTable('ket_furni_acc', 'kode_dept,keterangan', 'kode_dept'),
+        msReadTable('kursi_pijat', 'nip,total_value', 'nip'),
+        msReadTable('mtd_fp', 'nip_mtdfp,qty_mtdfp', 'nip_mtdfp'),
+        msReadTable('mtd_comser', 'nip_mtdcnc,total_mtdcnc', 'nip_mtdcnc')
+      ]).then(([target, departments, chairs, fp, comser]) => {
+        msSources = msMakeSources({ target, departments, chairs, fp, comser });
+        msSourcesAt = Date.now();
+        msSourceError = '';
+        msBuildPreview();
+        return msSources;
+      }).catch(error => {
+        msSourceError = error?.message || String(error);
+        msSources = null;
+        msData = [];
+        msRender();
+        console.error('Gagal memuat referensi Monthly Sale:', error);
+        throw error;
+      }).finally(() => {
+        msSourcePromise = null;
+      });
+      msSourcePromise = load;
+      try { return await load; }
+      catch (error) { return null; }
+    }
+
+    function msNowProgress() {
+      // Gunakan tanggal kalender Asia/Jakarta agar SMTD konsisten meskipun perangkat berbeda zona waktu.
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(new Date());
+      const part = key => Number(parts.find(item => item.type === key)?.value || 0);
+      const year = part('year'), month = part('month'), day = part('day');
+      const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+      return Math.ceil((100 / daysInMonth) * day) / 100;
+    }
+
+    function msBuildPreview() {
+      if (!msSources) { msData = []; msRender(); return; }
+      const employees = new Map();
+      const unmappedDeptCodes = new Set();
+      let missingTargetCount = 0;
+      const smtd = msNowProgress();
+
+      msRawRows.forEach(item => {
+        const nip = item.nip;
+        let employee = employees.get(nip);
+        if (!employee) {
+          employee = {
+            nip, nama: item.nama || '-', mtd_sales: 0, mtd_furniture_detail: 0, mtd_acc_detail: 0
+          };
+          employees.set(nip, employee);
+        } else if ((!employee.nama || employee.nama === '-') && item.nama) {
+          employee.nama = item.nama;
+        }
+
+        employee.mtd_sales += item.value;
+        const category = msSources.deptByCode.get(item.kode_dept.toUpperCase()) || '';
+        if (!category) unmappedDeptCodes.add(item.kode_dept || '(kode dept kosong)');
+        if (category === 'FURNITURE') employee.mtd_furniture_detail += item.value;
+        else if (category === 'ACC') employee.mtd_acc_detail += item.value;
+      });
+
+      msData = Array.from(employees.values()).map(employee => {
+        const targetExists = msSources.targetByNip.has(employee.nip);
+        if (!targetExists) missingTargetCount++;
+        const target = msSources.targetByNip.get(employee.nip) || {};
+        const targetSales = msAngka(target.target_sales);
+        const chairSales = msSources.chairByNip.get(employee.nip) || 0;
+        const mtdFurniture = employee.mtd_furniture_detail + chairSales;
+        const mtdAcc = employee.mtd_acc_detail - chairSales;
+        const targetFurniture = targetSales * 0.8;
+        const targetAcc = targetSales * 0.2;
+        const targetFp = msAngka(target.target_fp);
+        const mtdFp = msSources.fpByNip.get(employee.nip) || 0;
+        const targetComser = msAngka(target.target_comser);
+        const mtdComser = msSources.comserByNip.get(employee.nip) || 0;
+        const pctSales = msRatio(employee.mtd_sales, targetSales);
+        const pctFurniture = msRatio(mtdFurniture, targetFurniture);
+        const pctAcc = msRatio(mtdAcc, targetAcc);
+        const pctFp = msRatio(mtdFp, targetFp);
+        const pctComser = msRatio(mtdComser, targetComser);
+
+        return {
+          nip: employee.nip,
+          nama: employee.nama || msStr(target.nama) || '-',
+          target_sales: targetSales,
+          mtd_sales: employee.mtd_sales,
+          persentase_sales: pctSales,
+          kekurangan_sales: employee.mtd_sales - targetSales,
+          target_furniture: targetFurniture,
+          mtd_furniture: mtdFurniture,
+          persentase_furniture: pctFurniture,
+          kekurangan_furniture: mtdFurniture - targetFurniture,
+          target_acc: targetAcc,
+          mtd_acc: mtdAcc,
+          persentase_acc: pctAcc,
+          kekurangan_acc: mtdAcc - targetAcc,
+          keterangan_8020: (pctFurniture > 1 && pctAcc > 1) ? 'SUKSES' : 'GAGAL',
+          target_fp: targetFp,
+          mtd_fp: mtdFp,
+          persentase_fp: pctFp,
+          target_comser: targetComser,
+          mtd_comser: mtdComser,
+          persentase_comser: pctComser,
+          smtd
+        };
+      });
+      msMissingTargetCount = missingTargetCount;
+      msUnmappedDeptCodes = Array.from(unmappedDeptCodes);
+      msRender();
+    }
+
+    function msStat(icon, label, value, tone) {
+      return '<div class="ms-stat ' + tone + '"><div class="ms-stat-ico"><i data-lucide="' + icon + '" class="w-5 h-5"></i></div>' +
+        '<div class="min-w-0"><div class="ms-stat-val truncate">' + value + '</div><div class="ms-stat-lbl">' + label + '</div></div></div>';
+    }
+
+    function msRender() {
+      const head = document.getElementById('msTableHead');
+      const body = document.getElementById('msTableBody');
+      const total = document.getElementById('msTotalBaris');
+      const stats = document.getElementById('msStats');
+      const summary = document.getElementById('msSummary');
+      if (!head || !body) return;
+      if (total) total.textContent = msData.length;
+      head.innerHTML = '<tr><th class="text-center">NO</th>' + MS_HEADERS.map((label, index) =>
+        '<th class="' + (index === 0 || index === 1 || index === 14 ? 'text-left' : 'text-right') + '">' + label + '</th>'
+      ).join('') + '</tr>';
+
+      if (stats) {
+        if (msData.length) {
+          const sum = key => msData.reduce((acc, row) => acc + (Number(row[key]) || 0), 0);
+          stats.innerHTML =
+            msStat('users', 'Karyawan Unik', msNumber(msData.length), 'bg-slate-50 border-slate-200 text-slate-700') +
+            msStat('wallet', 'Total MTD Sales', msNumber(sum('mtd_sales')), 'bg-blue-50 border-blue-100 text-blue-700') +
+            msStat('armchair', 'Total MTD Furniture', msNumber(sum('mtd_furniture')), 'bg-teal-50 border-teal-100 text-teal-700') +
+            msStat('package', 'Total MTD ACC', msNumber(sum('mtd_acc')), 'bg-violet-50 border-violet-100 text-violet-700');
+        } else stats.innerHTML = '';
+      }
+
+      if (summary) {
+        let chips = '';
+        const chip = text => '<span class="ms-chip">' + text + '</span>';
+        if (msSourceError) {
+          chips += '<span class="ms-chip" style="background:#fff1f2;color:#be123c;border-color:#fecdd3"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Referensi gagal dimuat: ' + msEsc(msSourceError.slice(0, 150)) + '</span>';
+        } else if (!msSources) {
+          chips += chip('<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Memuat 5 tabel referensi Supabase...');
+        } else {
+          chips += chip('<i data-lucide="database" class="w-3.5 h-3.5"></i> Referensi siap &middot; ' + new Date(msSourcesAt).toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta' }));
+        }
+        if (msDetailRows) chips += chip(msNumber(msDetailRows) + ' baris transaksi diproses');
+        if (msSkipped) chips += '<span class="ms-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a">' + msNumber(msSkipped) + ' baris NIP kosong/tidak valid dilewati</span>';
+        if (msData.length) chips += chip(msNumber(msData.length) + ' karyawan unik · 1 baris per NIP');
+        if (msMissingTargetCount) chips += '<span class="ms-chip" style="background:#fff1f2;color:#be123c;border-color:#fecdd3">' + msNumber(msMissingTargetCount) + ' NIP tidak ditemukan di target_smt (target = 0)</span>';
+        if (msUnmappedDeptCodes.length) chips += '<span class="ms-chip" style="background:#fffbeb;color:#b45309;border-color:#fde68a">Kode dept belum terpetakan: ' + msUnmappedDeptCodes.slice(0, 5).map(msEsc).join(', ') + (msUnmappedDeptCodes.length > 5 ? ', ...' : '') + '</span>';
+        summary.innerHTML = chips;
+      }
+
+      if (!msSources && !msSourceError) {
+        body.innerHTML = '<tr><td colspan="23" class="text-center py-16 text-slate-400"><i data-lucide="loader-2" class="w-7 h-7 animate-spin mx-auto mb-2"></i><span class="text-xs">Memuat referensi target, departemen, kursi pijat, MTD FP, dan MTD Comser...</span></td></tr>';
+        lucide.createIcons();
+        return;
+      }
+      if (msSourceError) {
+        body.innerHTML = '<tr><td colspan="23" class="text-center py-16 text-rose-500 text-xs">Referensi belum lengkap. Periksa policy SELECT/RLS dan koneksi Supabase, lalu klik Refresh Referensi.</td></tr>';
+        lucide.createIcons();
+        return;
+      }
+      if (!msData.length) {
+        body.innerHTML = '<tr><td colspan="23" class="text-center py-16 text-gray-400"><div class="flex flex-col items-center justify-center gap-2"><div class="w-16 h-16 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-8 h-8 text-teal-300"></i></div><span class="italic text-xs">Belum ada data transaksi valid. Paste data Excel ke kotak di atas.</span></div></td></tr>';
+        lucide.createIcons();
+        return;
+      }
+
+      const keys = [
+        'nip', 'nama', 'target_sales', 'mtd_sales', 'persentase_sales', 'kekurangan_sales',
+        'target_furniture', 'mtd_furniture', 'persentase_furniture', 'kekurangan_furniture',
+        'target_acc', 'mtd_acc', 'persentase_acc', 'kekurangan_acc', 'keterangan_8020',
+        'target_fp', 'mtd_fp', 'persentase_fp', 'target_comser', 'mtd_comser', 'persentase_comser', 'smtd'
+      ];
+      const percentKeys = new Set(['persentase_sales', 'persentase_furniture', 'persentase_acc', 'persentase_fp', 'persentase_comser', 'smtd']);
+      const textKeys = new Set(['nip', 'nama', 'keterangan_8020']);
+      let html = '';
+      const limit = Math.min(msData.length, 3000);
+      for (let i = 0; i < limit; i++) {
+        const row = msData[i];
+        html += '<tr class="ms-row" style="animation-delay:' + Math.min(i, 18) * 12 + 'ms"><td class="text-center"><span class="xl-no">' + (i + 1) + '</span></td>';
+        keys.forEach(key => {
+          let value = row[key];
+          let cell;
+          if (percentKeys.has(key)) cell = msPercent(value);
+          else if (textKeys.has(key)) cell = msEsc(value);
+          else cell = msNumber(value);
+          if (key === 'keterangan_8020') {
+            cell = value === 'SUKSES' ? '<span class="ms-good">SUKSES</span>' : '<span class="ms-bad">GAGAL</span>';
+          } else if (percentKeys.has(key)) {
+            cell = '<span class="ms-num">' + cell + '</span>';
+          } else if (!textKeys.has(key)) {
+            cell = '<span class="ms-num">' + cell + '</span>';
+          }
+          html += '<td class="' + (textKeys.has(key) ? 'font-semibold text-slate-800' : 'text-right font-mono') + '">' + cell + '</td>';
+        });
+        html += '</tr>';
+      }
+      if (msData.length > limit) html += '<tr><td colspan="23" class="text-center py-3 text-slate-500">Menampilkan ' + msNumber(limit) + ' dari ' + msNumber(msData.length) + ' karyawan</td></tr>';
+      body.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function msHandlePaste() {
+      const text = document.getElementById('msPasteInput')?.value || '';
+      msRawRows = [];
+      msSkipped = 0;
+      msDetailRows = 0;
+      if (text.trim()) {
+        const lines = text.replace(/\r/g, '').split('\n');
+        let firstNonEmpty = true;
+        lines.forEach(line => {
+          if (!line.trim()) return;
+          const cols = line.split('\t').map(value => value.trim());
+          if (firstNonEmpty) {
+            firstNonEmpty = false;
+            if ((cols[0] || '').toUpperCase() === 'NIP' || (cols[1] || '').toUpperCase() === 'NAMA') return;
+          }
+          if (!msNipValid(cols[0])) { msSkipped++; return; }
+          msRawRows.push({ nip: msKey(cols[0]), nama: cols[1] || '-', kode_dept: msKey(cols[2]), value: msAngka(cols[3]) });
+        });
+      }
+      msDetailRows = msRawRows.length;
+      if (msSources) msBuildPreview();
+      else msRender();
+    }
+
+    function msReset() {
+      const input = document.getElementById('msPasteInput');
+      if (input) input.value = '';
+      msRawRows = [];
+      msData = [];
+      msSkipped = 0;
+      msDetailRows = 0;
+      msMissingTargetCount = 0;
+      msUnmappedDeptCodes = [];
+      msRender();
+    }
+
+    async function msRefreshSources() {
+      msSources = null;
+      msSourcesAt = 0;
+      msSourceError = '';
+      await msLoadSources(true);
+      if (!msSourceError) showToast('Referensi Monthly Sale berhasil diperbarui.', 'success');
+    }
+
+    function msOnShow() {
+      msRender();
+      msLoadSources(false);
+    }
+
+    function msSetButton(enabled) {
+      const button = document.getElementById('btnMsKirim');
+      if (!button) return;
+      button.disabled = !enabled;
+      button.innerHTML = enabled
+        ? '<i data-lucide="send" class="w-4 h-4"></i> Kirim <span id="msTotalBaris" class="bg-black/20 px-1.5 py-0.5 rounded text-[11px]">' + msData.length + '</span> Baris ke Database'
+        : '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses Replace...';
+      lucide.createIcons();
+    }
+
+    async function msKirim() {
+      if (msSending) return;
+      if (!msSources || msSourceError) { showToast('Referensi belum siap. Refresh referensi sebelum mengirim.', 'error'); return; }
+      if (!msData.length) { showToast('Belum ada preview Monthly Sale yang valid untuk dikirim.', 'error'); return; }
+      const approved = await konfirmasiBawah(
+        'PERINGATAN: seluruh isi tabel "' + MS_TABLE + '" akan dihapus dan diganti dengan ' + msData.length + ' baris hasil preview ini. Pastikan data sudah benar. Lanjutkan?'
+      );
+      if (!approved) return;
+
+      msSending = true;
+      msSetButton(false);
+      try {
+        const payload = msData.map(row => ({
+          nip: row.nip,
+          nama: row.nama,
+          target_sales: row.target_sales,
+          mtd_sales: row.mtd_sales,
+          persentase_sales: row.persentase_sales,
+          kekurangan_sales: row.kekurangan_sales,
+          target_furniture: row.target_furniture,
+          mtd_furniture: row.mtd_furniture,
+          persentase_furniture: row.persentase_furniture,
+          kekurangan_furniture: row.kekurangan_furniture,
+          target_acc: row.target_acc,
+          mtd_acc: row.mtd_acc,
+          persentase_acc: row.persentase_acc,
+          kekurangan_acc: row.kekurangan_acc,
+          keterangan_8020: row.keterangan_8020,
+          target_fp: row.target_fp,
+          mtd_fp: row.mtd_fp,
+          persentase_fp: row.persentase_fp,
+          target_comser: row.target_comser,
+          mtd_comser: row.mtd_comser,
+          persentase_comser: row.persentase_comser,
+          smtd: row.smtd
+        }));
+        const { error } = await supabaseClient.rpc(MS_RPC, { new_data: payload });
+        if (error) throw error;
+        showToast('Sukses! ' + payload.length + ' baris berhasil menggantikan seluruh isi tabel ' + MS_TABLE + '.', 'success');
+      } catch (error) {
+        console.error('Gagal replace ach_smt:', error);
+        showToast('Gagal menyimpan ach_smt: ' + (error?.message || error), 'error');
+      } finally {
+        msSending = false;
+        msSetButton(true);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { msRender(); });
+  </script>
+
 </body>
 </html>
